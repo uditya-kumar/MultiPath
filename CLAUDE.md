@@ -58,7 +58,7 @@ MultiPath/
         ├── main.rs        calls multipath_lib::run()
         ├── lib.rs         module tree + Tauri builder
         ├── app/           Tauri glue: state, settings, status, commands, ticker, usage, autostart, tray + popup
-        ├── engine/        TUN capture and relays: lifecycle, flows, tcp, udp, icmp, sniff
+        ├── engine/        TUN capture and relays: lifecycle, gate, flows, tcp, udp, icmp, sniff
         ├── net/           physical networks: links, health, dial, balancer, router (pick + failover)
         └── sys/           Win32 wrappers: elevation, routes, sockets, icmp
 ```
@@ -95,3 +95,6 @@ cd src-tauri && cargo check && cargo test
 - Win32 error 5010 (object already exists) is treated as success when adding routes and addresses.
 - Windows prefers IPv6 even from the adapter's ULA. Since usually only some links have IPv6, the engine raises the
   IPv4 precedence (`::ffff:0:0/96` → 45, active store) while on (`sys::PreferIpv4`); otherwise IPv6 flows pile onto one link.
+- `ipstack` completes the TCP handshake before we dial out, so an app never sees a dead IPv6 path and never falls back
+  to IPv4. `engine::gate` resets IPv6 SYNs when no link carries IPv6. A link carries IPv6 only after an IPv6 probe
+  through it succeeds: phone tethers keep stale (deprecated) IPv6 addresses after their IPv6 is gone.

@@ -47,6 +47,20 @@ pub struct Health {
     pub state: HealthState,
     pub latency_ms: Option<u32>,
     pub consecutive_failures: u32,
+    /// An IPv6 probe got through. Having an address isn't enough: a phone
+    /// can keep a stale prefix after its own IPv6 has gone.
+    pub ipv6_ok: bool,
+}
+
+impl Health {
+    fn unknown() -> Health {
+        Health {
+            state: HealthState::Unknown,
+            latency_ms: None,
+            consecutive_failures: 0,
+            ipv6_ok: false,
+        }
+    }
 }
 
 #[derive(Default)]
@@ -102,11 +116,7 @@ impl Link {
             id,
             info: RwLock::new(info),
             stats: LinkStats::default(),
-            health: Mutex::new(Health {
-                state: HealthState::Unknown,
-                latency_ms: None,
-                consecutive_failures: 0,
-            }),
+            health: Mutex::new(Health::unknown()),
             rates: Mutex::new(Rates {
                 last_rx: 0,
                 last_tx: 0,
@@ -161,6 +171,15 @@ impl Link {
 
     pub fn usable(&self) -> bool {
         self.info.read().unwrap().present && self.health.lock().unwrap().state != HealthState::Down
+    }
+
+    /// Usable for IPv6 flows: has an address, and its IPv6 was seen working.
+    pub fn carries_ipv6(&self) -> bool {
+        self.info.read().unwrap().ipv6.is_some() && self.health.lock().unwrap().ipv6_ok
+    }
+
+    pub fn set_ipv6_ok(&self, ok: bool) {
+        self.health.lock().unwrap().ipv6_ok = ok;
     }
 
     pub fn record_success(&self, latency_ms: Option<u32>) {
@@ -328,11 +347,7 @@ impl Links {
                         || info.present != fresh.present;
                     if addr_changed {
                         // A new address deserves a fresh health verdict.
-                        *link.health.lock().unwrap() = Health {
-                            state: HealthState::Unknown,
-                            latency_ms: None,
-                            consecutive_failures: 0,
-                        };
+                        *link.health.lock().unwrap() = Health::unknown();
                         changed = true;
                     }
                     *info = fresh.clone();

@@ -103,11 +103,10 @@ impl Router {
             .filter(|l| !exclude.contains(&l.id.as_str()))
             .filter(|l| l.usable())
             .filter(|l| {
-                let info = l.info.read().unwrap();
                 if v6 {
-                    info.ipv6.is_some()
+                    l.carries_ipv6()
                 } else {
-                    info.ipv4.is_some()
+                    l.info.read().unwrap().ipv4.is_some()
                 }
             })
             .filter_map(|l| {
@@ -201,7 +200,7 @@ mod tests {
     use std::net::{Ipv4Addr, Ipv6Addr};
 
     fn link(id: &str, v4: bool, v6: bool) -> Arc<Link> {
-        Arc::new(Link::new(
+        let link = Arc::new(Link::new(
             id.into(),
             LinkInfo {
                 if_index: 1,
@@ -214,7 +213,9 @@ mod tests {
                 speed_bps: None,
                 present: true,
             },
-        ))
+        ));
+        link.set_ipv6_ok(v6);
+        link
     }
 
     fn router(links: Vec<Arc<Link>>, policy: Policy) -> Router {
@@ -311,6 +312,15 @@ mod tests {
         let r = router(vec![link("dual", true, true)], policy);
         assert!(r.choose(true, None, &[]).is_none());
         assert_eq!(r.choose(false, None, &[]).unwrap().id, "dual");
+    }
+
+    #[test]
+    fn ipv6_needs_a_working_probe() {
+        let stale = link("stale", true, true);
+        stale.set_ipv6_ok(false);
+        let r = router(vec![stale], Policy::default());
+        assert!(r.choose(true, None, &[]).is_none());
+        assert_eq!(r.choose(false, None, &[]).unwrap().id, "stale");
     }
 
     #[test]

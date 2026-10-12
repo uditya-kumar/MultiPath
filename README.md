@@ -31,9 +31,10 @@ and other sites that sign you out when your address changes, but a single site t
 4. The connection is then made again from that network's own address, pinned to that adapter.
 5. Health checks take a network out of rotation when it stops reaching the internet, and put it back when it recovers.
 
-While MultiPath is on, Windows looks up names with the DNS servers in Settings (1.1.1.1 and 8.8.8.8 by default). Those
-lookups are balanced like any other traffic. IPv6 is always captured, so it can't slip past MultiPath. It is balanced
-across the networks that have IPv6 when *Include IPv6* is on. Otherwise IPv6 connections are refused and apps use IPv4.
+While MultiPath is on, Windows looks up names with the DNS servers in Settings (8.8.8.8 and 1.1.1.1 by default, in that
+order, because some ISPs drop queries to 1.1.1.1). Those lookups are balanced like any other traffic. IPv6 is always
+captured, so it can't slip past MultiPath. It is balanced across the networks whose IPv6 is seen working when *Include
+IPv6* is on. Otherwise, or when no network's IPv6 works, IPv6 connections are refused at once and apps use IPv4.
 While MultiPath is on, Windows tries IPv4 first for sites that have both. Usually only some of your networks have IPv6,
 so a connection that used IPv6 could only go through those.
 

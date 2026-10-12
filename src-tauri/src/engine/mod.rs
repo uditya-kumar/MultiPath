@@ -5,6 +5,7 @@
 //! the link list fresh and probing health is the caller's job.
 
 mod flows;
+mod gate;
 mod icmp;
 mod sniff;
 mod tcp;
@@ -106,7 +107,7 @@ impl Engine {
             .inspect_err(|err| log::warn!("couldn't make IPv4 preferred: {err}"))
             .ok();
 
-        let stack = IpStack::new(stack_config(), device);
+        let stack = IpStack::new(stack_config(), gate::Gate::new(device, router.clone()));
         let flows = Arc::new(Flows::default());
         let (stop, stopped) = watch::channel(false);
         let tasks = vec![
