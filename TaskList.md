@@ -24,12 +24,12 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [x] Elevation handoff: `relaunch_as_admin` starts an elevated copy that waits for this one to exit
 
 ## Phase 2 — Networks (`net/`)
-- [ ] Verify `links.rs` discovery on real hardware (Wi-Fi + USB tether + Ethernet)
-- [ ] `health.rs`: a TCP probe to 1.1.1.1:443 per link every 5 s; record latency; mark a link down after 2 failures
-- [ ] `dial.rs`: open TCP/UDP sockets bound to a link's address and pinned with `IP_UNICAST_IF`, with a connect timeout
-- [ ] `balancer.rs`: weighted least-connections, an adaptive capacity factor from `peak_rx`, optional sticky sessions
-- [ ] Failover: when a dial fails, retry once on the next best link and record the failure
-- [ ] Unit tests for the balancer (weights, disabled links, sticky, all links down)
+- [x] Verify `links.rs` discovery on real hardware (Wi-Fi checked; USB tether + Ethernet are in the Phase 6 matrix)
+- [x] `health.rs`: a TCP probe to 1.1.1.1:443 per link every 5 s; record latency; mark a link down after 2 failures
+- [x] `dial.rs`: open TCP/UDP sockets bound to a link's address and pinned with `IP_UNICAST_IF`, with a connect timeout
+- [x] `balancer.rs`: weighted least-connections, an adaptive capacity factor from `peak_rx`, optional sticky sessions
+- [x] Failover: when a dial fails, retry once on the next best link and record the failure
+- [x] Unit tests for the balancer (weights, disabled links, sticky, all links down)
 
 ## Phase 3 — Engine (`engine/`)
 - [ ] `mod.rs`: start/stop lifecycle — create the Wintun adapter, assign 10.77.0.1/24 (plus an IPv6 ULA), set DNS and metric
@@ -67,7 +67,7 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 
 ## Phase 6 — Test & ship
 - [ ] "Turn on" from a normal copy → UAC → the elevated copy opens its popup
-- [ ] Manual test matrix: Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
+- [ ] Manual test matrix: discovery of USB tether + Ethernet; Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
 - [ ] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link
 - [ ] NSIS installer bundling `wintun.dll`
 - [ ] README: how it works, and its limits (one TCP connection can't be split without a server)

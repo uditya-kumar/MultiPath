@@ -72,6 +72,26 @@ pub struct Link {
 }
 
 impl Link {
+    pub fn new(id: String, info: LinkInfo) -> Link {
+        Link {
+            id,
+            info: RwLock::new(info),
+            stats: LinkStats::default(),
+            health: Mutex::new(Health {
+                state: HealthState::Unknown,
+                latency_ms: None,
+                consecutive_failures: 0,
+            }),
+            rates: Mutex::new(Rates {
+                last_rx: 0,
+                last_tx: 0,
+                rx_rate: 0,
+                tx_rate: 0,
+                history: VecDeque::from(vec![(0, 0); HISTORY_LEN]),
+            }),
+        }
+    }
+
     pub fn info(&self) -> LinkInfo {
         self.info.read().unwrap().clone()
     }
@@ -228,23 +248,7 @@ impl Links {
 
         for (id, info) in found {
             if !list.iter().any(|l| l.id == id) {
-                list.push(Arc::new(Link {
-                    id,
-                    info: RwLock::new(info),
-                    stats: LinkStats::default(),
-                    health: Mutex::new(Health {
-                        state: HealthState::Unknown,
-                        latency_ms: None,
-                        consecutive_failures: 0,
-                    }),
-                    rates: Mutex::new(Rates {
-                        last_rx: 0,
-                        last_tx: 0,
-                        rx_rate: 0,
-                        tx_rate: 0,
-                        history: VecDeque::from(vec![(0, 0); HISTORY_LEN]),
-                    }),
-                }));
+                list.push(Arc::new(Link::new(id, info)));
                 changed = true;
             }
         }
@@ -274,5 +278,51 @@ impl Links {
                 .peak_rx
                 .store(decayed.max(r.rx_rate), Ordering::Relaxed);
         }
+    }
+
+    #[cfg(test)]
+    pub fn from_list(list: Vec<Arc<Link>>) -> Links {
+        Links {
+            list: RwLock::new(list),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Prints what discovery sees on this machine. Run with
+    /// `cargo test discovery -- --ignored --nocapture`.
+    #[test]
+    #[ignore]
+    fn discovery_on_this_machine() {
+        for (id, info) in discover() {
+            println!("{id}\n  {info:?}");
+        }
+    }
+
+    #[test]
+    fn two_failures_take_a_link_down_and_success_restores_it() {
+        let link = Link::new(
+            "x".into(),
+            LinkInfo {
+                if_index: 1,
+                name: "x".into(),
+                description: String::new(),
+                kind: "wifi",
+                ipv4: Some(Ipv4Addr::new(192, 168, 1, 2)),
+                ipv6: None,
+                gateway: None,
+                speed_bps: None,
+                present: true,
+            },
+        );
+        link.record_failure();
+        assert!(link.usable());
+        link.record_failure();
+        assert!(!link.usable());
+        link.record_success(Some(20));
+        assert!(link.usable());
     }
 }
