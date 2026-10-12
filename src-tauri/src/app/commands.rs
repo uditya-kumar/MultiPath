@@ -70,7 +70,15 @@ fn update_link(
 
 #[tauri::command]
 pub fn set_link_enabled(app: AppHandle, id: String, enabled: bool) -> Result<Status, String> {
-    update_link(&app, id, |p| p.enabled = enabled)
+    let status = update_link(&app, id.clone(), |p| p.enabled = enabled)?;
+    if !enabled {
+        // Switching a network off moves its traffic too: apps reconnect,
+        // and their new connections go elsewhere.
+        if let Some(flows) = app.state::<AppState>().flows.read().unwrap().as_ref() {
+            flows.abort_on_link(&id);
+        }
+    }
+    Ok(status)
 }
 
 #[tauri::command]

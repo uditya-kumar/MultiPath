@@ -93,3 +93,5 @@ cd src-tauri && cargo check && cargo test
 - `tun` 0.8: create the device with `tun::create_as_async`; Windows options go in `platform_config` (`device_guid`, `wintun_file`).
 - Routes added with `CreateIpForwardEntry2` outlive the process. Always remove them on stop, and clean up stale ones at startup.
 - Win32 error 5010 (object already exists) is treated as success when adding routes and addresses.
+- Windows prefers IPv6 even from the adapter's ULA. Since usually only some links have IPv6, the engine raises the
+  IPv4 precedence (`::ffff:0:0/96` → 45, active store) while on (`sys::PreferIpv4`); otherwise IPv6 flows pile onto one link.

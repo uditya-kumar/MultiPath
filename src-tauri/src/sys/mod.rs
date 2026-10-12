@@ -1,12 +1,13 @@
 //! Thin wrappers over the Win32 APIs MultiPath needs: elevation, single
 //! instance, adapter and clock queries, egress pinning, routes on the
-//! virtual adapter, socket owner lookup, and ICMP.
+//! virtual adapter, IPv4/IPv6 preference, socket owner lookup, and ICMP.
 
 mod adapters;
 mod clock;
 mod elevation;
 mod icmp;
 mod instance;
+mod prefix_policy;
 mod routes;
 mod sockets;
 
@@ -15,5 +16,6 @@ pub use clock::local_date;
 pub use elevation::{is_elevated, relaunch_elevated, run_elevated};
 pub use icmp::icmp_echo;
 pub use instance::Instance;
+pub use prefix_policy::PreferIpv4;
 pub use routes::{add_unicast_address, Route};
 pub use sockets::{pin_socket_to_interface, process_name, socket_owners};

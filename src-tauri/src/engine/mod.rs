@@ -26,7 +26,7 @@ pub use flows::{Flow, Flows};
 
 use crate::net::links::Links;
 use crate::net::router::{Proto, Router};
-use crate::sys::{self, Route};
+use crate::sys::{self, PreferIpv4, Route};
 use flows::FlowGuard;
 
 /// Name of the Wintun adapter MultiPath creates.
@@ -64,6 +64,7 @@ pub struct EngineConfig {
 pub struct Engine {
     pub flows: Arc<Flows>,
     routes: Vec<Route>,
+    prefer_ipv4: Option<PreferIpv4>,
     stop: watch::Sender<bool>,
     tasks: Vec<JoinHandle<()>>,
 }
@@ -93,12 +94,17 @@ impl Engine {
         // IPv6 is always captured, even when no network has it yet or it's
         // switched off: otherwise it would go straight out of whichever
         // network has an IPv6 route, around MultiPath. Flows the router has
-        // no link for are refused. The adapter's address is a ULA, which
-        // Windows ranks below IPv4, so dual-stack sites are reached over IPv4.
+        // no link for are refused.
         sys::add_unicast_address(if_index, IpAddr::V6(TUN_V6), 64)?;
         for (prefix, len) in CAPTURE_V4.into_iter().chain(CAPTURE_V6) {
             routes.push(Route::add(if_index, prefix, len)?);
         }
+
+        // Sites with both families are reached over IPv4, which every
+        // network has, so their connections can be spread across all of them.
+        let prefer_ipv4 = PreferIpv4::apply()
+            .inspect_err(|err| log::warn!("couldn't make IPv4 preferred: {err}"))
+            .ok();
 
         let stack = IpStack::new(stack_config(), device);
         let flows = Arc::new(Flows::default());
@@ -111,6 +117,7 @@ impl Engine {
         Ok(Engine {
             flows,
             routes,
+            prefer_ipv4,
             stop,
             tasks,
         })
@@ -125,6 +132,7 @@ impl Engine {
     pub async fn stop(self) {
         // Routes first, so traffic goes straight back to the real networks.
         drop(self.routes);
+        drop(self.prefer_ipv4);
         let _ = self.stop.send(true);
         for task in self.tasks {
             let _ = task.await;

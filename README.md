@@ -34,6 +34,11 @@ and other sites that sign you out when your address changes, but a single site t
 While MultiPath is on, Windows looks up names with the DNS servers in Settings (1.1.1.1 and 8.8.8.8 by default). Those
 lookups are balanced like any other traffic. IPv6 is always captured, so it can't slip past MultiPath. It is balanced
 across the networks that have IPv6 when *Include IPv6* is on. Otherwise IPv6 connections are refused and apps use IPv4.
+While MultiPath is on, Windows tries IPv4 first for sites that have both. Usually only some of your networks have IPv6,
+so a connection that used IPv6 could only go through those.
+
+Switching a network off in the popup also closes the connections already on it. Apps reconnect through the others, and
+download managers resume.
 
 Turning MultiPath off or quitting it removes the adapter's routes, so Windows goes back to normal. If MultiPath ever
 crashes and leaves routes behind, it removes them the next time it starts with administrator rights.
