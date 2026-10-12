@@ -41,9 +41,7 @@ pub fn pin_socket_to_interface(sock: RawSocket, if_index: u32, v6: bool) -> io::
 /// Which process owns a local socket, keyed by (is_tcp, local port).
 pub type SocketOwners = HashMap<(bool, u16), u32>;
 
-fn read_table(
-    fetch: impl Fn(*mut core::ffi::c_void, *mut u32) -> u32,
-) -> Option<Vec<u8>> {
+fn read_table(fetch: impl Fn(*mut core::ffi::c_void, *mut u32) -> u32) -> Option<Vec<u8>> {
     let mut size = 0u32;
     fetch(std::ptr::null_mut(), &mut size);
     for _ in 0..4 {
@@ -116,14 +114,18 @@ pub fn socket_owners(tun_v4: Ipv4Addr, tun_v6: Ipv6Addr) -> SocketOwners {
     if let Some(buf) = udp(AF_INET) {
         for r in rows::<MIB_UDPROW_OWNER_PID>(&buf) {
             if r.dwLocalAddr == v4 || r.dwLocalAddr == 0 {
-                owners.entry((false, port(r.dwLocalPort))).or_insert(r.dwOwningPid);
+                owners
+                    .entry((false, port(r.dwLocalPort)))
+                    .or_insert(r.dwOwningPid);
             }
         }
     }
     if let Some(buf) = udp(AF_INET6) {
         for r in rows::<MIB_UDP6ROW_OWNER_PID>(&buf) {
             if r.ucLocalAddr == v6 || r.ucLocalAddr == [0; 16] {
-                owners.entry((false, port(r.dwLocalPort))).or_insert(r.dwOwningPid);
+                owners
+                    .entry((false, port(r.dwLocalPort)))
+                    .or_insert(r.dwOwningPid);
             }
         }
     }

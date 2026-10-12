@@ -11,14 +11,14 @@ const ROUTE_PROTOCOL_NETMGMT: i32 = 3;
 fn sockaddr_inet(ip: IpAddr) -> SOCKADDR_INET {
     let mut sa: SOCKADDR_INET = unsafe { std::mem::zeroed() };
     match ip {
-        IpAddr::V4(v4) => unsafe {
+        IpAddr::V4(v4) => {
             sa.Ipv4.sin_family = AF_INET;
             sa.Ipv4.sin_addr.S_un.S_addr = u32::from_ne_bytes(v4.octets());
-        },
-        IpAddr::V6(v6) => unsafe {
+        }
+        IpAddr::V6(v6) => {
             sa.Ipv6.sin6_family = AF_INET6;
             sa.Ipv6.sin6_addr.u.Byte = v6.octets();
-        },
+        }
     }
     sa
 }

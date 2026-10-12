@@ -14,14 +14,14 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [x] Folder structure, `CLAUDE.md`, and this task list
 
 ## Phase 1 — Tauri shell
-- [ ] `tauri.conf.json`, capabilities, and app icons
-- [ ] Vite + React + TypeScript frontend scaffold in `src/`
-- [ ] `main.rs` → `multipath_lib::run()`; `cargo check` passes with every module wired in
-- [ ] Tray icon: a left click toggles the popup, a right click opens a menu (Open, Turn on/off, Quit)
-- [ ] Popup window: 360 px wide, frameless, always on top, hidden from the taskbar, anchored above the tray, hides on blur
-- [ ] Mica/acrylic background behind the popup (fall back to a solid colour)
-- [ ] Single instance (a second launch focuses the existing popup)
-- [ ] Elevation flow: when not admin, "Turn on" calls `relaunch_elevated()` and the current copy exits
+- [x] `tauri.conf.json`, capabilities, and app icons
+- [x] Vite + React + TypeScript frontend scaffold in `src/`
+- [x] `main.rs` → `multipath_lib::run()`; `cargo check` passes with every module wired in
+- [x] Tray icon: a left click toggles the popup, a right click opens a menu (Open, Quit)
+- [x] Popup window: 360 px wide, frameless, always on top, hidden from the taskbar, anchored above the tray, hides on blur
+- [x] Mica background behind the popup (a translucent fill keeps it readable without Mica)
+- [x] Single instance (a second launch focuses the existing popup)
+- [x] Elevation handoff: `relaunch_as_admin` starts an elevated copy that waits for this one to exit
 
 ## Phase 2 — Networks (`net/`)
 - [ ] Verify `links.rs` discovery on real hardware (Wi-Fi + USB tether + Ethernet)
@@ -42,9 +42,11 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [ ] `sniff.rs`: read the TLS SNI / HTTP Host for sticky keys and the connections list
 - [ ] Link loss mid-run: new flows avoid the link, and its flows close quickly instead of hanging
 - [ ] Clean stop: routes removed and adapter closed, verified with `route print`
+- [ ] Remove the temporary `allow(dead_code, unused_imports)` in `lib.rs`
 
 ## Phase 4 — App glue (`app/`)
 - [ ] `state.rs`: shared `AppState` (engine handle, links, settings and their path)
+- [ ] Tray menu gets "Turn on / Turn off"; the tray icon shows the on/off state (`tray::set_active`)
 - [ ] `commands.rs`: `get_status`, `set_enabled`, `set_link_enabled`, `set_link_weight`, `set_option`, `list_connections`
 - [ ] 1 Hz ticker: `links.tick()`, then emit a `status` event to the popup (only while it is visible)
 - [ ] Connections snapshot with process names (`sys::socket_owners` + `sys::process_name`)
@@ -64,6 +66,7 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [ ] Keyboard: Esc closes the popup, Tab order is sensible
 
 ## Phase 6 — Test & ship
+- [ ] "Turn on" from a normal copy → UAC → the elevated copy opens its popup
 - [ ] Manual test matrix: Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
 - [ ] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link
 - [ ] NSIS installer bundling `wintun.dll`

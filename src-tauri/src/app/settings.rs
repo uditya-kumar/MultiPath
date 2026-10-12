@@ -43,10 +43,7 @@ impl Default for Settings {
             sticky: false,
             adaptive: true,
             capture_ipv6: true,
-            dns: vec![
-                "1.1.1.1".parse().unwrap(),
-                "8.8.8.8".parse().unwrap(),
-            ],
+            dns: vec!["1.1.1.1".parse().unwrap(), "8.8.8.8".parse().unwrap()],
         }
     }
 }

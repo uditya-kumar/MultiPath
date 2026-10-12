@@ -1,0 +1,21 @@
+:root {
+  color-scheme: dark;
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+html,
+body {
+  margin: 0;
+  /* The window is transparent so the Mica/acrylic effect shows through. */
+  background: transparent;
+  overflow: hidden;
+}
+
+.popup {
+  width: 100vw;
+  background: rgb(43 43 43 / 0.88);
+}

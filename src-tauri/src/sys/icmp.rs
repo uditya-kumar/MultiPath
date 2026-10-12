@@ -5,7 +5,13 @@ use windows_sys::Win32::NetworkManagement::IpHelper::*;
 
 /// Sends an ICMP echo from `source` (which pins it to that interface) and
 /// waits for the reply. Returns the echoed payload. Blocking.
-pub fn icmp_echo(source: Ipv4Addr, dest: Ipv4Addr, payload: &[u8], ttl: u8, timeout_ms: u32) -> Option<Vec<u8>> {
+pub fn icmp_echo(
+    source: Ipv4Addr,
+    dest: Ipv4Addr,
+    payload: &[u8],
+    ttl: u8,
+    timeout_ms: u32,
+) -> Option<Vec<u8>> {
     unsafe {
         let handle: HANDLE = IcmpCreateFile();
         if handle == INVALID_HANDLE_VALUE {

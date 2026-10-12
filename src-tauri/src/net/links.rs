@@ -6,7 +6,8 @@ use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, RwLock};
 use std::time::Instant;
 
-use netdev::interface::InterfaceType;
+use netdev::interface::state::OperState;
+use netdev::interface::types::InterfaceType;
 
 use crate::engine::TUN_NAME;
 
@@ -100,8 +101,19 @@ impl Link {
 }
 
 fn kind_of(itf: &netdev::Interface) -> &'static str {
-    let desc = itf.description.as_deref().unwrap_or_default().to_lowercase();
-    let tether = ["remote ndis", "rndis", "apple mobile device", "iphone", "android", "usb ethernet/rndis"];
+    let desc = itf
+        .description
+        .as_deref()
+        .unwrap_or_default()
+        .to_lowercase();
+    let tether = [
+        "remote ndis",
+        "rndis",
+        "apple mobile device",
+        "iphone",
+        "android",
+        "usb ethernet/rndis",
+    ];
     if tether.iter().any(|t| desc.contains(t)) {
         return "phone";
     }
@@ -133,9 +145,13 @@ fn discover() -> Vec<(String, LinkInfo)> {
             if gw_v4.is_none() && gw_v6.is_none() {
                 return None;
             }
-            let ipv4 = i.ipv4.iter().map(|n| n.addr()).find(|a| !a.is_link_local() && !a.is_unspecified());
+            let ipv4 = i
+                .ipv4
+                .iter()
+                .map(|n| n.addr())
+                .find(|a| !a.is_link_local() && !a.is_unspecified());
             let ipv6 = i.ipv6.iter().map(|n| n.addr()).find(is_global_v6);
-            let up = i.oper_state == netdev::interface::OperState::Up;
+            let up = i.oper_state == OperState::Up;
             let info = LinkInfo {
                 if_index: i.index,
                 name: i.friendly_name.clone().unwrap_or_else(|| i.name.clone()),
@@ -143,7 +159,9 @@ fn discover() -> Vec<(String, LinkInfo)> {
                 kind: kind_of(&i),
                 ipv4: gw_v4.and(ipv4),
                 ipv6: gw_v6.and(ipv6),
-                gateway: gw_v4.map(|g| g.to_string()).or(gw_v6.map(|g| g.to_string())),
+                gateway: gw_v4
+                    .map(|g| g.to_string())
+                    .or(gw_v6.map(|g| g.to_string())),
                 speed_bps: i.receive_speed.or(i.transmit_speed),
                 present: up && (ipv4.is_some() || ipv6.is_some()),
             };
@@ -186,7 +204,8 @@ impl Links {
             let mut info = link.info.write().unwrap();
             match found.iter().find(|(id, _)| *id == link.id) {
                 Some((_, fresh)) => {
-                    let addr_changed = info.ipv4 != fresh.ipv4 || info.ipv6 != fresh.ipv6 || !info.present;
+                    let addr_changed =
+                        info.ipv4 != fresh.ipv4 || info.ipv6 != fresh.ipv6 || !info.present;
                     if addr_changed {
                         // A new address deserves a fresh health verdict.
                         *link.health.lock().unwrap() = Health {
@@ -251,7 +270,9 @@ impl Links {
             // a network that has slowed down.
             let peak = link.stats.peak_rx.load(Ordering::Relaxed);
             let decayed = peak - peak / 36;
-            link.stats.peak_rx.store(decayed.max(r.rx_rate), Ordering::Relaxed);
+            link.stats
+                .peak_rx
+                .store(decayed.max(r.rx_rate), Ordering::Relaxed);
         }
     }
 }
