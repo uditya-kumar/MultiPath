@@ -180,7 +180,7 @@ pub fn build(state: &AppState) -> Status {
         busy: state.busy.load(Ordering::Relaxed),
         elevated: sys::is_elevated(),
         error: state.error.lock().unwrap().clone(),
-        ipv6: flows.is_some() && state.ipv6.load(Ordering::Relaxed),
+        ipv6: flows.is_some() && settings.capture_ipv6,
         rx_rate: links.iter().map(|l| l.rx_rate).sum(),
         tx_rate: links.iter().map(|l| l.tx_rate).sum(),
         connections: flows.map_or(0, |f| f.len()),

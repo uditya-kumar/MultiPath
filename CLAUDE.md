@@ -28,7 +28,8 @@ several networks at once (Wi-Fi, Ethernet, USB-tethered phone).
 
 ## How it works
 1. A Wintun adapter named `MultiPath` (10.77.0.1/24) captures traffic through split routes 0.0.0.0/1 and
-   128.0.0.0/1 (plus ::/1 and 8000::/1 for IPv6), which beat the default route without replacing it.
+   128.0.0.0/1 (plus ::/1 and 8000::/1 for IPv6), which beat the default route without replacing it. IPv6 is captured
+   even when it's switched off or no link has it, otherwise it leaks out of any link with an IPv6 route.
 2. `ipstack` (a userspace TCP/IP stack) turns the adapter's packets back into TCP streams and UDP flows.
 3. For each new flow, the balancer picks the link where it can expect the most bandwidth:
    `weight × capacity / (busy flows + 1)`, optionally sticky by destination. Only busy flows count (moving data, or

@@ -74,6 +74,7 @@ impl Settings {
                 .collect(),
             sticky: self.sticky,
             adaptive: self.adaptive,
+            block_ipv6: !self.capture_ipv6,
         }
     }
 

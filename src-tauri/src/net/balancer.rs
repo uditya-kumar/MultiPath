@@ -30,6 +30,8 @@ pub struct Policy {
     pub sticky: bool,
     /// Scale each link's share by the throughput it has delivered.
     pub adaptive: bool,
+    /// Refuse IPv6 flows, so apps fall back to IPv4.
+    pub block_ipv6: bool,
 }
 
 impl Policy {

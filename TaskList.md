@@ -33,7 +33,7 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 
 ## Phase 3 — Engine (`engine/`)
 - [x] `mod.rs`: start/stop lifecycle — create the Wintun adapter, assign 10.77.0.1/24 (plus an IPv6 ULA), set DNS and metric
-- [x] Capture routes 0.0.0.0/1 + 128.0.0.0/1 (and ::/1 + 8000::/1 when IPv6 capture is on) via `sys::Route`
+- [x] Capture routes 0.0.0.0/1 + 128.0.0.0/1 (and ::/1 + 8000::/1, always, so IPv6 can't bypass) via `sys::Route`
 - [x] On startup, clean up stale routes and the adapter left behind by a crashed run
 - [x] `ipstack` config (TCP timeout 30 min, 256 KB unacked/read buffers, UDP timeout 60 s) and the accept loop
 - [x] `tcp.rs`: relay each TCP stream through the chosen link and count bytes per link

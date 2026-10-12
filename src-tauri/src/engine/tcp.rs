@@ -20,6 +20,11 @@ const COPY_BUFFER: usize = 64 * 1024;
 
 pub async fn handle(mut inbound: IpStackTcpStream, router: Arc<Router>, flow: Arc<Flow>) {
     let dst = flow.dst;
+    // No network can carry it (IPv6 switched off, or on no network): close it
+    // at once instead of first waiting for the site name.
+    if router.choose(dst.is_ipv6(), None, &[]).is_none() {
+        return;
+    }
     let first = if SNIFF_PORTS.contains(&dst.port()) {
         match read_first(&mut inbound, &flow).await {
             Some(first) => first,

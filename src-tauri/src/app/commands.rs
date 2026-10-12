@@ -127,8 +127,8 @@ pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, 
         }
     });
     let after = state.settings();
-    // The adapter's DNS servers and IPv6 capture are set when it's created.
-    if before.dns != after.dns || before.capture_ipv6 != after.capture_ipv6 {
+    // The adapter's DNS servers are set when it's created.
+    if before.dns != after.dns {
         state.restart().await?;
     }
     Ok(current(&app))

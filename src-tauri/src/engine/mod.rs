@@ -59,12 +59,10 @@ pub struct EngineConfig {
     pub wintun: PathBuf,
     /// DNS servers set on the adapter, so lookups go through MultiPath too.
     pub dns: Vec<IpAddr>,
-    pub capture_ipv6: bool,
 }
 
 pub struct Engine {
     pub flows: Arc<Flows>,
-    pub ipv6: bool,
     routes: Vec<Route>,
     stop: watch::Sender<bool>,
     tasks: Vec<JoinHandle<()>>,
@@ -84,9 +82,6 @@ impl Engine {
             ));
         }
         clean_up_stale();
-        // IPv6 is only captured when a network can carry it; otherwise apps
-        // would prefer an IPv6 path that leads nowhere.
-        let ipv6 = config.capture_ipv6 && links.present().iter().any(|l| l.info().ipv6.is_some());
 
         let device = tokio::task::spawn_blocking(move || create_adapter(&config))
             .await
@@ -95,14 +90,14 @@ impl Engine {
         let device = tun::AsyncDevice::new(device)?;
 
         let mut routes = Vec::new();
-        for (prefix, len) in CAPTURE_V4 {
+        // IPv6 is always captured, even when no network has it yet or it's
+        // switched off: otherwise it would go straight out of whichever
+        // network has an IPv6 route, around MultiPath. Flows the router has
+        // no link for are refused. The adapter's address is a ULA, which
+        // Windows ranks below IPv4, so dual-stack sites are reached over IPv4.
+        sys::add_unicast_address(if_index, IpAddr::V6(TUN_V6), 64)?;
+        for (prefix, len) in CAPTURE_V4.into_iter().chain(CAPTURE_V6) {
             routes.push(Route::add(if_index, prefix, len)?);
-        }
-        if ipv6 {
-            sys::add_unicast_address(if_index, IpAddr::V6(TUN_V6), 64)?;
-            for (prefix, len) in CAPTURE_V6 {
-                routes.push(Route::add(if_index, prefix, len)?);
-            }
         }
 
         let stack = IpStack::new(stack_config(), device);
@@ -112,10 +107,9 @@ impl Engine {
             tokio::spawn(accept(stack, router, flows.clone(), stopped.clone())),
             tokio::spawn(close_flows_on_lost_links(links, flows.clone(), stopped)),
         ];
-        log::info!("engine started on interface {if_index} (IPv6 {ipv6})");
+        log::info!("engine started on interface {if_index}");
         Ok(Engine {
             flows,
-            ipv6,
             routes,
             stop,
             tasks,

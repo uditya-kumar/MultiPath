@@ -37,8 +37,6 @@ pub struct AppState {
     engine: tokio::sync::Mutex<Option<Engine>>,
     /// The running engine's flows, readable without waiting on the engine lock.
     pub flows: RwLock<Option<Arc<Flows>>>,
-    /// Whether the running engine captures IPv6.
-    pub ipv6: AtomicBool,
     /// Turning on or off is under way.
     pub busy: AtomicBool,
     /// Why MultiPath last failed to turn on, or stopped by itself.
@@ -67,7 +65,6 @@ impl AppState {
             wintun,
             engine: tokio::sync::Mutex::new(None),
             flows: RwLock::new(None),
-            ipv6: AtomicBool::new(false),
             busy: AtomicBool::new(false),
             error: Mutex::new(None),
             start_with_windows: AtomicBool::new(start_with_windows),
@@ -111,14 +108,12 @@ impl AppState {
         let config = EngineConfig {
             wintun: self.wintun.clone(),
             dns: settings.dns.clone(),
-            capture_ipv6: settings.capture_ipv6,
         };
         let started = Engine::start(config, self.links.clone(), self.router.clone()).await;
         self.busy.store(false, Ordering::Relaxed);
         match started {
             Ok(started) => {
                 *self.flows.write().unwrap() = Some(started.flows.clone());
-                self.ipv6.store(started.ipv6, Ordering::Relaxed);
                 *self.error.lock().unwrap() = None;
                 *engine = Some(started);
                 drop(engine);
@@ -156,7 +151,7 @@ impl AppState {
         *self.flow_counts.lock().unwrap() = FlowCounts::default();
     }
 
-    /// Applies settings the engine only reads at start (DNS, IPv6).
+    /// Applies settings the engine only reads at start (DNS).
     pub async fn restart(&self) -> Result<(), String> {
         if !self.is_on() {
             return Ok(());

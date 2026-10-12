@@ -93,6 +93,9 @@ impl Router {
         exclude: &[&str],
     ) -> Option<Arc<Link>> {
         let policy = self.policy.read().unwrap();
+        if v6 && policy.block_ipv6 {
+            return None;
+        }
         let eligible: Vec<(Arc<Link>, u32)> = self
             .links
             .all()
@@ -297,6 +300,17 @@ mod tests {
         );
         assert_eq!(r.choose(true, None, &[]).unwrap().id, "v6");
         assert_eq!(r.choose(false, None, &[]).unwrap().id, "v4");
+    }
+
+    #[test]
+    fn blocked_ipv6_has_no_link() {
+        let policy = Policy {
+            block_ipv6: true,
+            ..Policy::default()
+        };
+        let r = router(vec![link("dual", true, true)], policy);
+        assert!(r.choose(true, None, &[]).is_none());
+        assert_eq!(r.choose(false, None, &[]).unwrap().id, "dual");
     }
 
     #[test]
