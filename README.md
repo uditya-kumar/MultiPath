@@ -24,8 +24,6 @@ A small Windows tray app built with **Tauri v2 and Rust**. Everything runs on yo
 - Two 10 Mbps networks give you about **20 Mbps** for anything that opens several connections.
 - Lives in the tray as a small popup: turn it on, switch networks on or off, see each network's speed.
 
-Inspired by [Plexo](https://github.com/anmolkapil/plexo/).
-
 ## What gets faster
 
 MultiPath balances **connections**. One connection always stays on one network, because splitting it would need a
@@ -34,8 +32,9 @@ server on the internet.
 | Gets faster ✅ | Doesn't get faster ❌ |
 |---|---|
 | Speed tests (fast.com, Speedtest) | A single download over one connection |
-| Download managers, Steam, torrents | One video stream |
-| Browsers loading many things at once | One video call or game session |
+| YouTube and other streaming sites (video and audio load in chunks) | One video call or game session |
+| Download managers, Steam, torrents | |
+| Browsers loading many things at once | |
 | Several downloads at the same time | |
 
 ## How it works
