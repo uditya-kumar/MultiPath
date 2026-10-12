@@ -1,0 +1,4545 @@
+{
+  "version": "2.21",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Fjf0c",
+      "x": 0,
+      "y": 0,
+      "name": "Toggle / On",
+      "reusable": true,
+      "width": 40,
+      "height": 20,
+      "fill": "$accent",
+      "cornerRadius": 10,
+      "padding": [
+        0,
+        4
+      ],
+      "justifyContent": "end",
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "J8GHs",
+          "name": "Knob",
+          "fill": "$on-accent",
+          "width": 12,
+          "height": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "O0lszP",
+      "x": 60,
+      "y": 0,
+      "name": "Toggle / Off",
+      "reusable": true,
+      "width": 40,
+      "height": 20,
+      "cornerRadius": 10,
+      "stroke": "#FFFFFF9E",
+      "strokeWidth": 1,
+      "padding": [
+        0,
+        4
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "M1xr6",
+          "name": "Knob",
+          "fill": "#FFFFFFC8",
+          "width": 12,
+          "height": 12
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "sHmR9",
+      "x": 0,
+      "y": 60,
+      "name": "Network Row",
+      "reusable": true,
+      "width": 328,
+      "fill": "$surface",
+      "cornerRadius": 6,
+      "layout": "vertical",
+      "gap": 10,
+      "padding": [
+        10,
+        12,
+        12,
+        12
+      ],
+      "children": [
+        {
+          "type": "frame",
+          "id": "Lg4aj",
+          "name": "Top",
+          "width": "fill_container",
+          "gap": 12,
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "r4oNC",
+              "name": "Icon Box",
+              "width": 32,
+              "height": 32,
+              "fill": "#4CC2FF26",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "coXjH",
+                  "name": "Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "wifi",
+                  "library": "lucide",
+                  "fill": "$net-wifi"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "R3RhFv",
+              "name": "Info",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "k2dOm",
+                  "name": "Name",
+                  "fill": "$text",
+                  "content": "Wi-Fi",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "dnBMv",
+                  "name": "Meta",
+                  "fill": "$text-3",
+                  "content": "192.168.1.40 · 18 ms",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "P91fm",
+              "name": "Rate",
+              "layout": "vertical",
+              "gap": 2,
+              "alignItems": "end",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "EegR1",
+                  "name": "Rate Value",
+                  "fill": "$text",
+                  "content": "29.6 MB/s",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "r0thU",
+                  "name": "Share",
+                  "fill": "$text-3",
+                  "content": "62% · 84 conn",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "wpv2s",
+              "type": "ref",
+              "ref": "Fjf0c",
+              "name": "Toggle"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ghrPP",
+          "name": "Share Track",
+          "clip": true,
+          "width": "fill_container",
+          "height": 3,
+          "fill": "#FFFFFF12",
+          "cornerRadius": 2,
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "cornerRadius": 2,
+              "id": "g9QCW",
+              "x": 0,
+              "y": 0,
+              "name": "Share Fill",
+              "fill": "$net-wifi",
+              "width": 188,
+              "height": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "KabQ6",
+      "x": 0,
+      "y": 200,
+      "name": "Tray Flyout — Active",
+      "clip": true,
+      "width": 360,
+      "fill": "$bg",
+      "cornerRadius": 8,
+      "stroke": "$border",
+      "strokeWidth": 1,
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#00000066",
+        "offset": {
+          "x": 0,
+          "y": 8
+        },
+        "blur": 32
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "F1nWk",
+          "name": "Header",
+          "width": "fill_container",
+          "gap": 12,
+          "padding": [
+            16,
+            16,
+            12,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "wpbyN",
+              "name": "App Mark",
+              "width": 32,
+              "height": 32,
+              "fill": "$accent",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "OJzEa",
+                  "name": "Mark Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "waypoints",
+                  "library": "lucide",
+                  "fill": "$on-accent"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Lg7hy",
+              "name": "Title Block",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MsPdk",
+                  "name": "App Name",
+                  "fill": "$text",
+                  "content": "MultiPath",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "XjtHo",
+                  "name": "Status",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "OcKE2",
+                      "name": "Status Dot",
+                      "fill": "$ok",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "text",
+                      "id": "DK0oK",
+                      "name": "Status Text",
+                      "fill": "$text-2",
+                      "content": "Combining 2 networks",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "GCB2D",
+              "type": "ref",
+              "ref": "Fjf0c",
+              "name": "Master Toggle"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BeWcd",
+          "name": "Throughput",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            8,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "RQ2uz",
+              "name": "Share Ring",
+              "width": "fill_container",
+              "gap": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hUZNq",
+                  "name": "Ring",
+                  "width": 120,
+                  "height": 120,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "gDpJu",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Track",
+                      "innerRadius": 0.82,
+                      "fill": "#FFFFFF10",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "H82jEv",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Wi-Fi Arc",
+                      "innerRadius": 0.82,
+                      "startAngle": 88,
+                      "sweepAngle": -219.2,
+                      "fill": "$net-wifi",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "o7J7Y",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Phone Arc",
+                      "innerRadius": 0.82,
+                      "startAngle": -135.2,
+                      "sweepAngle": -132.8,
+                      "fill": "$net-phone",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "text",
+                      "id": "P8Cg9",
+                      "name": "Total",
+                      "fill": "$text",
+                      "content": "47.8",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 26,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "sd3zo",
+                      "name": "Unit",
+                      "fill": "$text-2",
+                      "content": "MB/s",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "A6tKK",
+                  "name": "Legend",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "LTnSi",
+                      "name": "Legend · Wi-Fi",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "AQSab",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "wqDrg",
+                              "name": "Dot",
+                              "fill": "$net-wifi",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "Iuapz",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Wi-Fi",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "MfWTt",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "c0Muqh",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "29.6 MB/s",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "FFjE1",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "62%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mznFk",
+                      "name": "Legend · Pixel 8 (USB)",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "uR0Ze",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "QqgH7",
+                              "name": "Dot",
+                              "fill": "$net-phone",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "X9B5l9",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Pixel 8 (USB)",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "UNT55",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "z6XUgk",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "18.2 MB/s",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "J32EX",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "38%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v16AlF",
+                      "name": "Upload",
+                      "gap": 4,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "wmbNC",
+                          "name": "Up Icon",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "arrow-up",
+                          "library": "lucide",
+                          "fill": "$text-3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "MdQuz",
+                          "name": "Up Value",
+                          "fill": "$text-3",
+                          "content": "3.1 MB/s upload",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "dIVHp",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "D3ROiJ",
+          "name": "Networks",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "padding": [
+            12,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "FRJDz",
+              "name": "Section Head",
+              "width": "fill_container",
+              "padding": [
+                0,
+                2,
+                4,
+                2
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rSP49",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "Networks",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "EL2Kl",
+                  "name": "Mode Chip",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "gap": 4,
+                  "padding": [
+                    3,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "NwPXS",
+                      "name": "Chip Icon",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "gauge",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Cq5sD",
+                      "name": "Chip Text",
+                      "fill": "$text-2",
+                      "content": "Adaptive",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "fsTjr",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Wi-Fi",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#4CC2FF26"
+                },
+                "coXjH": {
+                  "icon": "wifi",
+                  "fill": "$net-wifi"
+                },
+                "k2dOm": {
+                  "content": "Wi-Fi"
+                },
+                "dnBMv": {
+                  "content": "192.168.1.40 · 18 ms"
+                },
+                "EegR1": {
+                  "content": "29.6 MB/s"
+                },
+                "r0thU": {
+                  "content": "62% · 84 conn"
+                },
+                "g9QCW": {
+                  "width": 188,
+                  "fill": "$net-wifi"
+                }
+              }
+            },
+            {
+              "id": "NzxFx",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Pixel 8 (USB)",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#FFB45426"
+                },
+                "coXjH": {
+                  "icon": "smartphone",
+                  "fill": "$net-phone"
+                },
+                "k2dOm": {
+                  "content": "Pixel 8 (USB)"
+                },
+                "dnBMv": {
+                  "content": "10.94.248.17 · 41 ms"
+                },
+                "EegR1": {
+                  "content": "18.2 MB/s"
+                },
+                "r0thU": {
+                  "content": "38% · 58 conn"
+                },
+                "g9QCW": {
+                  "width": 116,
+                  "fill": "$net-phone"
+                }
+              }
+            },
+            {
+              "id": "hEweJ",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Ethernet",
+              "width": "fill_container",
+              "opacity": 0.55,
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#B98CFF1F"
+                },
+                "coXjH": {
+                  "icon": "ethernet-port",
+                  "fill": "$net-eth"
+                },
+                "k2dOm": {
+                  "content": "Ethernet"
+                },
+                "dnBMv": {
+                  "content": "Cable unplugged"
+                },
+                "EegR1": {
+                  "content": "—"
+                },
+                "r0thU": {
+                  "content": "Not available"
+                },
+                "wpv2s": {
+                  "id": "nnNoF",
+                  "type": "ref",
+                  "ref": "O0lszP",
+                  "name": "Toggle"
+                },
+                "g9QCW": {
+                  "width": 0,
+                  "fill": "$net-eth"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "R9dNgn",
+          "name": "Footer Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "vWw05",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-footer",
+          "padding": [
+            10,
+            12,
+            10,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "y1uC2J",
+              "name": "Footer Info",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "G78PP",
+                  "name": "Conn Icon",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "activity",
+                  "library": "lucide",
+                  "fill": "$text-3"
+                },
+                {
+                  "type": "text",
+                  "id": "v8U4fB",
+                  "name": "Conn Text",
+                  "fill": "$text-2",
+                  "content": "142 connections · 3.4 GB today",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "sF1bU",
+              "name": "Footer Actions",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "iH5cK",
+                  "name": "Btn · list",
+                  "width": 32,
+                  "height": 32,
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "xWamz",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "list",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "mrKF3",
+                  "name": "Btn · settings",
+                  "width": 32,
+                  "height": 32,
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Bjic0",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "g22LtP",
+      "x": 400,
+      "y": 200,
+      "name": "Tray Flyout — Off",
+      "clip": true,
+      "width": 360,
+      "fill": "$bg",
+      "cornerRadius": 8,
+      "stroke": "$border",
+      "strokeWidth": 1,
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#00000066",
+        "offset": {
+          "x": 0,
+          "y": 8
+        },
+        "blur": 32
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "w85h4c",
+          "name": "Header",
+          "width": "fill_container",
+          "gap": 12,
+          "padding": [
+            16,
+            16,
+            12,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "hg7A4",
+              "name": "App Mark",
+              "width": 32,
+              "height": 32,
+              "fill": "$accent",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "U7wBhT",
+                  "name": "Mark Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "waypoints",
+                  "library": "lucide",
+                  "fill": "$on-accent"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nQohW",
+              "name": "Title Block",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VCyec",
+                  "name": "App Name",
+                  "fill": "$text",
+                  "content": "MultiPath",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "V4Rv0",
+                  "name": "Status",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "pavSB",
+                      "name": "Status Dot",
+                      "fill": "$text-3",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "text",
+                      "id": "fsUEy",
+                      "name": "Status Text",
+                      "fill": "$text-2",
+                      "content": "Off · Windows is using Wi-Fi only",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "cGZjZ",
+              "type": "ref",
+              "ref": "O0lszP",
+              "name": "Master Toggle"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jJeA7",
+          "name": "Off Callout",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            4,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "Gb7F8",
+              "name": "Callout",
+              "width": "fill_container",
+              "fill": "$surface",
+              "cornerRadius": 6,
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "zMXU6",
+                  "name": "Callout Title",
+                  "fill": "$text",
+                  "content": "Add your networks together",
+                  "fontFamily": "$font",
+                  "fontSize": 15,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "LCC9X",
+                  "name": "Callout Body",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Each new connection goes out on whichever network has the most room. Apps that open many connections, like browsers, Steam and torrents, get the combined speed.",
+                  "lineHeight": 1.45,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "frame",
+                  "id": "USP4R",
+                  "name": "Primary Button",
+                  "width": "fill_container",
+                  "height": 32,
+                  "fill": "$accent",
+                  "cornerRadius": 4,
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "J5X9iL",
+                      "name": "Shield",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "shield-check",
+                      "library": "lucide",
+                      "fill": "$on-accent"
+                    },
+                    {
+                      "type": "text",
+                      "id": "TYTGd",
+                      "name": "Label",
+                      "fill": "$on-accent",
+                      "content": "Turn on",
+                      "fontFamily": "$font",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "KpGdR",
+                  "name": "Admin Note",
+                  "fill": "$text-3",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Windows will ask for administrator permission the first time.",
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "I7MFK",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "VTu7r",
+          "name": "Networks",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "padding": [
+            12,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "acOvb",
+              "name": "Section Head",
+              "width": "fill_container",
+              "padding": [
+                0,
+                2,
+                4,
+                2
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "KgnHb",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "Networks",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "mFgQc",
+                  "name": "Mode Chip",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "gap": 4,
+                  "padding": [
+                    3,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "R0MV5v",
+                      "name": "Chip Icon",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "gauge",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    },
+                    {
+                      "type": "text",
+                      "id": "e1Ycy",
+                      "name": "Chip Text",
+                      "fill": "$text-2",
+                      "content": "Adaptive",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "EIc46",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Wi-Fi",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#4CC2FF26"
+                },
+                "coXjH": {
+                  "icon": "wifi",
+                  "fill": "$net-wifi"
+                },
+                "k2dOm": {
+                  "content": "Wi-Fi"
+                },
+                "dnBMv": {
+                  "content": "192.168.1.40 · 18 ms"
+                },
+                "EegR1": {
+                  "content": "18 ms"
+                },
+                "r0thU": {
+                  "content": "Default route"
+                },
+                "ghrPP": {
+                  "enabled": false
+                },
+                "g9QCW": {
+                  "width": 0,
+                  "fill": "$net-wifi"
+                }
+              }
+            },
+            {
+              "id": "KRkhP",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Pixel 8 (USB)",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#FFB45426"
+                },
+                "coXjH": {
+                  "icon": "smartphone",
+                  "fill": "$net-phone"
+                },
+                "k2dOm": {
+                  "content": "Pixel 8 (USB)"
+                },
+                "dnBMv": {
+                  "content": "10.94.248.17 · 41 ms"
+                },
+                "EegR1": {
+                  "content": "41 ms"
+                },
+                "r0thU": {
+                  "content": "Ready"
+                },
+                "ghrPP": {
+                  "enabled": false
+                },
+                "g9QCW": {
+                  "width": 0,
+                  "fill": "$net-phone"
+                }
+              }
+            },
+            {
+              "id": "E0at9",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Ethernet",
+              "width": "fill_container",
+              "opacity": 0.55,
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#B98CFF1F"
+                },
+                "coXjH": {
+                  "icon": "ethernet-port",
+                  "fill": "$net-eth"
+                },
+                "k2dOm": {
+                  "content": "Ethernet"
+                },
+                "dnBMv": {
+                  "content": "Cable unplugged"
+                },
+                "EegR1": {
+                  "content": "—"
+                },
+                "r0thU": {
+                  "content": "Not available"
+                },
+                "wpv2s": {
+                  "id": "YUxFo",
+                  "type": "ref",
+                  "ref": "O0lszP",
+                  "name": "Toggle"
+                },
+                "ghrPP": {
+                  "enabled": false
+                },
+                "g9QCW": {
+                  "width": 0,
+                  "fill": "$net-eth"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "jHXYQ",
+          "name": "Footer Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "Kx81K",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-footer",
+          "padding": [
+            10,
+            12,
+            10,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "I2h8JQ",
+              "name": "Footer Info",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "suxmZ",
+                  "name": "Conn Icon",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "activity",
+                  "library": "lucide",
+                  "fill": "$text-3"
+                },
+                {
+                  "type": "text",
+                  "id": "PQXl6",
+                  "name": "Conn Text",
+                  "fill": "$text-2",
+                  "content": "2 networks ready",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "naR9i",
+              "name": "Footer Actions",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "uCT41",
+                  "name": "Btn · list",
+                  "width": 32,
+                  "height": 32,
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "fw6QQ",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "list",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tQJyf",
+                  "name": "Btn · settings",
+                  "width": 32,
+                  "height": 32,
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "sTBMN",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "U0XhS",
+      "x": 800,
+      "y": 200,
+      "name": "Tray Flyout — Settings",
+      "clip": true,
+      "width": 360,
+      "fill": "$bg",
+      "cornerRadius": 8,
+      "stroke": "$border",
+      "strokeWidth": 1,
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#00000066",
+        "offset": {
+          "x": 0,
+          "y": 8
+        },
+        "blur": 32
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "n3jbj",
+          "name": "Header",
+          "width": "fill_container",
+          "gap": 4,
+          "padding": [
+            12,
+            16,
+            12,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "OVutV",
+              "name": "Back",
+              "width": 32,
+              "height": 32,
+              "cornerRadius": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "r5IJ2c",
+                  "name": "Back Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "chevron-left",
+                  "library": "lucide",
+                  "fill": "$text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "OPQhR",
+              "name": "Title",
+              "fill": "$text",
+              "content": "Settings",
+              "fontFamily": "$font",
+              "fontSize": 14,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "CimHu",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "z7Bnaw",
+          "name": "Balancing",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 2,
+          "padding": [
+            12,
+            16,
+            8,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "cBVML",
+              "name": "Section Title",
+              "fill": "$text-2",
+              "content": "Balancing",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "iHRXc",
+              "name": "Group",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                6,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Y2nN8I",
+                  "name": "Row · Adaptive weighting",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Z2V6f",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "QnJbH",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "Adaptive weighting",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rJz5q",
+                          "name": "Desc",
+                          "fill": "$text-3",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Faster networks get more new connections, based on what they actually deliver.",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "KcNtR",
+                      "type": "ref",
+                      "ref": "Fjf0c",
+                      "name": "Toggle"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Dv24d",
+                  "name": "Row · Keep sites on one network",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "rSBmX",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "avtqU",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "Keep sites on one network",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "IPjuX",
+                          "name": "Desc",
+                          "fill": "$text-3",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Fixes sign-outs on banking sites, but one site no longer gets the combined speed.",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "LW6qt",
+                      "type": "ref",
+                      "ref": "O0lszP",
+                      "name": "Toggle"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GwUpq",
+                  "name": "Row · Include IPv6",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "wtCgd",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "GnkH7",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "Include IPv6",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "P6uabs",
+                          "name": "Desc",
+                          "fill": "$text-3",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Balance IPv6 traffic on networks that have it.",
+                          "lineHeight": 1.35,
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "LphSJ",
+                      "type": "ref",
+                      "ref": "Fjf0c",
+                      "name": "Toggle"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "gg8is",
+          "name": "Share of new connections",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 2,
+          "padding": [
+            12,
+            16,
+            8,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "nbBOl",
+              "name": "Section Title",
+              "fill": "$text-2",
+              "content": "Share of new connections",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "k8yiv",
+              "name": "Group",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                6,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "TNZ1d",
+                  "name": "Weight · Wi-Fi",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    10,
+                    12,
+                    12,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nf3cZ",
+                      "name": "Top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Ma1HQ",
+                          "name": "Label Group",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "P9FKe",
+                              "name": "Swatch",
+                              "fill": "$net-wifi",
+                              "width": 8,
+                              "height": 8
+                            },
+                            {
+                              "type": "text",
+                              "id": "i2sxu",
+                              "name": "Name",
+                              "fill": "$text",
+                              "content": "Wi-Fi",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "P9anK",
+                          "name": "Value",
+                          "fill": "$text-2",
+                          "content": "7 / 10",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "v83lB",
+                      "name": "Slider",
+                      "width": "fill_container",
+                      "height": 20,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 2,
+                          "id": "Glx5T",
+                          "x": 0,
+                          "y": 8,
+                          "name": "Rail",
+                          "fill": "#FFFFFF2E",
+                          "width": 304,
+                          "height": 4
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 2,
+                          "id": "z4YUKH",
+                          "x": 0,
+                          "y": 8,
+                          "name": "Rail Fill",
+                          "fill": "$accent",
+                          "width": 203,
+                          "height": 4
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "JAxeN",
+                          "x": 193,
+                          "y": 0,
+                          "name": "Thumb Ring",
+                          "fill": "#454545",
+                          "width": 20,
+                          "height": 20,
+                          "stroke": "#FFFFFF1F",
+                          "strokeWidth": 1
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "kLMWb",
+                          "x": 197,
+                          "y": 4,
+                          "name": "Thumb",
+                          "fill": "$accent",
+                          "width": 12,
+                          "height": 12
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ExIZF",
+                  "name": "Weight · Pixel 8 (USB)",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": [
+                    10,
+                    12,
+                    12,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "b7RT4",
+                      "name": "Top",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "BFzab",
+                          "name": "Label Group",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "fUcQH",
+                              "name": "Swatch",
+                              "fill": "$net-phone",
+                              "width": 8,
+                              "height": 8
+                            },
+                            {
+                              "type": "text",
+                              "id": "BkPeb",
+                              "name": "Name",
+                              "fill": "$text",
+                              "content": "Pixel 8 (USB)",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "hOOKf",
+                          "name": "Value",
+                          "fill": "$text-2",
+                          "content": "5 / 10",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "RDcch",
+                      "name": "Slider",
+                      "width": "fill_container",
+                      "height": 20,
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 2,
+                          "id": "YtAQn",
+                          "x": 0,
+                          "y": 8,
+                          "name": "Rail",
+                          "fill": "#FFFFFF2E",
+                          "width": 304,
+                          "height": 4
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 2,
+                          "id": "SRPzG",
+                          "x": 0,
+                          "y": 8,
+                          "name": "Rail Fill",
+                          "fill": "$accent",
+                          "width": 135,
+                          "height": 4
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "zw9tx",
+                          "x": 125,
+                          "y": 0,
+                          "name": "Thumb Ring",
+                          "fill": "#454545",
+                          "width": 20,
+                          "height": 20,
+                          "stroke": "#FFFFFF1F",
+                          "strokeWidth": 1
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "a6JP5C",
+                          "x": 129,
+                          "y": 4,
+                          "name": "Thumb",
+                          "fill": "$accent",
+                          "width": 12,
+                          "height": 12
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "bB3Ot",
+          "name": "App",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 2,
+          "padding": [
+            12,
+            16,
+            8,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "gw3V7",
+              "name": "Section Title",
+              "fill": "$text-2",
+              "content": "App",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "eLrWO",
+              "name": "Group",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                6,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ml6L8",
+                  "name": "Row · Start with Windows",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "vlqH3",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "dQJu6",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "Start with Windows",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "WU7cH",
+                      "type": "ref",
+                      "ref": "Fjf0c",
+                      "name": "Toggle"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "PTNxs",
+                  "name": "Row · DNS",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "T3Qzsf",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rfREZ",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "DNS servers",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wFLtB",
+                          "name": "Desc",
+                          "fill": "$text-3",
+                          "content": "1.1.1.1, 8.8.8.8",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Tp76o",
+                      "name": "Chevron",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$text-3"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FpFt0",
+          "name": "Bottom Spacer",
+          "width": "fill_container",
+          "height": 8
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "iTY6N",
+      "x": 1200,
+      "y": 200,
+      "name": "In context — taskbar",
+      "clip": true,
+      "width": 720,
+      "height": 680,
+      "fill": {
+        "type": "gradient",
+        "gradientType": "linear",
+        "enabled": true,
+        "rotation": 200,
+        "size": {
+          "height": 1
+        },
+        "colors": [
+          {
+            "color": "#0B2440",
+            "position": 0
+          },
+          {
+            "color": "#1B3F66",
+            "position": 0.55
+          },
+          {
+            "color": "#3A2F5C",
+            "position": 1
+          }
+        ]
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "iecJF",
+          "x": 348,
+          "y": 87,
+          "name": "Tray Flyout — Active",
+          "clip": true,
+          "width": 360,
+          "fill": "$bg",
+          "cornerRadius": 8,
+          "stroke": "$border",
+          "strokeWidth": 1,
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#00000066",
+            "offset": {
+              "x": 0,
+              "y": 8
+            },
+            "blur": 32
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "s5kys",
+              "name": "Header",
+              "width": "fill_container",
+              "gap": 12,
+              "padding": [
+                16,
+                16,
+                12,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "I0zc29",
+                  "name": "App Mark",
+                  "width": 32,
+                  "height": 32,
+                  "fill": "$accent",
+                  "cornerRadius": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "ePCkG",
+                      "name": "Mark Icon",
+                      "width": 18,
+                      "height": 18,
+                      "icon": "waypoints",
+                      "library": "lucide",
+                      "fill": "$on-accent"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y9cvdE",
+                  "name": "Title Block",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SKyDm",
+                      "name": "App Name",
+                      "fill": "$text",
+                      "content": "MultiPath",
+                      "fontFamily": "$font",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "XV03d",
+                      "name": "Status",
+                      "gap": 6,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "xGVzw",
+                          "name": "Status Dot",
+                          "fill": "$ok",
+                          "width": 6,
+                          "height": 6
+                        },
+                        {
+                          "type": "text",
+                          "id": "x8duxs",
+                          "name": "Status Text",
+                          "fill": "$text-2",
+                          "content": "Combining 2 networks",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "nlzj8",
+                  "type": "ref",
+                  "ref": "Fjf0c",
+                  "name": "Master Toggle"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "iMX0B",
+              "name": "Throughput",
+              "width": "fill_container",
+              "layout": "vertical",
+              "padding": [
+                8,
+                16,
+                16,
+                16
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "B83D7r",
+                  "name": "Share Ring",
+                  "width": "fill_container",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "VXIqH",
+                      "name": "Ring",
+                      "width": 120,
+                      "height": 120,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "noGva",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Track",
+                          "innerRadius": 0.82,
+                          "fill": "#FFFFFF10",
+                          "width": 120,
+                          "height": 120
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "XOAsd",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Wi-Fi Arc",
+                          "innerRadius": 0.82,
+                          "startAngle": 88,
+                          "sweepAngle": -219.2,
+                          "fill": "$net-wifi",
+                          "width": 120,
+                          "height": 120
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "YXP5O",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Phone Arc",
+                          "innerRadius": 0.82,
+                          "startAngle": -135.2,
+                          "sweepAngle": -132.8,
+                          "fill": "$net-phone",
+                          "width": 120,
+                          "height": 120
+                        },
+                        {
+                          "type": "text",
+                          "id": "v92px",
+                          "name": "Total",
+                          "fill": "$text",
+                          "content": "47.8",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 26,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "h87onJ",
+                          "name": "Unit",
+                          "fill": "$text-2",
+                          "content": "MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "efRNP",
+                      "name": "Legend",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "t7ce3",
+                          "name": "Legend · Wi-Fi",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "R5hkO",
+                              "name": "Label Row",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "t5W2F",
+                                  "name": "Dot",
+                                  "fill": "$net-wifi",
+                                  "width": 6,
+                                  "height": 6
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "itFu3",
+                                  "name": "Name",
+                                  "fill": "$text-2",
+                                  "content": "Wi-Fi",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Mk6fq",
+                              "name": "Value Row",
+                              "gap": 6,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "O2mNZA",
+                                  "name": "Rate",
+                                  "fill": "$text",
+                                  "content": "29.6 MB/s",
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "IfGwG",
+                                  "name": "Pct",
+                                  "fill": "$text-3",
+                                  "content": "62%",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "W0ALJz",
+                          "name": "Legend · Pixel 8 (USB)",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "rL781",
+                              "name": "Label Row",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "Q9XQzZ",
+                                  "name": "Dot",
+                                  "fill": "$net-phone",
+                                  "width": 6,
+                                  "height": 6
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "tHZFA",
+                                  "name": "Name",
+                                  "fill": "$text-2",
+                                  "content": "Pixel 8 (USB)",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "LrdCr",
+                              "name": "Value Row",
+                              "gap": 6,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "yoglF",
+                                  "name": "Rate",
+                                  "fill": "$text",
+                                  "content": "18.2 MB/s",
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "eM8cS",
+                                  "name": "Pct",
+                                  "fill": "$text-3",
+                                  "content": "38%",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "BUUdO",
+                          "name": "Upload",
+                          "gap": 4,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "i5mTpk",
+                              "name": "Up Icon",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "arrow-up",
+                              "library": "lucide",
+                              "fill": "$text-3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "HQgFn",
+                              "name": "Up Value",
+                              "fill": "$text-3",
+                              "content": "3.1 MB/s upload",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "bNXWV",
+              "name": "Divider",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "rM2gU",
+              "name": "Networks",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "padding": [
+                12,
+                16,
+                16,
+                16
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "yjxyk",
+                  "name": "Section Head",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    2,
+                    4,
+                    2
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MyL8f",
+                      "name": "Section Title",
+                      "fill": "$text-2",
+                      "content": "Networks",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "w4fV9",
+                      "name": "Mode Chip",
+                      "fill": "$surface",
+                      "cornerRadius": 10,
+                      "gap": 4,
+                      "padding": [
+                        3,
+                        8
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "BcAFX",
+                          "name": "Chip Icon",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "gauge",
+                          "library": "lucide",
+                          "fill": "$text-2"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Wsfbb",
+                          "name": "Chip Text",
+                          "fill": "$text-2",
+                          "content": "Adaptive",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "m6lTws",
+                  "type": "ref",
+                  "ref": "sHmR9",
+                  "name": "Row · Wi-Fi",
+                  "width": "fill_container",
+                  "descendants": {
+                    "r4oNC": {
+                      "fill": "#4CC2FF26"
+                    },
+                    "coXjH": {
+                      "icon": "wifi",
+                      "fill": "$net-wifi"
+                    },
+                    "k2dOm": {
+                      "content": "Wi-Fi"
+                    },
+                    "dnBMv": {
+                      "content": "192.168.1.40 · 18 ms"
+                    },
+                    "EegR1": {
+                      "content": "29.6 MB/s"
+                    },
+                    "r0thU": {
+                      "content": "62% · 84 conn"
+                    },
+                    "g9QCW": {
+                      "width": 188,
+                      "fill": "$net-wifi"
+                    }
+                  }
+                },
+                {
+                  "id": "q45JLa",
+                  "type": "ref",
+                  "ref": "sHmR9",
+                  "name": "Row · Pixel 8 (USB)",
+                  "width": "fill_container",
+                  "descendants": {
+                    "r4oNC": {
+                      "fill": "#FFB45426"
+                    },
+                    "coXjH": {
+                      "icon": "smartphone",
+                      "fill": "$net-phone"
+                    },
+                    "k2dOm": {
+                      "content": "Pixel 8 (USB)"
+                    },
+                    "dnBMv": {
+                      "content": "10.94.248.17 · 41 ms"
+                    },
+                    "EegR1": {
+                      "content": "18.2 MB/s"
+                    },
+                    "r0thU": {
+                      "content": "38% · 58 conn"
+                    },
+                    "g9QCW": {
+                      "width": 116,
+                      "fill": "$net-phone"
+                    }
+                  }
+                },
+                {
+                  "id": "T5Aj9",
+                  "type": "ref",
+                  "ref": "sHmR9",
+                  "name": "Row · Ethernet",
+                  "width": "fill_container",
+                  "opacity": 0.55,
+                  "descendants": {
+                    "r4oNC": {
+                      "fill": "#B98CFF1F"
+                    },
+                    "coXjH": {
+                      "icon": "ethernet-port",
+                      "fill": "$net-eth"
+                    },
+                    "k2dOm": {
+                      "content": "Ethernet"
+                    },
+                    "dnBMv": {
+                      "content": "Cable unplugged"
+                    },
+                    "EegR1": {
+                      "content": "—"
+                    },
+                    "r0thU": {
+                      "content": "Not available"
+                    },
+                    "wpv2s": {
+                      "id": "AVXmg",
+                      "type": "ref",
+                      "ref": "O0lszP",
+                      "name": "Toggle"
+                    },
+                    "g9QCW": {
+                      "width": 0,
+                      "fill": "$net-eth"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "rectangle",
+              "id": "clJ0x",
+              "name": "Footer Divider",
+              "fill": "$border",
+              "width": "fill_container",
+              "height": 1
+            },
+            {
+              "type": "frame",
+              "id": "B9tCqz",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$bg-footer",
+              "padding": [
+                10,
+                12,
+                10,
+                16
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "VCCj0",
+                  "name": "Footer Info",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "r4CgJy",
+                      "name": "Conn Icon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "activity",
+                      "library": "lucide",
+                      "fill": "$text-3"
+                    },
+                    {
+                      "type": "text",
+                      "id": "ldTdQ",
+                      "name": "Conn Text",
+                      "fill": "$text-2",
+                      "content": "142 connections · 3.4 GB today",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "V9Vra",
+                  "name": "Footer Actions",
+                  "gap": 2,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "W4jaRg",
+                      "name": "Btn · list",
+                      "width": 32,
+                      "height": 32,
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "qwMmb",
+                          "name": "Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "list",
+                          "library": "lucide",
+                          "fill": "$text-2"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "chIsw",
+                      "name": "Btn · settings",
+                      "width": 32,
+                      "height": 32,
+                      "cornerRadius": 4,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "a9iC8y",
+                          "name": "Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "settings",
+                          "library": "lucide",
+                          "fill": "$text-2"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "a7JcxC",
+          "x": 0,
+          "y": 632,
+          "name": "Taskbar",
+          "width": 720,
+          "height": 48,
+          "fill": "#1C1C1CF0",
+          "stroke": "#FFFFFF14",
+          "strokeWidth": {
+            "top": 1
+          },
+          "effect": {
+            "type": "background_blur",
+            "radius": 30
+          },
+          "gap": 2,
+          "padding": [
+            0,
+            8
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "md6Xx",
+              "name": "Tray",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "lWHzC",
+                  "name": "Chevron Btn",
+                  "width": 28,
+                  "height": 40,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "rAFQX",
+                      "name": "Up",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-up",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "H7rKLT",
+                  "name": "MultiPath Tray Icon (active)",
+                  "width": 36,
+                  "height": 40,
+                  "fill": "#FFFFFF14",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "gap": 3,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "KAkOI",
+                      "name": "Mark",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "waypoints",
+                      "library": "lucide",
+                      "fill": "$accent"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "roFin",
+                  "name": "System Icons",
+                  "height": 40,
+                  "cornerRadius": 4,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "oEUeC",
+                      "name": "wifi",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "wifi",
+                      "library": "lucide",
+                      "fill": "$text"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "yxDOx",
+                      "name": "volume-2",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "volume-2",
+                      "library": "lucide",
+                      "fill": "$text"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "vGrXy",
+                      "name": "battery-full",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "battery-full",
+                      "library": "lucide",
+                      "fill": "$text"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "z79c2",
+                  "name": "Clock",
+                  "layout": "vertical",
+                  "gap": 1,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "N1QELu",
+                      "name": "Time",
+                      "fill": "$text",
+                      "content": "2:47 PM",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "KS4BK",
+                      "name": "Date",
+                      "fill": "$text",
+                      "content": "10/12/2026",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "h85yY",
+      "x": 20,
+      "y": 1295,
+      "name": "Hero options — static",
+      "fill": "#161616",
+      "cornerRadius": 12,
+      "gap": 32,
+      "padding": 40,
+      "children": [
+        {
+          "type": "frame",
+          "id": "x2eom",
+          "name": "Option · 1 · Share ring",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "JqeIr",
+              "name": "Caption",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FfHXd",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "1 · Share ring",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "G13Mdn",
+                  "name": "Desc",
+                  "fill": "#9A9A9A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Total in the middle; each network's slice is its share of the speed right now.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "x56pk",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "$bg",
+              "cornerRadius": 8,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "z9UubI",
+                  "name": "Ring Row",
+                  "width": "fill_container",
+                  "gap": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "K1Qet",
+                      "name": "Ring",
+                      "width": 120,
+                      "height": 120,
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "GU5lz",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Track",
+                          "innerRadius": 0.82,
+                          "fill": "#FFFFFF10",
+                          "width": 120,
+                          "height": 120
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "y24Rf",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Wi-Fi Arc",
+                          "innerRadius": 0.82,
+                          "startAngle": 88,
+                          "sweepAngle": -219.2,
+                          "fill": "$net-wifi",
+                          "width": 120,
+                          "height": 120
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "Y1AoQx",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 0,
+                          "name": "Phone Arc",
+                          "innerRadius": 0.82,
+                          "startAngle": -135.2,
+                          "sweepAngle": -132.8,
+                          "fill": "$net-phone",
+                          "width": 120,
+                          "height": 120
+                        },
+                        {
+                          "type": "text",
+                          "id": "k1xM6",
+                          "name": "Total",
+                          "fill": "$text",
+                          "content": "47.8",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 26,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rndXc",
+                          "name": "Unit",
+                          "fill": "$text-2",
+                          "content": "MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "q4Nb0",
+                      "name": "Legend",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 14,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "X8Jbft",
+                          "name": "Legend · Wi-Fi",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "iKOQe",
+                              "name": "Label Row",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "lpaPn",
+                                  "name": "Dot",
+                                  "fill": "$net-wifi",
+                                  "width": 6,
+                                  "height": 6
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "e1jrh",
+                                  "name": "Name",
+                                  "fill": "$text-2",
+                                  "content": "Wi-Fi",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DQRdG",
+                              "name": "Value Row",
+                              "gap": 6,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WvpvL",
+                                  "name": "Rate",
+                                  "fill": "$text",
+                                  "content": "29.6 MB/s",
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "bv7V2",
+                                  "name": "Pct",
+                                  "fill": "$text-3",
+                                  "content": "62%",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "D3tLOE",
+                          "name": "Legend · Pixel 8 (USB)",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Uw9Cn",
+                              "name": "Label Row",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "GaFcj",
+                                  "name": "Dot",
+                                  "fill": "$net-phone",
+                                  "width": 6,
+                                  "height": 6
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "LWLfR",
+                                  "name": "Name",
+                                  "fill": "$text-2",
+                                  "content": "Pixel 8 (USB)",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "VwTCm",
+                              "name": "Value Row",
+                              "gap": 6,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "lpSzO",
+                                  "name": "Rate",
+                                  "fill": "$text",
+                                  "content": "18.2 MB/s",
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "lqiM6",
+                                  "name": "Pct",
+                                  "fill": "$text-3",
+                                  "content": "38%",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "yS8mL",
+                          "name": "Upload",
+                          "gap": 4,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "Brwxg",
+                              "name": "Up Icon",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "arrow-up",
+                              "library": "lucide",
+                              "fill": "$text-3"
+                            },
+                            {
+                              "type": "text",
+                              "id": "yA8ah",
+                              "name": "Up Value",
+                              "fill": "$text-3",
+                              "content": "3.1 MB/s upload",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "rFJSn",
+          "name": "Option · 2 · Segmented meter",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "B5nimC",
+              "name": "Caption",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "B5fvD",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "2 · Segmented meter",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "R2KS9",
+                  "name": "Desc",
+                  "fill": "#9A9A9A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "One bar split by network, like Windows' storage meter. The segments shift as the share changes.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ZUtfb",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "$bg",
+              "cornerRadius": 8,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "DloOR",
+                  "name": "Numbers",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "JsZQu",
+                      "name": "Download",
+                      "gap": 6,
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "S6h2s",
+                          "name": "Down Value",
+                          "fill": "$text",
+                          "content": "47.8",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 34,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wVwmk",
+                          "name": "Down Unit",
+                          "fill": "$text-2",
+                          "content": "MB/s combined",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BEbO4",
+                      "name": "Upload",
+                      "gap": 4,
+                      "padding": [
+                        0,
+                        0,
+                        3,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "x0IfFj",
+                          "name": "Up Icon",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "arrow-up",
+                          "library": "lucide",
+                          "fill": "$text-3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "E61dW",
+                          "name": "Up Value",
+                          "fill": "$text-2",
+                          "content": "3.1 MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "DHkq4",
+                  "name": "Meter",
+                  "width": "fill_container",
+                  "height": 12,
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": [
+                        3,
+                        1,
+                        1,
+                        3
+                      ],
+                      "id": "x3cgm",
+                      "name": "Wi-Fi Segment",
+                      "fill": "$net-wifi",
+                      "width": 200,
+                      "height": "fill_container"
+                    },
+                    {
+                      "type": "rectangle",
+                      "cornerRadius": [
+                        1,
+                        3,
+                        3,
+                        1
+                      ],
+                      "id": "vgfOm",
+                      "name": "Phone Segment",
+                      "fill": "$net-phone",
+                      "width": "fill_container",
+                      "height": "fill_container"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YvlCA",
+                  "name": "Segment Labels",
+                  "width": "fill_container",
+                  "gap": 3,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "zuwyO",
+                      "name": "Wi-Fi Label",
+                      "width": 200,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "owPoA",
+                          "name": "Legend · Wi-Fi",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "A8GPcM",
+                              "name": "Label Row",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "aqzrh",
+                                  "name": "Dot",
+                                  "fill": "$net-wifi",
+                                  "width": 6,
+                                  "height": 6
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "s0SRSW",
+                                  "name": "Name",
+                                  "fill": "$text-2",
+                                  "content": "Wi-Fi",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "wxYKY",
+                              "name": "Value Row",
+                              "gap": 6,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "y96dY",
+                                  "name": "Rate",
+                                  "fill": "$text",
+                                  "content": "29.6",
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "hH6PS",
+                                  "name": "Pct",
+                                  "fill": "$text-3",
+                                  "content": "62%",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tnzFN",
+                      "name": "Phone Label",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "qeGTP",
+                          "name": "Legend · Pixel 8",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "z5npu",
+                              "name": "Label Row",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "MZSbD",
+                                  "name": "Dot",
+                                  "fill": "$net-phone",
+                                  "width": 6,
+                                  "height": 6
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "rTNUi",
+                                  "name": "Name",
+                                  "fill": "$text-2",
+                                  "content": "Pixel 8",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "A4dvs",
+                              "name": "Value Row",
+                              "gap": 6,
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "hv7XP",
+                                  "name": "Rate",
+                                  "fill": "$text",
+                                  "content": "18.2",
+                                  "fontFamily": "$font",
+                                  "fontSize": 15,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "PSxQS",
+                                  "name": "Pct",
+                                  "fill": "$text-3",
+                                  "content": "38%",
+                                  "fontFamily": "$font",
+                                  "fontSize": 11,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pbz9K",
+          "name": "Option · 3 · The sum",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "b7gSQH",
+              "name": "Caption",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ZnCRS",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "3 · The sum",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "IpB2R",
+                  "name": "Desc",
+                  "fill": "#9A9A9A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Says exactly what MultiPath does: this network plus that one equals your speed.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wZzDu",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "$bg",
+              "cornerRadius": 8,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "QjZoj",
+                  "name": "Equation",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "c6yS5",
+                      "name": "Term · Wi-Fi",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "O9dEL0",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "xRpY0",
+                              "name": "Dot",
+                              "fill": "$net-wifi",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "mprrN",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Wi-Fi",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "JLCyk",
+                          "name": "Value",
+                          "fill": "$text",
+                          "content": "29.6",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 22,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "S1O1yQ",
+                      "name": "Op +",
+                      "fill": "$text-3",
+                      "content": "+",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d65WGy",
+                      "name": "Term · Pixel 8",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rpUX3",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "C00dwc",
+                              "name": "Dot",
+                              "fill": "$net-phone",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "W6kw4",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Pixel 8",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "uADIh",
+                          "name": "Value",
+                          "fill": "$text",
+                          "content": "18.2",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 22,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "PMyqp",
+                      "name": "Op =",
+                      "fill": "$text-3",
+                      "content": "=",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 20,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "jJOVw",
+                      "name": "Term · Combined",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "GbALW",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "zzDkG",
+                              "name": "Name",
+                              "fill": "$accent",
+                              "content": "Combined",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "v5det",
+                          "name": "Value",
+                          "fill": "$text",
+                          "content": "47.8",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 32,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yepJc",
+                  "name": "Foot",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UAagF",
+                      "name": "Unit",
+                      "fill": "$text-3",
+                      "content": "MB/s download",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "QvjTF",
+                      "name": "Gain",
+                      "fill": "$ok",
+                      "content": "+61% vs Wi-Fi alone",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "FLKHr",
+          "name": "Option · 4 · Static merge",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "B6PrH",
+              "name": "Caption",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "rfpn2",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "4 · Static merge",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "quoTC",
+                  "name": "Desc",
+                  "fill": "#9A9A9A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "The animated merge, frozen: stream width shows each network's speed.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IoxfG",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "$bg",
+              "cornerRadius": 8,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "esXfC",
+                  "name": "Merge Viz",
+                  "width": 328,
+                  "height": 132,
+                  "layout": "none",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "MWhkE",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Wi-Fi Stream",
+                      "geometry": "M104 34c56 0 68 28.5 110 28.5l34 0",
+                      "viewBox": [
+                        0,
+                        0,
+                        328,
+                        132
+                      ],
+                      "width": 328,
+                      "height": 132,
+                      "stroke": "$net-wifi",
+                      "strokeWidth": 7,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "path",
+                      "id": "rq4jQ",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Phone Stream",
+                      "geometry": "M104 98c56 0 68-29 110-29l34 0",
+                      "viewBox": [
+                        0,
+                        0,
+                        328,
+                        132
+                      ],
+                      "width": 328,
+                      "height": 132,
+                      "stroke": "$net-phone",
+                      "strokeWidth": 5,
+                      "strokeLinecap": "round"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Kg6yL",
+                      "x": 0,
+                      "y": 16,
+                      "name": "Source · Wi-Fi",
+                      "width": 92,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wH5ZK",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "CTeLi",
+                              "name": "Dot",
+                              "fill": "$net-wifi",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "K2DmUy",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Wi-Fi",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "z7UjBp",
+                          "name": "Rate",
+                          "fill": "$text",
+                          "content": "29.6 MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "n5ayvB",
+                      "x": 0,
+                      "y": 80,
+                      "name": "Source · Pixel 8",
+                      "width": 92,
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "N3ncS",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "pSojR",
+                              "name": "Dot",
+                              "fill": "$net-phone",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "mOSjH",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Pixel 8",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "bk6Es",
+                          "name": "Rate",
+                          "fill": "$text",
+                          "content": "18.2 MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "UM8ie",
+                      "x": 244,
+                      "y": 24,
+                      "name": "Result",
+                      "width": 84,
+                      "height": 84,
+                      "fill": "#333333",
+                      "cornerRadius": 10,
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mBqnx",
+                          "name": "Total",
+                          "fill": "$text",
+                          "content": "47.8",
+                          "lineHeight": 1.1,
+                          "fontFamily": "$font",
+                          "fontSize": 26,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "UNewL",
+                          "name": "Unit",
+                          "fill": "$text-2",
+                          "content": "MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pJX1B",
+          "name": "Option · 5 · Speed gauge",
+          "width": 360,
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "frame",
+              "id": "drIAv",
+              "name": "Caption",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "P74Zi",
+                  "name": "Title",
+                  "fill": "#FFFFFF",
+                  "content": "5 · Speed gauge",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "i87K6",
+                  "name": "Desc",
+                  "fill": "#9A9A9A",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Arc fills toward the best speed seen today, coloured by network.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l8EVM",
+              "name": "Card",
+              "width": "fill_container",
+              "fill": "$bg",
+              "cornerRadius": 8,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 14,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HD9uH",
+                  "name": "Gauge",
+                  "clip": true,
+                  "width": "fill_container",
+                  "height": 128,
+                  "layout": "vertical",
+                  "justifyContent": "end",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "aEtn9",
+                      "layoutPosition": "absolute",
+                      "x": 48,
+                      "y": 6,
+                      "name": "Track",
+                      "innerRadius": 0.86,
+                      "startAngle": 180,
+                      "sweepAngle": -180,
+                      "fill": "#FFFFFF12",
+                      "width": 232,
+                      "height": 232
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "ziyYY",
+                      "layoutPosition": "absolute",
+                      "x": 48,
+                      "y": 6,
+                      "name": "Wi-Fi Arc",
+                      "innerRadius": 0.86,
+                      "startAngle": 180,
+                      "sweepAngle": -65.6,
+                      "fill": "$net-wifi",
+                      "width": 232,
+                      "height": 232
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "MdmKG",
+                      "layoutPosition": "absolute",
+                      "x": 48,
+                      "y": 6,
+                      "name": "Phone Arc",
+                      "innerRadius": 0.86,
+                      "startAngle": 112.4,
+                      "sweepAngle": -39.949999999999996,
+                      "fill": "$net-phone",
+                      "width": 232,
+                      "height": 232
+                    },
+                    {
+                      "type": "frame",
+                      "id": "eTMb5",
+                      "name": "Center",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "padding": [
+                        0,
+                        0,
+                        6,
+                        0
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "f8Bad9",
+                          "name": "Total",
+                          "fill": "$text",
+                          "content": "47.8",
+                          "lineHeight": 1,
+                          "fontFamily": "$font",
+                          "fontSize": 34,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "AObE0",
+                          "name": "Unit",
+                          "fill": "$text-2",
+                          "content": "MB/s",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "e5pcAI",
+                  "name": "Scale",
+                  "width": "fill_container",
+                  "padding": [
+                    0,
+                    40
+                  ],
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "OMWcK",
+                      "name": "Min",
+                      "fill": "$text-3",
+                      "content": "0",
+                      "fontFamily": "$font",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "olo6A",
+                      "name": "Max",
+                      "fill": "$text-3",
+                      "content": "80 MB/s peak",
+                      "fontFamily": "$font",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Qzhjq",
+                  "name": "Legend",
+                  "width": "fill_container",
+                  "gap": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qJJAD",
+                      "name": "Legend · Wi-Fi",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "gQZeg",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "I76ws",
+                              "name": "Dot",
+                              "fill": "$net-wifi",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "J47xs",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Wi-Fi",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "HyKEb",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "DBVRH",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "29.6",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "RcVGs",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "62%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "t9nqM",
+                      "name": "Legend · Pixel 8",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ca4qd",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "lhL2y",
+                              "name": "Dot",
+                              "fill": "$net-phone",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "WRG5b",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Pixel 8",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "auGZc",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Zp0Hd",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "18.2",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "KyOxM",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "38%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "bg": {
+      "type": "color",
+      "value": "#2B2B2B"
+    },
+    "bg-footer": {
+      "type": "color",
+      "value": "#202020"
+    },
+    "surface": {
+      "type": "color",
+      "value": "#FFFFFF0D"
+    },
+    "surface-hover": {
+      "type": "color",
+      "value": "#FFFFFF14"
+    },
+    "border": {
+      "type": "color",
+      "value": "#FFFFFF17"
+    },
+    "text": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "text-2": {
+      "type": "color",
+      "value": "#C8C8C8"
+    },
+    "text-3": {
+      "type": "color",
+      "value": "#8E8E8E"
+    },
+    "accent": {
+      "type": "color",
+      "value": "#4CC2FF"
+    },
+    "on-accent": {
+      "type": "color",
+      "value": "#000000"
+    },
+    "ok": {
+      "type": "color",
+      "value": "#6CCB5F"
+    },
+    "warn": {
+      "type": "color",
+      "value": "#FCE100"
+    },
+    "net-wifi": {
+      "type": "color",
+      "value": "#4CC2FF"
+    },
+    "net-phone": {
+      "type": "color",
+      "value": "#FFB454"
+    },
+    "net-eth": {
+      "type": "color",
+      "value": "#B98CFF"
+    },
+    "font": {
+      "type": "string",
+      "value": "Inter"
+    }
+  },
+  "fileToken": "61f9323d-0f60-4b60-a6c0-96b688895c3b"
+}

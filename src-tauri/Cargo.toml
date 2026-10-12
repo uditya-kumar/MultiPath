@@ -1,0 +1,33 @@
+[package]
+name = "multipath"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "multipath_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+ipstack = "1"
+tun = { version = "0.8", features = ["async"] }
+netdev = "0.46"
+socket2 = { version = "0.6", features = ["all"] }
+etherparse = "0.20"
+log = "0.4"
+windows-sys = { version = "0.61", features = [
+    "Win32_Foundation",
+    "Win32_Networking_WinSock",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_NetworkManagement_Ndis",
+    "Win32_System_Threading",
+    "Win32_System_IO",
+    "Win32_UI_Shell",
+    "Win32_UI_WindowsAndMessaging",
+] }

@@ -1,0 +1,70 @@
+# MultiPath — Task List
+
+Tick a box (`[x]`) as soon as its task is done and verified. Add tasks when new work turns up.
+Phases run roughly in order, but a later phase can start once the tasks it depends on are done.
+
+## Phase 0 — Groundwork
+- [x] Study Plexo and choose the architecture (Wintun TUN + `ipstack` + per-connection balancing, no remote server)
+- [x] Cargo manifest with dependencies (`tauri`, `ipstack`, `tun`, `netdev`, `socket2`, `windows-sys`, …)
+- [x] Bundle `wintun.dll` (amd64) and its licence in `src-tauri/resources/`
+- [x] `sys/`: Win32 wrappers for elevation, routes, addresses, socket pinning, socket owners, and ICMP
+- [x] `net/links.rs`: adapter discovery, link kinds, per-link counters, rates, and history
+- [x] `app/settings.rs`: settings model with load and atomic save
+- [x] Tray popup design in `design.pen` (Active / Off / Settings / taskbar mockup), with the share ring chosen as the hero
+- [x] Folder structure, `CLAUDE.md`, and this task list
+
+## Phase 1 — Tauri shell
+- [ ] `tauri.conf.json`, capabilities, and app icons
+- [ ] Vite + React + TypeScript frontend scaffold in `src/`
+- [ ] `main.rs` → `multipath_lib::run()`; `cargo check` passes with every module wired in
+- [ ] Tray icon: a left click toggles the popup, a right click opens a menu (Open, Turn on/off, Quit)
+- [ ] Popup window: 360 px wide, frameless, always on top, hidden from the taskbar, anchored above the tray, hides on blur
+- [ ] Mica/acrylic background behind the popup (fall back to a solid colour)
+- [ ] Single instance (a second launch focuses the existing popup)
+- [ ] Elevation flow: when not admin, "Turn on" calls `relaunch_elevated()` and the current copy exits
+
+## Phase 2 — Networks (`net/`)
+- [ ] Verify `links.rs` discovery on real hardware (Wi-Fi + USB tether + Ethernet)
+- [ ] `health.rs`: a TCP probe to 1.1.1.1:443 per link every 5 s; record latency; mark a link down after 2 failures
+- [ ] `dial.rs`: open TCP/UDP sockets bound to a link's address and pinned with `IP_UNICAST_IF`, with a connect timeout
+- [ ] `balancer.rs`: weighted least-connections, an adaptive capacity factor from `peak_rx`, optional sticky sessions
+- [ ] Failover: when a dial fails, retry once on the next best link and record the failure
+- [ ] Unit tests for the balancer (weights, disabled links, sticky, all links down)
+
+## Phase 3 — Engine (`engine/`)
+- [ ] `mod.rs`: start/stop lifecycle — create the Wintun adapter, assign 10.77.0.1/24 (plus an IPv6 ULA), set DNS and metric
+- [ ] Capture routes 0.0.0.0/1 + 128.0.0.0/1 (and ::/1 + 8000::/1 when IPv6 capture is on) via `sys::Route`
+- [ ] On startup, clean up stale routes and the adapter left behind by a crashed run
+- [ ] `ipstack` config (TCP timeout ~30 min, 64 KB unacked/read buffers, UDP timeout 60 s) and the accept loop
+- [ ] `tcp.rs`: relay each TCP stream through the chosen link and count bytes per link
+- [ ] `udp.rs`: per-flow UDP relay with idle timeout; DNS goes to the configured servers
+- [ ] `icmp.rs`: relay pings through `sys::icmp_echo` so `ping` works while MultiPath is on
+- [ ] `sniff.rs`: read the TLS SNI / HTTP Host for sticky keys and the connections list
+- [ ] Link loss mid-run: new flows avoid the link, and its flows close quickly instead of hanging
+- [ ] Clean stop: routes removed and adapter closed, verified with `route print`
+
+## Phase 4 — App glue (`app/`)
+- [ ] `state.rs`: shared `AppState` (engine handle, links, settings and their path)
+- [ ] `commands.rs`: `get_status`, `set_enabled`, `set_link_enabled`, `set_link_weight`, `set_option`, `list_connections`
+- [ ] 1 Hz ticker: `links.tick()`, then emit a `status` event to the popup (only while it is visible)
+- [ ] Connections snapshot with process names (`sys::socket_owners` + `sys::process_name`)
+- [ ] Store settings in the app config dir and apply changes live
+- [ ] Daily data counter ("3.4 GB today"), reset at local midnight
+- [ ] Start with Windows (a scheduled task with highest privileges, since admin is required)
+
+## Phase 5 — Frontend (`src/`)
+- [ ] `styles/tokens.css` from the `design.pen` variables; Segoe UI Variable font
+- [ ] `api/`: typed `invoke` wrappers, shared types, and a `useStatus()` event hook
+- [ ] `components/`: Toggle, NetworkRow, ShareRing (SVG donut), IconButton
+- [ ] `views/Active.tsx`: header, share ring hero, network rows, footer
+- [ ] `views/Off.tsx`: callout, "Turn on" button, admin note
+- [ ] `views/Settings.tsx`: balancing toggles, weight sliders, app options
+- [ ] `views/Connections.tsx`: live list of flows (app, destination, link, rate)
+- [ ] `lib/format.ts`: MB/s, GB, and percentage formatting; smooth number transitions
+- [ ] Keyboard: Esc closes the popup, Tab order is sensible
+
+## Phase 6 — Test & ship
+- [ ] Manual test matrix: Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
+- [ ] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link
+- [ ] NSIS installer bundling `wintun.dll`
+- [ ] README: how it works, and its limits (one TCP connection can't be split without a server)

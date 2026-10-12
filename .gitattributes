@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.dll binary
+*.png binary
+*.ico binary
+*.pen binary

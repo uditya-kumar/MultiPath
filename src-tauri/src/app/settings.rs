@@ -1,0 +1,78 @@
+use std::collections::HashMap;
+use std::net::IpAddr;
+use std::path::PathBuf;
+
+use serde::{Deserialize, Serialize};
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct LinkPrefs {
+    pub enabled: bool,
+    /// Relative share of new connections, 1 to 10.
+    pub weight: u32,
+    pub label: Option<String>,
+}
+
+impl Default for LinkPrefs {
+    fn default() -> Self {
+        LinkPrefs {
+            enabled: true,
+            weight: 5,
+            label: None,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(default, rename_all = "camelCase")]
+pub struct Settings {
+    /// Keyed by the adapter's GUID, which survives renames and reboots.
+    pub links: HashMap<String, LinkPrefs>,
+    /// Keep every connection to a site on the network it first used.
+    pub sticky: bool,
+    /// Scale each network's share by the throughput it has actually delivered.
+    pub adaptive: bool,
+    pub capture_ipv6: bool,
+    pub dns: Vec<IpAddr>,
+}
+
+impl Default for Settings {
+    fn default() -> Self {
+        Settings {
+            links: HashMap::new(),
+            sticky: false,
+            adaptive: true,
+            capture_ipv6: true,
+            dns: vec![
+                "1.1.1.1".parse().unwrap(),
+                "8.8.8.8".parse().unwrap(),
+            ],
+        }
+    }
+}
+
+impl Settings {
+    pub fn link(&self, id: &str) -> LinkPrefs {
+        self.links.get(id).cloned().unwrap_or_default()
+    }
+
+    pub fn load(path: &PathBuf) -> Settings {
+        std::fs::read(path)
+            .ok()
+            .and_then(|b| serde_json::from_slice(&b).ok())
+            .unwrap_or_default()
+    }
+
+    pub fn save(&self, path: &PathBuf) {
+        if let Some(dir) = path.parent() {
+            let _ = std::fs::create_dir_all(dir);
+        }
+        if let Ok(json) = serde_json::to_vec_pretty(self) {
+            // Write then rename so a crash never leaves half a file.
+            let tmp = path.with_extension("json.tmp");
+            if std::fs::write(&tmp, json).is_ok() {
+                let _ = std::fs::rename(&tmp, path);
+            }
+        }
+    }
+}
