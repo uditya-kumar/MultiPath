@@ -16,7 +16,7 @@ A small Windows tray app built with **Tauri v2 and Rust**. Everything runs on yo
 
 </div>
 
----
+
 
 ## Screenshot
 
