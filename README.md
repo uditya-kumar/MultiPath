@@ -37,6 +37,24 @@ server on the internet.
 | Browsers loading many things at once | |
 | Several downloads at the same time | |
 
+## Tech stack
+
+| Part | Technology |
+|---|---|
+| App shell | <img src="https://cdn.simpleicons.org/tauri" width="16" height="16" alt="" /> [Tauri v2](https://tauri.app/) |
+| Backend | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> Rust |
+| Async runtime | <img src="https://cdn.simpleicons.org/tokio/8A8A8A" width="16" height="16" alt="" /> [Tokio](https://tokio.rs/) |
+| Traffic capture | <img src="https://cdn.simpleicons.org/wireguard" width="16" height="16" alt="" /> [Wintun](https://www.wintun.net/) adapter, via the [`tun`](https://crates.io/crates/tun) crate |
+| TCP/IP stack | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`ipstack`](https://crates.io/crates/ipstack) (userspace) |
+| Packets, sockets | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`etherparse`](https://crates.io/crates/etherparse), [`socket2`](https://crates.io/crates/socket2), [`netdev`](https://crates.io/crates/netdev) |
+| Windows APIs | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`windows-sys`](https://crates.io/crates/windows-sys) (routes, sockets, elevation) |
+| Frontend | <img src="https://cdn.simpleicons.org/react" width="16" height="16" alt="" /> React 19 |
+| Language | <img src="https://cdn.simpleicons.org/typescript" width="16" height="16" alt="" /> TypeScript |
+| Build tool | <img src="https://cdn.simpleicons.org/vite" width="16" height="16" alt="" /> Vite |
+| Icons | <img src="https://cdn.simpleicons.org/lucide/F56565" width="16" height="16" alt="" /> [Lucide](https://lucide.dev/) |
+| Tests | <img src="https://cdn.simpleicons.org/vitest" width="16" height="16" alt="" /> [Vitest](https://vitest.dev/), `cargo test` |
+| Installer | <img src="https://cdn.simpleicons.org/nsis/8A8A8A" width="16" height="16" alt="" /> NSIS (through Tauri) |
+
 ## How it works
 
 Think of your networks as checkout counters, and each connection as a customer. MultiPath is the manager at the door.
@@ -86,21 +104,6 @@ proportionally more.
 | Two or more working networks | Otherwise there's nothing to combine |
 
 *Start with Windows* (in Settings) starts MultiPath in the tray when you sign in, with no permission prompt.
-
-## Tech stack
-
-| Part | Technology |
-|---|---|
-| App shell | [Tauri v2](https://tauri.app/) |
-| Backend | Rust, [Tokio](https://tokio.rs/) |
-| Traffic capture | [Wintun](https://www.wintun.net/) adapter, via the [`tun`](https://crates.io/crates/tun) crate |
-| TCP/IP stack | [`ipstack`](https://crates.io/crates/ipstack) (userspace) |
-| Packets, sockets | [`etherparse`](https://crates.io/crates/etherparse), [`socket2`](https://crates.io/crates/socket2), [`netdev`](https://crates.io/crates/netdev) |
-| Windows APIs | [`windows-sys`](https://crates.io/crates/windows-sys) (routes, sockets, elevation) |
-| Frontend | React 19, TypeScript, Vite |
-| Icons | [Lucide](https://lucide.dev/) |
-| Tests | `cargo test`, [Vitest](https://vitest.dev/) |
-| Installer | NSIS (through Tauri) |
 
 ## Getting started (developers)
 
