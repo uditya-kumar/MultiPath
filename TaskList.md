@@ -70,6 +70,6 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [ ] "Turn on" from a normal copy → UAC → the elevated copy opens its popup
 - [ ] Manual test matrix: discovery of USB tether + Ethernet; Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
 - [ ] Start with Windows: turning it on registers the task (UAC prompt), and MultiPath starts in the tray after signing in
-- [ ] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link
+- [x] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link — fast.com, Wi-Fi 10 + tether 10 Mbps → 19–20 Mbps, split 50/50
 - [x] NSIS installer bundling `wintun.dll`
 - [x] README: how it works, and its limits (one TCP connection can't be split without a server)
