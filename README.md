@@ -18,6 +18,12 @@ A small Windows tray app built with **Tauri v2 and Rust**. Everything runs on yo
 
 ---
 
+## Screenshot
+
+<p align="center">
+  <img src="public/screenshot_tray.jpg" width="320" alt="The MultiPath tray popup combining Wi-Fi and a USB-tethered phone" />
+</p>
+
 ## What it does
 
 - Spreads your PC's connections across all your networks, so they all work at once.
