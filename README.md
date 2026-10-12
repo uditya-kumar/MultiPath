@@ -19,10 +19,18 @@ A small Windows tray app built with **Tauri v2 and Rust**. Everything runs on yo
 
 
 
-## Screenshot
+## Screenshots
 
 <p align="center">
   <img src="public/screenshot_tray.jpg" width="320" alt="The MultiPath tray popup combining Wi-Fi and a USB-tethered phone" />
+  <br />
+  <em>The tray popup, combining Wi-Fi and a USB-tethered phone</em>
+</p>
+
+<p align="center">
+  <img src="public/screenshot_downloading.jpeg" width="640" alt="A download manager using several connections, split across Wi-Fi and a phone" />
+  <br />
+  <em>A download manager with several connections: about half go over Wi-Fi and half over the phone</em>
 </p>
 
 ## What it does
