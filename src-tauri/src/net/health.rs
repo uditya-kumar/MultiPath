@@ -92,7 +92,11 @@ mod tests {
         links.refresh();
         for link in links.present() {
             let rtt = probe(&link).await;
-            println!("{} ({}): {rtt:?} ms", link.info().name, link.id);
+            let info = link.info();
+            println!(
+                "{} (if {}, {:?}): {rtt:?} ms",
+                info.name, info.if_index, info.ipv4
+            );
             assert!(rtt.is_some(), "{} could not reach the internet", link.id);
         }
     }
