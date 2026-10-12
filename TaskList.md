@@ -44,15 +44,15 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [ ] Clean stop: routes removed and adapter closed, verified with `route print` (needs an elevated run, so it waits for the user)
 
 ## Phase 4 — App glue (`app/`)
-- [ ] Remove the temporary `allow(dead_code, unused_imports)` in `lib.rs` once the engine is wired in
-- [ ] `state.rs`: shared `AppState` (engine handle, links, settings and their path)
-- [ ] Tray menu gets "Turn on / Turn off"; the tray icon shows the on/off state (`tray::set_active`)
-- [ ] `commands.rs`: `get_status`, `set_enabled`, `set_link_enabled`, `set_link_weight`, `set_option`, `list_connections`
-- [ ] 1 Hz ticker: `links.tick()`, then emit a `status` event to the popup (only while it is visible)
-- [ ] Connections snapshot with process names (`sys::socket_owners` + `sys::process_name`)
-- [ ] Store settings in the app config dir and apply changes live
-- [ ] Daily data counter ("3.4 GB today"), reset at local midnight
-- [ ] Start with Windows (a scheduled task with highest privileges, since admin is required)
+- [x] Remove the temporary `allow(dead_code, unused_imports)` in `lib.rs` once the engine is wired in
+- [x] `state.rs`: shared `AppState` (engine handle, links, settings and their path)
+- [x] Tray menu gets "Turn on / Turn off"; the tray icon shows the on/off state (`tray::set_active`)
+- [x] `commands.rs`: `get_status`, `set_enabled`, `set_link_enabled`, `set_link_weight`, `set_option`, `list_connections`
+- [x] 1 Hz ticker: `links.tick()`, then emit a `status` event to the popup (only while it is visible)
+- [x] Connections snapshot with process names (`sys::socket_owners` + `sys::process_name`)
+- [x] Store settings in the app config dir and apply changes live
+- [x] Daily data counter ("3.4 GB today"), reset at local midnight
+- [x] Start with Windows (a scheduled task with highest privileges, since admin is required; registering it needs the UAC prompt, checked in Phase 6)
 
 ## Phase 5 — Frontend (`src/`)
 - [ ] `styles/tokens.css` from the `design.pen` variables; Segoe UI Variable font
@@ -69,6 +69,7 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [ ] First elevated run: turn on, browse and download, check `route print` shows the /1 routes on MultiPath, turn off and check they're gone
 - [ ] "Turn on" from a normal copy → UAC → the elevated copy opens its popup
 - [ ] Manual test matrix: discovery of USB tether + Ethernet; Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
+- [ ] Start with Windows: turning it on registers the task (UAC prompt), and MultiPath starts in the tray after signing in
 - [ ] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link
 - [ ] NSIS installer bundling `wintun.dll`
 - [ ] README: how it works, and its limits (one TCP connection can't be split without a server)

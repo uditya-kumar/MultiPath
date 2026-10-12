@@ -1,20 +1,34 @@
-// The engine and networking modules are wired into the app in Phase 4 of
-// the TaskList; remove this once they are.
-#![allow(dead_code, unused_imports)]
-
 mod app;
 mod engine;
 mod net;
 mod sys;
 
+use std::path::PathBuf;
 use std::time::Duration;
 
-use tauri::{Manager, WindowEvent};
+use tauri::path::BaseDirectory;
+use tauri::{App, Manager, RunEvent, WindowEvent};
 
-use app::{commands, popup, tray};
+use app::state::AppState;
+use app::{autostart, commands, popup, ticker, tray};
+
+/// `wintun.dll` ships as a bundle resource; in development it's read from
+/// the source tree.
+fn wintun_path(app: &App) -> PathBuf {
+    let bundled = app
+        .path()
+        .resolve("resources/wintun.dll", BaseDirectory::Resource);
+    match bundled {
+        Ok(path) if path.is_file() => path,
+        _ => PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/wintun.dll")),
+    }
+}
 
 pub fn run() {
-    let relaunched = std::env::args().any(|a| a == commands::ELEVATED_ARG);
+    let has_arg = |arg: &str| std::env::args().any(|a| a == arg);
+    let relaunched = has_arg(commands::ELEVATED_ARG);
+    let turn_on = has_arg(commands::TURN_ON_ARG);
+    let at_sign_in = has_arg(autostart::AUTOSTART_ARG);
     // The elevated copy waits for the copy that launched it to exit.
     let wait = if relaunched {
         Duration::from_secs(10)
@@ -38,17 +52,41 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             popup::fit_popup,
             popup::hide_popup,
-            commands::is_elevated,
-            commands::relaunch_as_admin,
+            commands::get_status,
+            commands::set_enabled,
+            commands::set_link_enabled,
+            commands::set_link_weight,
+            commands::set_option,
+            commands::list_connections,
         ])
         .setup(move |app| {
+            let elevated = sys::is_elevated();
+            if elevated {
+                engine::clean_up_stale();
+            }
+            let state = AppState::new(
+                app.path().app_config_dir()?,
+                wintun_path(app),
+                autostart::is_enabled(),
+            );
+            let start = elevated && (turn_on || state.settings().on);
+            app.manage(state);
             tray::create(app.handle())?;
+            ticker::spawn(app.handle().clone());
+            if start {
+                let handle = app.handle().clone();
+                tauri::async_runtime::spawn(async move {
+                    let _ = commands::switch(&handle, true).await;
+                });
+            }
+
             if let Some(instance) = &instance {
                 let handle = app.handle().clone();
                 instance.on_show_requested(move || popup::show(&handle));
             }
             app.manage(instance);
-            if relaunched {
+            // At sign-in MultiPath starts quietly in the tray.
+            if !at_sign_in {
                 popup::show(app.handle());
             }
             Ok(())
@@ -67,6 +105,14 @@ pub fn run() {
                 _ => {}
             }
         })
-        .run(tauri::generate_context!())
-        .expect("error while running MultiPath");
+        .build(tauri::generate_context!())
+        .expect("error while starting MultiPath")
+        .run(|app, event| {
+            if let RunEvent::Exit = event {
+                // Give the PC its own routing back before going.
+                let state = app.state::<AppState>();
+                tauri::async_runtime::block_on(state.turn_off(false));
+                state.save_usage();
+            }
+        });
 }

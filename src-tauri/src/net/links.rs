@@ -10,6 +10,7 @@ use netdev::interface::state::OperState;
 use netdev::interface::types::InterfaceType;
 
 use crate::engine::TUN_NAME;
+use crate::sys;
 
 /// Seconds of throughput history kept for the charts.
 pub const HISTORY_LEN: usize = 60;
@@ -153,47 +154,67 @@ fn is_global_v6(ip: &Ipv6Addr) -> bool {
     (ip.segments()[0] & 0xe000) == 0x2000
 }
 
-/// Interfaces that could reach the internet: up, addressed, with a gateway.
+/// Interfaces that could reach the internet (up, addressed, with a
+/// gateway), plus disconnected hardware adapters so they can be shown as
+/// "not connected".
 fn discover() -> Vec<(String, LinkInfo)> {
     netdev::get_interfaces()
         .into_iter()
         .filter(|i| !i.is_loopback() && i.friendly_name.as_deref() != Some(TUN_NAME))
         .filter_map(|i| {
-            let gw = i.gateway.as_ref()?;
-            let gw_v4 = gw.ipv4.iter().find(|g| !g.is_unspecified()).copied();
-            let gw_v6 = gw.ipv6.iter().find(|g| !g.is_unspecified()).copied();
-            if gw_v4.is_none() && gw_v6.is_none() {
-                return None;
-            }
+            let (gw_v4, gw_v6) = match &i.gateway {
+                Some(gw) => (
+                    gw.ipv4.iter().find(|g| !g.is_unspecified()).copied(),
+                    gw.ipv6.iter().find(|g| !g.is_unspecified()).copied(),
+                ),
+                None => (None, None),
+            };
             let ipv4 = i
                 .ipv4
                 .iter()
                 .map(|n| n.addr())
-                .find(|a| !a.is_link_local() && !a.is_unspecified());
-            let ipv6 = i.ipv6.iter().map(|n| n.addr()).find(is_global_v6);
-            let up = i.oper_state == OperState::Up;
+                .find(|a| !a.is_link_local() && !a.is_unspecified())
+                .filter(|_| gw_v4.is_some());
+            let ipv6 = i
+                .ipv6
+                .iter()
+                .map(|n| n.addr())
+                .find(is_global_v6)
+                .filter(|_| gw_v6.is_some());
+            let present = i.oper_state == OperState::Up && (ipv4.is_some() || ipv6.is_some());
+            let kind = kind_of(&i);
+            let description = i.description.clone().unwrap_or_default();
+            // Virtual adapters (Hyper-V, VPNs, Bluetooth PAN) have no connector.
+            let hardware = kind != "other"
+                && !description.to_lowercase().contains("bluetooth")
+                && sys::has_connector(i.index);
+            if !present && !hardware {
+                return None;
+            }
             let info = LinkInfo {
                 if_index: i.index,
                 name: i.friendly_name.clone().unwrap_or_else(|| i.name.clone()),
-                description: i.description.clone().unwrap_or_default(),
-                kind: kind_of(&i),
-                ipv4: gw_v4.and(ipv4),
-                ipv6: gw_v6.and(ipv6),
+                description,
+                kind,
+                ipv4,
+                ipv6,
                 gateway: gw_v4
                     .map(|g| g.to_string())
                     .or(gw_v6.map(|g| g.to_string())),
                 speed_bps: i.receive_speed.or(i.transmit_speed),
-                present: up && (ipv4.is_some() || ipv6.is_some()),
+                present,
             };
             Some((i.name, info))
         })
-        .filter(|(_, info)| info.present)
         .collect()
 }
 
 #[derive(Default)]
 pub struct Links {
     list: RwLock<Vec<Arc<Link>>>,
+    /// Interface index of the network Windows routes through by default
+    /// (0 when unknown).
+    default_if: AtomicU32,
 }
 
 impl Links {
@@ -208,6 +229,15 @@ impl Links {
             .collect()
     }
 
+    /// The network Windows itself would use, as last seen without MultiPath
+    /// in the way.
+    pub fn default_link(&self) -> Option<Arc<Link>> {
+        let index = self.default_if.load(Ordering::Relaxed);
+        self.all()
+            .into_iter()
+            .find(|l| l.info.read().unwrap().if_index == index)
+    }
+
     pub fn get(&self, id: &str) -> Option<Arc<Link>> {
         self.all().into_iter().find(|l| l.id == id)
     }
@@ -217,6 +247,13 @@ impl Links {
     /// Returns true when something changed.
     pub fn refresh(&self) -> bool {
         let found = discover();
+        // While MultiPath is on, the default is its own adapter, which isn't in
+        // the list; the last real default is kept then.
+        if let Ok(default) = netdev::get_default_interface() {
+            if found.iter().any(|(_, info)| info.if_index == default.index) {
+                self.default_if.store(default.index, Ordering::Relaxed);
+            }
+        }
         let mut list = self.list.write().unwrap();
         let mut changed = false;
 
@@ -224,8 +261,9 @@ impl Links {
             let mut info = link.info.write().unwrap();
             match found.iter().find(|(id, _)| *id == link.id) {
                 Some((_, fresh)) => {
-                    let addr_changed =
-                        info.ipv4 != fresh.ipv4 || info.ipv6 != fresh.ipv6 || !info.present;
+                    let addr_changed = info.ipv4 != fresh.ipv4
+                        || info.ipv6 != fresh.ipv6
+                        || info.present != fresh.present;
                     if addr_changed {
                         // A new address deserves a fresh health verdict.
                         *link.health.lock().unwrap() = Health {
@@ -284,6 +322,7 @@ impl Links {
     pub fn from_list(list: Vec<Arc<Link>>) -> Links {
         Links {
             list: RwLock::new(list),
+            default_if: AtomicU32::new(0),
         }
     }
 }

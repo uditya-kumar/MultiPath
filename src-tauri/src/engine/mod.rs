@@ -122,6 +122,11 @@ impl Engine {
         })
     }
 
+    /// False once the packet stack has stopped by itself.
+    pub fn is_running(&self) -> bool {
+        self.tasks.iter().all(|t| !t.is_finished())
+    }
+
     /// Stops capturing and removes the adapter.
     pub async fn stop(self) {
         // Routes first, so traffic goes straight back to the real networks.

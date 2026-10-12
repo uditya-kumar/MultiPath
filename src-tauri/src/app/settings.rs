@@ -4,6 +4,8 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
+use crate::net::balancer::{LinkPolicy, Policy};
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct LinkPrefs {
@@ -26,6 +28,8 @@ impl Default for LinkPrefs {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Settings {
+    /// MultiPath was on when it last ran, so it turns back on at start.
+    pub on: bool,
     /// Keyed by the adapter's GUID, which survives renames and reboots.
     pub links: HashMap<String, LinkPrefs>,
     /// Keep every connection to a site on the network it first used.
@@ -39,6 +43,7 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Settings {
+            on: false,
             links: HashMap::new(),
             sticky: false,
             adaptive: true,
@@ -51,6 +56,25 @@ impl Default for Settings {
 impl Settings {
     pub fn link(&self, id: &str) -> LinkPrefs {
         self.links.get(id).cloned().unwrap_or_default()
+    }
+
+    /// What the balancer needs to know.
+    pub fn policy(&self) -> Policy {
+        Policy {
+            links: self
+                .links
+                .iter()
+                .map(|(id, p)| {
+                    let policy = LinkPolicy {
+                        enabled: p.enabled,
+                        weight: p.weight.clamp(1, 10),
+                    };
+                    (id.clone(), policy)
+                })
+                .collect(),
+            sticky: self.sticky,
+            adaptive: self.adaptive,
+        }
     }
 
     pub fn load(path: &PathBuf) -> Settings {

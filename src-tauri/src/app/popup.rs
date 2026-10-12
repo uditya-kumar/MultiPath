@@ -86,6 +86,10 @@ pub fn show(app: &AppHandle) {
     let _ = window.set_focus();
 }
 
+pub fn is_visible(app: &AppHandle) -> bool {
+    window(app).is_some_and(|w| w.is_visible().unwrap_or(false))
+}
+
 pub fn hide(app: &AppHandle) {
     let Some(window) = window(app) else { return };
     if window.is_visible().unwrap_or(false) {
