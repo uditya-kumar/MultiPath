@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronLeft, Waypoints } from "lucide-react";
+import { ChevronLeft, Minus, Waypoints } from "lucide-react";
 import { IconButton } from "./IconButton";
 import { Toggle } from "./Toggle";
 
@@ -9,10 +9,11 @@ interface Props {
   dot: string;
   disabled: boolean;
   onToggle: (on: boolean) => void;
+  onMinimize: () => void;
 }
 
-/** The main header: app mark, status line and the master switch. */
-export function Header({ on, status, dot, disabled, onToggle }: Props) {
+/** The main header: app mark, status line, the master switch and minimize. */
+export function Header({ on, status, dot, disabled, onToggle, onMinimize }: Props) {
   return (
     <header className="header">
       <span className="app-mark">
@@ -26,6 +27,7 @@ export function Header({ on, status, dot, disabled, onToggle }: Props) {
         </span>
       </div>
       <Toggle on={on} label="MultiPath" disabled={disabled} onChange={onToggle} />
+      <IconButton icon={Minus} label="Minimize" onClick={onMinimize} />
     </header>
   );
 }
@@ -33,16 +35,19 @@ export function Header({ on, status, dot, disabled, onToggle }: Props) {
 interface SubProps {
   title: string;
   onBack: () => void;
+  onMinimize: () => void;
   children?: ReactNode;
 }
 
 /** The header of an inner page, with a way back. */
-export function SubHeader({ title, onBack, children }: SubProps) {
+export function SubHeader({ title, onBack, onMinimize, children }: SubProps) {
   return (
     <header className="header sub">
       <IconButton icon={ChevronLeft} label="Back" size={18} strong onClick={onBack} />
       <span className="header-title">{title}</span>
       {children}
+      <span className="header-spacer" />
+      <IconButton icon={Minus} label="Minimize" onClick={onMinimize} />
     </header>
   );
 }

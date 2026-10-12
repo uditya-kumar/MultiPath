@@ -9,6 +9,7 @@ import {
 import { ChevronRight } from "lucide-react";
 import { errorText, setLinkWeight, setOption } from "../api/commands";
 import type { OptionChange, Status } from "../api/types";
+import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
 import { networkColor } from "../lib/format";
@@ -35,7 +36,7 @@ export function Settings({ status, onStatus, onBack }: Props) {
 
   return (
     <>
-      <SubHeader title="Settings" onBack={onBack} />
+      <SubHeader title="Settings" onBack={onBack} onMinimize={hidePopup} />
       {error && (
         <div className="notice" role="alert">
           {error}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { listConnections } from "../api/commands";
 import type { Connection, Status } from "../api/types";
+import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { formatRate, networkColor } from "../lib/format";
 
@@ -37,7 +38,7 @@ export function Connections({ status, onBack }: Props) {
 
   return (
     <>
-      <SubHeader title="Connections" onBack={onBack}>
+      <SubHeader title="Connections" onBack={onBack} onMinimize={hidePopup}>
         {status.on && <span className="chip">{connections.length.toLocaleString("en-US")} open</span>}
       </SubHeader>
       <div className="divider" />

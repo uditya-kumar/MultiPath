@@ -1,8 +1,9 @@
-//! The tray popup window: sized to its content, placed above the tray like a
-//! Windows 11 flyout, and hidden as soon as it loses focus.
+//! The tray popup window: sized to its content and placed above the tray like a
+//! Windows 11 flyout. It stays open when it loses focus, so it can be watched
+//! while working elsewhere; it hides through its minimize button, Esc, or
+//! another click on the tray icon.
 
 use std::sync::Mutex;
-use std::time::{Duration, Instant};
 
 use tauri::{AppHandle, Manager, PhysicalPosition, PhysicalSize, WebviewWindow};
 
@@ -11,16 +12,12 @@ const WIDTH: f64 = 360.0;
 /// Gap between the popup and the taskbar / screen edge, as in Windows flyouts.
 const MARGIN: f64 = 12.0;
 const DEFAULT_HEIGHT: f64 = 533.0;
-/// A tray click arrives just after the click itself took focus away from the
-/// popup and hid it. Treat a click this soon after hiding as "close".
-const REOPEN_GRACE: Duration = Duration::from_millis(300);
 
 pub struct PopupState {
     /// Logical height of the page, reported by the frontend.
     height: Mutex<f64>,
     /// Centre of the tray icon in physical pixels, once it has been clicked.
     anchor: Mutex<Option<(f64, f64)>>,
-    hidden_at: Mutex<Option<Instant>>,
 }
 
 impl Default for PopupState {
@@ -28,7 +25,6 @@ impl Default for PopupState {
         PopupState {
             height: Mutex::new(DEFAULT_HEIGHT),
             anchor: Mutex::new(None),
-            hidden_at: Mutex::new(None),
         }
     }
 }
@@ -91,27 +87,16 @@ pub fn is_visible(app: &AppHandle) -> bool {
 }
 
 pub fn hide(app: &AppHandle) {
-    let Some(window) = window(app) else { return };
-    if window.is_visible().unwrap_or(false) {
+    if let Some(window) = window(app) {
         let _ = window.hide();
-        *app.state::<PopupState>().hidden_at.lock().unwrap() = Some(Instant::now());
     }
 }
 
 /// What a left click on the tray icon does.
 pub fn toggle(app: &AppHandle) {
-    let Some(window) = window(app) else { return };
-    if window.is_visible().unwrap_or(false) {
+    if is_visible(app) {
         hide(app);
-        return;
-    }
-    let just_hidden = app
-        .state::<PopupState>()
-        .hidden_at
-        .lock()
-        .unwrap()
-        .is_some_and(|t| t.elapsed() < REOPEN_GRACE);
-    if !just_hidden {
+    } else {
         show(app);
     }
 }

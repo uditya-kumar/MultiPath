@@ -105,12 +105,16 @@ button.chip:hover {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 16px 12px;
+  padding: 16px 8px 12px 16px;
 }
 
 .header.sub {
   gap: 4px;
-  padding: 12px 16px 12px 8px;
+  padding: 12px 8px;
+}
+
+.header-spacer {
+  flex: 1;
 }
 
 .app-mark {

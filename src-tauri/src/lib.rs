@@ -95,14 +95,10 @@ pub fn run() {
             if window.label() != popup::LABEL {
                 return;
             }
-            match event {
-                WindowEvent::Focused(false) => popup::hide(window.app_handle()),
-                // The popup is only ever hidden; quitting goes through the tray menu.
-                WindowEvent::CloseRequested { api, .. } => {
-                    api.prevent_close();
-                    popup::hide(window.app_handle());
-                }
-                _ => {}
+            // The popup is only ever hidden; quitting goes through the tray menu.
+            if let WindowEvent::CloseRequested { api, .. } = event {
+                api.prevent_close();
+                popup::hide(window.app_handle());
             }
         })
         .build(tauri::generate_context!())

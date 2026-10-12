@@ -21,7 +21,7 @@ export function useFitWindow<T extends HTMLElement>() {
   return ref;
 }
 
-/** Hides the popup, as clicking outside it would. */
+/** Hides the popup back into the tray. */
 export function hidePopup() {
   return invoke("hide_popup");
 }

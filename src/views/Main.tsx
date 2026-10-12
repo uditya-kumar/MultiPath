@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Gauge, ShieldCheck } from "lucide-react";
 import { errorText, setEnabled, setLinkEnabled } from "../api/commands";
 import type { Status } from "../api/types";
+import { hidePopup } from "../api/window";
 import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { NetworkRow } from "../components/NetworkRow";
@@ -49,6 +50,7 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
         dot={header.dot}
         disabled={busy}
         onToggle={turn}
+        onMinimize={hidePopup}
       />
       {notice && (
         <div className="notice" role="alert">
