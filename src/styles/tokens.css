@@ -1,0 +1,30 @@
+/* Design tokens, from the variables in design.pen (read through Pencil). */
+:root {
+  --bg: #2b2b2b;
+  --bg-footer: #202020;
+  --surface: #ffffff0d;
+  --surface-hover: #ffffff14;
+  --border: #ffffff17;
+  --text: #ffffff;
+  --text-2: #c8c8c8;
+  --text-3: #8e8e8e;
+  --accent: #4cc2ff;
+  --on-accent: #000000;
+  --ok: #6ccb5f;
+  --warn: #fce100;
+  --net-wifi: #4cc2ff;
+  --net-phone: #ffb454;
+  --net-eth: #b98cff;
+
+  --track: #ffffff12;
+  --toggle-off: #ffffff9e;
+  --knob-off: #ffffffc8;
+  --rail: #ffffff2e;
+  --thumb: #454545;
+  --thumb-border: #ffffff1f;
+
+  --font: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+}

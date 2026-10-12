@@ -55,15 +55,15 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [x] Start with Windows (a scheduled task with highest privileges, since admin is required; registering it needs the UAC prompt, checked in Phase 6)
 
 ## Phase 5 — Frontend (`src/`)
-- [ ] `styles/tokens.css` from the `design.pen` variables; Segoe UI Variable font
-- [ ] `api/`: typed `invoke` wrappers, shared types, and a `useStatus()` event hook
-- [ ] `components/`: Toggle, NetworkRow, ShareRing (SVG donut), IconButton
-- [ ] `views/Active.tsx`: header, share ring hero, network rows, footer
-- [ ] `views/Off.tsx`: callout, "Turn on" button, admin note
-- [ ] `views/Settings.tsx`: balancing toggles, weight sliders, app options
-- [ ] `views/Connections.tsx`: live list of flows (app, destination, link, rate)
-- [ ] `lib/format.ts`: MB/s, GB, and percentage formatting; smooth number transitions
-- [ ] Keyboard: Esc closes the popup, Tab order is sensible
+- [x] `styles/tokens.css` from the `design.pen` variables; Segoe UI Variable font
+- [x] `api/`: typed `invoke` wrappers, shared types, and a `useStatus()` event hook
+- [x] `components/`: Toggle, NetworkRow, ShareRing (SVG donut), IconButton, Header, Footer
+- [x] `views/Main.tsx` when on: header, share ring hero, network rows, footer
+- [x] `views/Main.tsx` when off: callout, "Turn on" button, admin note
+- [x] `views/Settings.tsx`: balancing toggles, weight sliders, app options
+- [x] `views/Connections.tsx`: live list of flows (app, destination, link, rate)
+- [x] `lib/format.ts`: MB/s, GB, and percentage formatting; smooth number transitions
+- [x] Keyboard: Esc goes back a page or closes the popup, Tab order is sensible
 
 ## Phase 6 — Test & ship
 - [ ] First elevated run: turn on, browse and download, check `route print` shows the /1 routes on MultiPath, turn off and check they're gone

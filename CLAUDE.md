@@ -46,8 +46,8 @@ MultiPath/
 ├── src/                   frontend: React + TypeScript + Vite (the popup)
 │   ├── api/               the ONLY place that calls Tauri: invoke wrappers, types, useStatus()
 │   ├── components/        presentational pieces: Toggle, NetworkRow, ShareRing, …
-│   ├── views/             one file per popup screen: Active, Off, Settings, Connections
-│   ├── lib/               pure helpers (formatting)
+│   ├── views/             one file per popup page: Main (on and off), Settings, Connections
+│   ├── lib/               pure helpers (formatting, status text) and small hooks
 │   └── styles/            tokens.css (from design.pen variables) and global styles
 └── src-tauri/
     ├── resources/         wintun.dll + licence (bundled)
