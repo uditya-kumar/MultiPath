@@ -13,6 +13,7 @@ A small Windows tray app built with **Tauri v2 and Rust**. Everything runs on yo
 ![Windows 10/11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white)
 ![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC131?logo=tauri&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-stable-B7410E?logo=rust&logoColor=white)
+[![MIT License](https://img.shields.io/badge/License-MIT-22C55E)](LICENSE)
 
 </div>
 
@@ -158,5 +159,7 @@ cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings &
 - Some sites sign you out if your requests come from different addresses. Turn on *Keep sites on one network* for those.
 
 ## License
+
+MultiPath is released under the [MIT License](LICENSE).
 
 Wintun is © WireGuard LLC. Its license is in `src-tauri/resources/wintun-LICENSE.txt`.
