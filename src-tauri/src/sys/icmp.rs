@@ -44,10 +44,16 @@ pub fn icmp_echo(
         if n == 0 {
             return None;
         }
+        if IcmpParseReplies(reply.as_mut_ptr().cast(), reply_size as u32) == 0 {
+            return None;
+        }
         let r = std::ptr::read_unaligned(reply.as_ptr() as *const ICMP_ECHO_REPLY);
-        // IP_SUCCESS
+        // IP_SUCCESS (0)
         if r.Status != 0 {
             return None;
+        }
+        if r.Data.is_null() || r.DataSize == 0 {
+            return Some(Vec::new());
         }
         let data = std::slice::from_raw_parts(r.Data as *const u8, r.DataSize as usize);
         Some(data.to_vec())
