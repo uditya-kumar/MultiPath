@@ -30,8 +30,10 @@ several networks at once (Wi-Fi, Ethernet, USB-tethered phone).
 1. A Wintun adapter named `MultiPath` (10.77.0.1/24) captures traffic through split routes 0.0.0.0/1 and
    128.0.0.0/1 (plus ::/1 and 8000::/1 for IPv6), which beat the default route without replacing it.
 2. `ipstack` (a userspace TCP/IP stack) turns the adapter's packets back into TCP streams and UDP flows.
-3. For each new flow, the balancer picks a link (weighted least-connections × adaptive capacity, optionally sticky
-   by destination). The relay socket is bound to that link's address and pinned with `IP_UNICAST_IF`, so it leaves
+3. For each new flow, the balancer picks the link where it can expect the most bandwidth:
+   `weight × capacity / (busy flows + 1)`, optionally sticky by destination. Only busy flows count (moving data, or
+   just opened); idle keep-alives don't. Capacity is the link's recent peak, and an idle or unmeasured link counts as
+   average so it always gets tried. The relay socket is bound to that link's address and pinned with `IP_UNICAST_IF`, so it leaves
    through that adapter and never loops back into the TUN.
 4. Health probes take dead links out of rotation; per-link counters feed the popup once a second.
 

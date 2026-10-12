@@ -25,9 +25,9 @@ and other sites that sign you out when your address changes, but a single site t
    routes, `0.0.0.0/1` and `128.0.0.0/1`, that send all traffic to it. Windows' own default route stays in place.
 2. A userspace TCP/IP stack ([ipstack](https://crates.io/crates/ipstack)) turns the adapter's packets back into TCP
    connections and UDP flows.
-3. For each new connection, the balancer picks a network:
-   - It weighs each network's open connections against its share setting.
-   - With *Adaptive weighting* on, it also favours networks by the speed they actually deliver.
+3. For each new connection, the balancer picks the network where it can expect the most bandwidth. It looks at
+   each network's share setting and, with *Adaptive weighting* on, its measured speed, split among the downloads
+   already running on it. Idle connections don't count, and a network with nothing to do always gets the next one.
 4. The connection is then made again from that network's own address, pinned to that adapter.
 5. Health checks take a network out of rotation when it stops reaching the internet, and put it back when it recovers.
 

@@ -2,7 +2,6 @@
 //! through the network the balancer picks.
 
 use std::io;
-use std::sync::atomic::Ordering;
 use std::sync::Arc;
 
 use ipstack::IpStackUdpStream;
@@ -30,7 +29,6 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
         return;
     }
     let _ = flow.link.set(lease.link.id.clone());
-    let link = &lease.link;
 
     let (mut in_r, mut in_w) = tokio::io::split(inbound);
     let mut up = vec![0u8; MAX_DATAGRAM];
@@ -41,7 +39,7 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
             read = in_r.read(&mut up) => {
                 let Ok(n @ 1..) = read else { break };
                 if socket.send(&up[..n]).await.is_ok() {
-                    link.stats.tx.fetch_add(n as u64, Ordering::Relaxed);
+                    lease.count_tx(n as u64);
                     flow.add_tx(n as u64);
                 }
             }
@@ -50,7 +48,7 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
                     if in_w.write_all(&down[..n]).await.is_err() {
                         break;
                     }
-                    link.stats.rx.fetch_add(n as u64, Ordering::Relaxed);
+                    lease.count_rx(n as u64);
                     flow.add_rx(n as u64);
                     // A DNS lookup is one question and one answer.
                     if dst.port() == DNS_PORT {

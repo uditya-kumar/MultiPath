@@ -1,7 +1,6 @@
 //! Relays one captured TCP connection through the network the balancer picks.
 
 use std::io;
-use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -11,8 +10,7 @@ use tokio::time::Instant;
 
 use super::flows::Flow;
 use super::sniff::{self, Sniff, MAX_SNIFF_BYTES};
-use crate::net::links::Link;
-use crate::net::router::Router;
+use crate::net::router::{Lease, Router};
 
 /// Ports where the client speaks first and names the site.
 const SNIFF_PORTS: [u16; 4] = [80, 443, 8080, 8443];
@@ -50,12 +48,11 @@ pub async fn handle(mut inbound: IpStackTcpStream, router: Arc<Router>, flow: Ar
         if out_w.write_all(&first).await.is_err() {
             return;
         }
-        count_tx(&lease.link, &flow, first.len());
+        count_tx(&lease, &flow, first.len());
     }
     let (mut in_r, mut in_w) = tokio::io::split(inbound);
-    let link = &lease.link;
-    let up = pump(&mut in_r, &mut out_w, |n| count_tx(link, &flow, n));
-    let down = pump(&mut out_r, &mut in_w, |n| count_rx(link, &flow, n));
+    let up = pump(&mut in_r, &mut out_w, |n| count_tx(&lease, &flow, n));
+    let down = pump(&mut out_r, &mut in_w, |n| count_rx(&lease, &flow, n));
     // Either side failing ends both; a clean close lets the other side finish.
     if let Err(err) = tokio::try_join!(up, down) {
         log::trace!("tcp {dst}: {err}");
@@ -86,13 +83,13 @@ async fn read_first(inbound: &mut IpStackTcpStream, flow: &Flow) -> Option<Vec<u
     Some(first)
 }
 
-fn count_tx(link: &Link, flow: &Flow, n: usize) {
-    link.stats.tx.fetch_add(n as u64, Ordering::Relaxed);
+fn count_tx(lease: &Lease, flow: &Flow, n: usize) {
+    lease.count_tx(n as u64);
     flow.add_tx(n as u64);
 }
 
-fn count_rx(link: &Link, flow: &Flow, n: usize) {
-    link.stats.rx.fetch_add(n as u64, Ordering::Relaxed);
+fn count_rx(lease: &Lease, flow: &Flow, n: usize) {
+    lease.count_rx(n as u64);
     flow.add_rx(n as u64);
 }
 
@@ -116,7 +113,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::{AtomicUsize, Ordering};
 
     #[tokio::test]
     async fn pump_copies_counts_and_closes() {

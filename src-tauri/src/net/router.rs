@@ -11,7 +11,7 @@ use tokio::net::{TcpStream, UdpSocket};
 
 use super::balancer::{self, Candidate, Policy, Sticky};
 use super::dial;
-use super::links::{Link, Links};
+use super::links::{Link, Links, Meter};
 
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
 /// The first try plus one failover.
@@ -27,13 +27,24 @@ pub enum Proto {
 pub struct Lease {
     pub link: Arc<Link>,
     proto: Proto,
+    meter: Arc<Meter>,
 }
 
 impl Lease {
     fn new(link: Arc<Link>, proto: Proto) -> Lease {
         counter(&link, proto).fetch_add(1, Ordering::Relaxed);
         link.stats.opened.fetch_add(1, Ordering::Relaxed);
-        Lease { link, proto }
+        let meter = link.meter();
+        Lease { link, proto, meter }
+    }
+
+    pub fn count_rx(&self, n: u64) {
+        self.link.stats.rx.fetch_add(n, Ordering::Relaxed);
+        self.meter.add_rx(n);
+    }
+
+    pub fn count_tx(&self, n: u64) {
+        self.link.stats.tx.fetch_add(n, Ordering::Relaxed);
     }
 }
 
@@ -116,8 +127,7 @@ impl Router {
             .map(|(l, weight)| Candidate {
                 id: &l.id,
                 weight: *weight,
-                active: l.stats.tcp_active.load(Ordering::Relaxed)
-                    + l.stats.udp_active.load(Ordering::Relaxed),
+                busy: l.busy(),
                 peak_rx: l.stats.peak_rx.load(Ordering::Relaxed),
             })
             .collect();

@@ -86,6 +86,9 @@ pub struct Connection {
     pub seconds: u64,
 }
 
+/// Below this much download, in bytes/s, the ring shows connections instead.
+const IDLE_RATE: u64 = 4 * 1024;
+
 /// Each value's share of the total as whole percents that add up to 100
 /// (largest remainder), or all zeros when there's nothing to share.
 pub fn percents(values: &[u64]) -> Vec<u8> {
@@ -159,10 +162,10 @@ pub fn build(state: &AppState) -> Status {
         })
         .collect();
 
-    // The ring shows where the traffic goes; with none flowing, where the
-    // connections are.
-    let mut basis: Vec<u64> = links.iter().map(|l| l.rx_rate + l.tx_rate).collect();
-    if basis.iter().all(|&b| b == 0) {
+    // The ring shows where the downloads go, matching the rates beside it;
+    // with next to nothing flowing, where the connections are.
+    let mut basis: Vec<u64> = links.iter().map(|l| l.rx_rate).collect();
+    if basis.iter().sum::<u64>() < IDLE_RATE {
         basis = links.iter().map(|l| l.connections as u64).collect();
     }
     for (link, share) in links.iter_mut().zip(percents(&basis)) {

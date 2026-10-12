@@ -3,8 +3,8 @@
 use std::collections::VecDeque;
 use std::net::{Ipv4Addr, Ipv6Addr};
 use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
-use std::sync::{Arc, Mutex, RwLock};
-use std::time::Instant;
+use std::sync::{Arc, Mutex, RwLock, Weak};
+use std::time::{Duration, Instant};
 
 use netdev::interface::state::OperState;
 use netdev::interface::types::InterfaceType;
@@ -14,6 +14,12 @@ use crate::sys;
 
 /// Seconds of throughput history kept for the charts.
 pub const HISTORY_LEN: usize = 60;
+/// A flow that downloads at least this much in a second is busy.
+const BUSY_BYTES: u64 = 16 * 1024;
+/// New flows count as busy for this long, before there is a rate to go by,
+/// so a burst of new connections is spread out instead of all landing on
+/// one link.
+const FRESH: Duration = Duration::from_secs(3);
 
 #[derive(Clone, Debug)]
 pub struct LinkInfo {
@@ -54,6 +60,23 @@ pub struct LinkStats {
     /// Highest recent download rate in bytes/s, decaying slowly. Drives
     /// adaptive weighting.
     pub peak_rx: AtomicU64,
+    /// Flows that were busy at the last tick.
+    pub busy: AtomicU32,
+    /// Flows opened since the last tick; they're busy until it sees them.
+    pub opened_since_tick: AtomicU32,
+}
+
+/// One flow's download counter, so a tick can tell busy flows from idle ones.
+pub struct Meter {
+    rx: AtomicU64,
+    seen_rx: AtomicU64,
+    opened: Instant,
+}
+
+impl Meter {
+    pub fn add_rx(&self, n: u64) {
+        self.rx.fetch_add(n, Ordering::Relaxed);
+    }
 }
 
 pub struct Rates {
@@ -70,6 +93,7 @@ pub struct Link {
     pub stats: LinkStats,
     pub health: Mutex<Health>,
     pub rates: Mutex<Rates>,
+    meters: Mutex<Vec<Weak<Meter>>>,
 }
 
 impl Link {
@@ -90,7 +114,45 @@ impl Link {
                 tx_rate: 0,
                 history: VecDeque::from(vec![(0, 0); HISTORY_LEN]),
             }),
+            meters: Mutex::new(Vec::new()),
         }
+    }
+
+    /// Starts metering a new flow on this link, for as long as the meter lives.
+    pub fn meter(&self) -> Arc<Meter> {
+        let meter = Arc::new(Meter {
+            rx: AtomicU64::new(0),
+            seen_rx: AtomicU64::new(0),
+            opened: Instant::now(),
+        });
+        self.meters.lock().unwrap().push(Arc::downgrade(&meter));
+        self.stats.opened_since_tick.fetch_add(1, Ordering::Relaxed);
+        meter
+    }
+
+    /// Busy flows right now, for the balancer.
+    pub fn busy(&self) -> u32 {
+        self.stats.busy.load(Ordering::Relaxed)
+            + self.stats.opened_since_tick.load(Ordering::Relaxed)
+    }
+
+    /// Counts the flows that moved data since the last call, or are new,
+    /// and forgets closed ones.
+    fn count_busy(&self, now: Instant) -> u32 {
+        self.stats.opened_since_tick.store(0, Ordering::Relaxed);
+        let mut busy = 0;
+        self.meters.lock().unwrap().retain(|weak| {
+            let Some(meter) = weak.upgrade() else {
+                return false;
+            };
+            let rx = meter.rx.load(Ordering::Relaxed);
+            let moved = rx - meter.seen_rx.swap(rx, Ordering::Relaxed);
+            if moved >= BUSY_BYTES || now.duration_since(meter.opened) < FRESH {
+                busy += 1;
+            }
+            true
+        });
+        busy
     }
 
     pub fn info(&self) -> LinkInfo {
@@ -294,8 +356,10 @@ impl Links {
     }
 
     /// Called once a second: turns byte counters into rates.
-    pub fn tick(&self, _now: Instant) {
+    pub fn tick(&self, now: Instant) {
         for link in self.all() {
+            let busy = link.count_busy(now);
+            link.stats.busy.store(busy, Ordering::Relaxed);
             let rx = link.stats.rx.load(Ordering::Relaxed);
             let tx = link.stats.tx.load(Ordering::Relaxed);
             let mut r = link.rates.lock().unwrap();
@@ -330,6 +394,44 @@ impl Links {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn busy_counts_new_and_downloading_flows() {
+        let link = Link::new("wifi".into(), test_info());
+        let downloading = link.meter();
+        let idle = link.meter();
+        // Not ticked yet: both are new.
+        assert_eq!(link.busy(), 2);
+
+        let later = Instant::now() + FRESH;
+        downloading.add_rx(BUSY_BYTES);
+        idle.add_rx(100);
+        link.stats
+            .busy
+            .store(link.count_busy(later), Ordering::Relaxed);
+        assert_eq!(link.busy(), 1);
+
+        drop(downloading);
+        link.stats
+            .busy
+            .store(link.count_busy(later), Ordering::Relaxed);
+        assert_eq!(link.busy(), 0);
+        assert_eq!(link.meters.lock().unwrap().len(), 1);
+    }
+
+    fn test_info() -> LinkInfo {
+        LinkInfo {
+            if_index: 1,
+            name: "Wi-Fi".into(),
+            description: String::new(),
+            kind: "wifi",
+            ipv4: Some(Ipv4Addr::new(192, 168, 1, 2)),
+            ipv6: None,
+            gateway: None,
+            speed_bps: None,
+            present: true,
+        }
+    }
 
     /// Prints what discovery sees on this machine. Run with
     /// `cargo test discovery -- --ignored --nocapture`.
