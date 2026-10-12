@@ -32,19 +32,19 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [x] Unit tests for the balancer (weights, disabled links, sticky, all links down)
 
 ## Phase 3 — Engine (`engine/`)
-- [ ] `mod.rs`: start/stop lifecycle — create the Wintun adapter, assign 10.77.0.1/24 (plus an IPv6 ULA), set DNS and metric
-- [ ] Capture routes 0.0.0.0/1 + 128.0.0.0/1 (and ::/1 + 8000::/1 when IPv6 capture is on) via `sys::Route`
-- [ ] On startup, clean up stale routes and the adapter left behind by a crashed run
-- [ ] `ipstack` config (TCP timeout ~30 min, 64 KB unacked/read buffers, UDP timeout 60 s) and the accept loop
-- [ ] `tcp.rs`: relay each TCP stream through the chosen link and count bytes per link
-- [ ] `udp.rs`: per-flow UDP relay with idle timeout; DNS goes to the configured servers
-- [ ] `icmp.rs`: relay pings through `sys::icmp_echo` so `ping` works while MultiPath is on
-- [ ] `sniff.rs`: read the TLS SNI / HTTP Host for sticky keys and the connections list
-- [ ] Link loss mid-run: new flows avoid the link, and its flows close quickly instead of hanging
-- [ ] Clean stop: routes removed and adapter closed, verified with `route print`
-- [ ] Remove the temporary `allow(dead_code, unused_imports)` in `lib.rs`
+- [x] `mod.rs`: start/stop lifecycle — create the Wintun adapter, assign 10.77.0.1/24 (plus an IPv6 ULA), set DNS and metric
+- [x] Capture routes 0.0.0.0/1 + 128.0.0.0/1 (and ::/1 + 8000::/1 when IPv6 capture is on) via `sys::Route`
+- [x] On startup, clean up stale routes and the adapter left behind by a crashed run
+- [x] `ipstack` config (TCP timeout 30 min, 256 KB unacked/read buffers, UDP timeout 60 s) and the accept loop
+- [x] `tcp.rs`: relay each TCP stream through the chosen link and count bytes per link
+- [x] `udp.rs`: per-flow UDP relay with idle timeout; DNS goes to the configured servers
+- [x] `icmp.rs`: relay pings through `sys::icmp_echo` so `ping` works while MultiPath is on (IPv4)
+- [x] `sniff.rs`: read the TLS SNI / HTTP Host for sticky keys and the connections list
+- [x] Link loss mid-run: new flows avoid the link, and its flows close quickly instead of hanging
+- [ ] Clean stop: routes removed and adapter closed, verified with `route print` (needs an elevated run, so it waits for the user)
 
 ## Phase 4 — App glue (`app/`)
+- [ ] Remove the temporary `allow(dead_code, unused_imports)` in `lib.rs` once the engine is wired in
 - [ ] `state.rs`: shared `AppState` (engine handle, links, settings and their path)
 - [ ] Tray menu gets "Turn on / Turn off"; the tray icon shows the on/off state (`tray::set_active`)
 - [ ] `commands.rs`: `get_status`, `set_enabled`, `set_link_enabled`, `set_link_weight`, `set_option`, `list_connections`
@@ -66,6 +66,7 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [ ] Keyboard: Esc closes the popup, Tab order is sensible
 
 ## Phase 6 — Test & ship
+- [ ] First elevated run: turn on, browse and download, check `route print` shows the /1 routes on MultiPath, turn off and check they're gone
 - [ ] "Turn on" from a normal copy → UAC → the elevated copy opens its popup
 - [ ] Manual test matrix: discovery of USB tether + Ethernet; Wi-Fi + USB tether, unplug during a download, sleep/resume, alongside a VPN
 - [ ] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link

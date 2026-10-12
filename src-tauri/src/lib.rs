@@ -1,5 +1,5 @@
-// The networking modules are written ahead of the engine that uses them.
-// Remove once the engine is wired in (TaskList, Phase 3).
+// The engine and networking modules are wired into the app in Phase 4 of
+// the TaskList; remove this once they are.
 #![allow(dead_code, unused_imports)]
 
 mod app;

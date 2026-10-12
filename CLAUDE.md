@@ -55,7 +55,7 @@ MultiPath/
         ├── main.rs        calls multipath_lib::run()
         ├── lib.rs         module tree + Tauri builder
         ├── app/           Tauri glue: settings, state, commands, tray + popup window
-        ├── engine/        TUN capture and relays: lifecycle, tcp, udp, icmp, sniff
+        ├── engine/        TUN capture and relays: lifecycle, flows, tcp, udp, icmp, sniff
         ├── net/           physical networks: links, health, dial, balancer, router (pick + failover)
         └── sys/           Win32 wrappers: elevation, routes, sockets, icmp
 ```

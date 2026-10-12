@@ -45,7 +45,7 @@ unsafe impl Send for Route {}
 unsafe impl Sync for Route {}
 
 impl Route {
-    pub fn add(if_index: u32, prefix: IpAddr, prefix_len: u8) -> io::Result<Route> {
+    fn row(if_index: u32, prefix: IpAddr, prefix_len: u8) -> MIB_IPFORWARD_ROW2 {
         let mut row: MIB_IPFORWARD_ROW2 = unsafe { std::mem::zeroed() };
         unsafe { InitializeIpForwardEntry(&mut row) };
         row.InterfaceIndex = if_index;
@@ -58,8 +58,20 @@ impl Route {
         });
         row.Metric = 0;
         row.Protocol = ROUTE_PROTOCOL_NETMGMT;
+        row
+    }
+
+    pub fn add(if_index: u32, prefix: IpAddr, prefix_len: u8) -> io::Result<Route> {
+        let row = Self::row(if_index, prefix, prefix_len);
         win32_result(unsafe { CreateIpForwardEntry2(&row) }, "adding a route")?;
         Ok(Route { row })
+    }
+
+    /// Deletes a route left behind by a run that didn't stop cleanly.
+    /// Returns true if there was one.
+    pub fn remove_stale(if_index: u32, prefix: IpAddr, prefix_len: u8) -> bool {
+        let row = Self::row(if_index, prefix, prefix_len);
+        unsafe { DeleteIpForwardEntry2(&row) == NO_ERROR }
     }
 }
 
