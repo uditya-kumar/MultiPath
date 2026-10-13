@@ -33,14 +33,19 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
     let (mut in_r, mut in_w) = tokio::io::split(inbound);
     let mut up = vec![0u8; MAX_DATAGRAM];
     let mut down = vec![0u8; MAX_DATAGRAM];
+    let mut unanswered: u32 = 0;
     loop {
         tokio::select! {
+            // Questions first, so one already waiting is sent before an
+            // answer can end a DNS flow.
+            biased;
             // The stack ends the flow (with an error) after it has been idle.
             read = in_r.read(&mut up) => {
                 let Ok(n @ 1..) = read else { break };
                 if socket.send(&up[..n]).await.is_ok() {
                     lease.count_tx(n as u64);
                     flow.add_tx(n as u64);
+                    unanswered += 1;
                 }
             }
             received = socket.recv(&mut down) => match received {
@@ -50,8 +55,10 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
                     }
                     lease.count_rx(n as u64);
                     flow.add_rx(n as u64);
-                    // A DNS lookup is one question and one answer.
-                    if dst.port() == DNS_PORT {
+                    // A DNS lookup is done once every question has its
+                    // answer. glibc asks for A and AAAA from one socket.
+                    unanswered = unanswered.saturating_sub(1);
+                    if dst.port() == DNS_PORT && unanswered == 0 {
                         break;
                     }
                 }
