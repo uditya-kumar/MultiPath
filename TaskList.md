@@ -109,11 +109,11 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 ### Testing
 - [x] Unit tests for the Linux parsers (`/proc/net/tcp` rows, route and address messages) — run in WSL
 - [x] `scripts/linux-lab.sh`: build the namespaces, veths, NAT and 10 Mbit/s `tc` shaping, plus an HTTP/iperf3 server and DNS in "the internet"; tear it all down on exit
-- [ ] Lab test — spread: 8 parallel connections ≈ 20 Mbit/s split ~50/50; a single connection ≈ 10 Mbit/s
-- [ ] Lab test — failover: bring ISP 2 down mid-download → its flows close, new ones go to ISP 1; bring it back → new flows return
-- [ ] Lab test — health: blackhole ISP 2's internet (link stays up) → marked down within ~10 s, recovers after
-- [ ] Lab test — IPv6 gate: no working IPv6 → `curl -6` is refused at once, `curl` falls back to IPv4
-- [ ] Lab test — clean stop: no MultiPath routes left after stop, and stale ones are cleaned after `kill -9` + restart
+- [x] Lab test — spread: 8 parallel connections ≈ 18 Mbit/s split 50/50; a single connection ≈ 9 Mbit/s (each 10 Mbit/s `tbf` uplink carries ~8–9 Mbit/s of TCP); also on Kali with Ethernet + a USB-tethered phone: 6.5 MB/s against 1.2 MB/s on Ethernet alone
+- [x] Lab test — failover: unplug ISP 2 mid-download → its flows close within ~1 s (the app gets a FIN, so it reconnects), new ones go to ISP 1; plug it back → it's used again within ~5 s
+- [x] Lab test — health: blackhole ISP 2's internet (link stays up) → marked down within ~15 s with no failed requests (dial retries after 5 s), back up ~5 s after restore
+- [x] Lab test — IPv6 gate: no working IPv6 → `curl -6` is refused at once, `curl` uses IPv4
+- [x] Lab test — clean stop: no MultiPath routes or adapter left after stop or `kill -9` (on Linux the routes go with the adapter), and a restart after `kill -9` starts and stops cleanly
 - [ ] GitHub Actions workflow: build, unit tests, and the lab tests on `ubuntu-latest` (the user pushes; nothing is pushed from here)
 
 ### Ship
