@@ -73,3 +73,51 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [x] Measure the gain with parallel downloads (multi-file / Steam / torrent) against a single link — fast.com, Wi-Fi 10 + tether 10 Mbps → 19–20 Mbps, split 50/50
 - [x] NSIS installer bundling `wintun.dll`
 - [x] README: how it works, and its limits (one TCP connection can't be split without a server)
+
+## Phase 7 — Linux support
+Linux code sits next to the Windows code in the same files, behind `#[cfg(windows)]` / `#[cfg(target_os = "linux")]`.
+The Windows build must stay green after every task.
+
+**Testing without a Linux PC.** Development and tests run in WSL2 (Ubuntu). WSL has only one virtual network, so a
+script builds a fake one: network namespaces for "the PC", two "ISPs" and "the internet", joined by veth pairs, each ISP
+capped at 10 Mbit/s with `tc`. MultiPath runs headless inside the "PC" namespace and sees two links, like Wi-Fi + phone.
+The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages are install-tested in Docker containers.
+
+### Setup
+- [ ] WSL2 Ubuntu 24.04 dev box: `wsl --install -d Ubuntu-24.04` (needs the user), then Rust, Node and Tauri's Linux deps (`libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, …)
+- [ ] Workspace builds on Linux: `cargo check` passes with Windows-only modules and crates behind `cfg` (`windows-sys`, `wintun.dll` resource only on Windows)
+- [ ] Headless runner (`cargo run --example headless`): starts the engine and health checks without Tauri and prints link stats, so the lab can drive it
+
+### System layer (`sys/`, Linux side)
+- [ ] TUN device via `tun` (no DLL); interface address and MTU via netlink
+- [ ] Routes: add/remove `0.0.0.0/1`, `128.0.0.0/1`, `::/1`, `8000::/1` via netlink; remove on stop; clean stale ones at startup
+- [ ] Socket pinning with `SO_BINDTODEVICE` (`socket2::bind_device`); set `rp_filter` to loose (2) on links while on, restore on stop
+- [ ] DNS while on: `resolvectl dns MultiPath …` + `resolvectl domain MultiPath ~.`; fall back to a warning without systemd-resolved
+- [ ] Socket owners from `/proc/net/{tcp,tcp6,udp,udp6}` + `/proc/<pid>/fd`; process names from `/proc/<pid>/comm`
+- [ ] ICMP echo with an unprivileged ping socket (`SOCK_DGRAM` + `IPPROTO_ICMP`)
+- [ ] Privileges: run with `cap_net_admin,cap_net_raw` (set once with `pkexec setcap`); clear message when missing
+- [ ] Single instance (lock file in `$XDG_RUNTIME_DIR`, a second launch shows the popup); clock via `Instant`
+- [ ] Link discovery: tag `usb0` / `rndis` / `enx…` as phone tethers, `wl…` as Wi-Fi, `en…`/`eth…` as Ethernet
+
+### App (`app/`)
+- [ ] Tray on Linux (AppIndicator): menu with Open, Turn on/off, Quit (Linux trays don't report left clicks)
+- [ ] Popup on Linux: same 360 px window, placed at the top-right of the work area, hides on minimize / Esc
+- [ ] Start on login: `~/.config/autostart/multipath.desktop`; the Settings label reads "Start on login" on Linux
+- [ ] Off-state admin note and README wording per OS (UAC on Windows, one-time permission on Linux)
+
+### Testing
+- [ ] Unit tests for the Linux parsers (`/proc/net/tcp` rows, route and address messages) — run in WSL
+- [ ] `scripts/linux-lab.sh`: build the namespaces, veths, NAT and 10 Mbit/s `tc` shaping, plus an HTTP/iperf3 server and DNS in "the internet"; tear it all down on exit
+- [ ] Lab test — spread: 8 parallel connections ≈ 20 Mbit/s split ~50/50; a single connection ≈ 10 Mbit/s
+- [ ] Lab test — failover: bring ISP 2 down mid-download → its flows close, new ones go to ISP 1; bring it back → new flows return
+- [ ] Lab test — health: blackhole ISP 2's internet (link stays up) → marked down within ~10 s, recovers after
+- [ ] Lab test — IPv6 gate: no working IPv6 → `curl -6` is refused at once, `curl` falls back to IPv4
+- [ ] Lab test — clean stop: no MultiPath routes left after stop, and stale ones are cleaned after `kill -9` + restart
+- [ ] GitHub Actions workflow: build, unit tests, and the lab tests on `ubuntu-latest` (the user pushes; nothing is pushed from here)
+
+### Ship
+- [ ] Bundle `.deb` and AppImage (`npm run tauri build` in WSL); the `.deb` sets capabilities in its post-install script
+- [ ] Install test in Docker: the `.deb` installs on Ubuntu 24.04 and Debian 12 with its dependencies, and the binary starts
+- [ ] Popup check in WSLg (it shows the window; there's no tray there): layout matches `design.pen`
+- [ ] Optional real-hardware check: boot an Ubuntu live USB on the Windows PC, run the AppImage with Wi-Fi + USB tether (needs the user)
+- [ ] Docs: CLAUDE.md (no longer Windows-only, Linux gotchas, folder notes), README (Linux install, badges), release notes
