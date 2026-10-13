@@ -19,13 +19,3 @@ pub use instance::Instance;
 pub use routes::{add_unicast_address, Route};
 pub use rp_filter::LooseRpFilter;
 pub use sockets::{pin_socket_to_interface, process_name, socket_owners};
-
-use std::io;
-
-/// For the parts of the Linux port that aren't written yet.
-fn not_yet(what: &str) -> io::Error {
-    io::Error::new(
-        io::ErrorKind::Unsupported,
-        format!("{what} isn't supported on Linux yet"),
-    )
-}

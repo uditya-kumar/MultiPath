@@ -97,7 +97,7 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] Socket owners from `/proc/net/{tcp,tcp6,udp,udp6}` + `/proc/<pid>/fd`; process names from `/proc/<pid>/comm`
 - [x] ICMP echo with an unprivileged ping socket (`SOCK_DGRAM` + `IPPROTO_ICMP`), falling back to a raw socket (`CAP_NET_RAW`) where `ping_group_range` leaves it out (WSL); bound to the link's device
 - [x] Privileges: run with `cap_net_admin,cap_net_raw` (set once with `pkexec setcap`, then relaunch); clear message when missing. Only root may set systemd-resolved's DNS (polkit ignores capabilities), so with capabilities DNS stays with the system resolver, which still works
-- [ ] Single instance (lock file in `$XDG_RUNTIME_DIR`, a second launch shows the popup); clock via `Instant`
+- [x] Single instance (a socket in `$XDG_RUNTIME_DIR` is both the lock and the "show" channel; a crashed copy's socket is taken over); local date via `localtime_r`
 - [ ] Link discovery: tag `usb0` / `rndis` / `enx…` as phone tethers, `wl…` as Wi-Fi, `en…`/`eth…` as Ethernet
 
 ### App (`app/`)
