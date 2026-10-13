@@ -19,6 +19,8 @@ const IDENTIFIER: &str = "dev.multipath.app";
 
 /// Runs until asked to stop, and returns the exit code.
 pub fn run() -> i32 {
+    log::set_logger(&StderrLog).ok();
+    log::set_max_level(log::LevelFilter::Info);
     let Some(config_dir) = config_dir() else {
         eprintln!("no config folder: pass {CONFIG_ARG} <folder>");
         return 2;
@@ -109,4 +111,21 @@ async fn shutdown_requested() {
         }
     }
     let _ = tokio::signal::ctrl_c().await;
+}
+
+/// Engine and health messages go to stderr, keeping stdout for the status.
+struct StderrLog;
+
+impl log::Log for StderrLog {
+    fn enabled(&self, metadata: &log::Metadata) -> bool {
+        metadata.target().starts_with("multipath_lib")
+    }
+
+    fn log(&self, record: &log::Record) {
+        if self.enabled(record.metadata()) {
+            eprintln!("{:5} {}", record.level(), record.args());
+        }
+    }
+
+    fn flush(&self) {}
 }

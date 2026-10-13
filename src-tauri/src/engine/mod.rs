@@ -28,6 +28,8 @@ pub use flows::{Flow, Flows};
 
 use crate::net::links::Links;
 use crate::net::router::{Proto, Router};
+#[cfg(target_os = "linux")]
+use crate::sys::LooseRpFilter;
 #[cfg(windows)]
 use crate::sys::PreferIpv4;
 use crate::sys::{self, Route};
@@ -69,6 +71,8 @@ pub struct Engine {
     routes: Vec<Route>,
     #[cfg(windows)]
     prefer_ipv4: Option<PreferIpv4>,
+    #[cfg(target_os = "linux")]
+    loose_rp_filter: Option<LooseRpFilter>,
     stop: watch::Sender<bool>,
     tasks: Vec<JoinHandle<()>>,
 }
@@ -127,6 +131,10 @@ impl Engine {
         let prefer_ipv4 = PreferIpv4::apply()
             .inspect_err(|err| log::warn!("couldn't make IPv4 preferred: {err}"))
             .ok();
+        #[cfg(target_os = "linux")]
+        let loose_rp_filter = LooseRpFilter::apply()
+            .inspect_err(|err| log::warn!("couldn't loosen reverse-path filtering: {err}"))
+            .ok();
 
         let stack = IpStack::new(stack_config(), gate::Gate::new(device, router.clone()));
         let flows = Arc::new(Flows::default());
@@ -141,6 +149,8 @@ impl Engine {
             routes,
             #[cfg(windows)]
             prefer_ipv4,
+            #[cfg(target_os = "linux")]
+            loose_rp_filter,
             stop,
             tasks,
         })
@@ -157,6 +167,8 @@ impl Engine {
         drop(self.routes);
         #[cfg(windows)]
         drop(self.prefer_ipv4);
+        #[cfg(target_os = "linux")]
+        drop(self.loose_rp_filter);
         let _ = self.stop.send(true);
         for task in self.tasks {
             let _ = task.await;

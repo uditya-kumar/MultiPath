@@ -7,6 +7,7 @@ mod elevation;
 mod icmp;
 mod instance;
 mod routes;
+mod rp_filter;
 mod sockets;
 
 pub use adapters::has_connector;
@@ -16,6 +17,7 @@ pub use elevation::{is_elevated, relaunch_elevated};
 pub use icmp::icmp_echo;
 pub use instance::Instance;
 pub use routes::{add_unicast_address, Route};
+pub use rp_filter::LooseRpFilter;
 pub use sockets::{pin_socket_to_interface, process_name, socket_owners};
 
 use std::io;

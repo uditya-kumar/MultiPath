@@ -90,9 +90,9 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] Headless runner (`multipath --headless [--config <dir>]`): starts the engine and health checks without Tauri and prints the status as a JSON line a second, so the lab can drive it
 
 ### System layer (`sys/`, Linux side)
-- [ ] TUN device via `tun` (no DLL); interface address and MTU via netlink
-- [ ] Routes: add/remove `0.0.0.0/1`, `128.0.0.0/1`, `::/1`, `8000::/1` via netlink; remove on stop; clean stale ones at startup
-- [ ] Socket pinning with `SO_BINDTODEVICE` (`socket2::bind_device`); set `rp_filter` to loose (2) on links while on, restore on stop
+- [x] TUN device via `tun` (no DLL); interface address and MTU via netlink
+- [x] Routes: add/remove `0.0.0.0/1`, `128.0.0.0/1`, `::/1`, `8000::/1` via netlink; remove on stop; clean stale ones at startup
+- [x] Socket pinning with `SO_BINDTODEVICE` (`socket2::bind_device`); set `rp_filter` to loose (2) on links while on, restore on stop
 - [ ] DNS while on: `resolvectl dns MultiPath …` + `resolvectl domain MultiPath ~.`; fall back to a warning without systemd-resolved
 - [ ] Socket owners from `/proc/net/{tcp,tcp6,udp,udp6}` + `/proc/<pid>/fd`; process names from `/proc/<pid>/comm`
 - [ ] ICMP echo with an unprivileged ping socket (`SOCK_DGRAM` + `IPPROTO_ICMP`)
@@ -108,7 +108,7 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 
 ### Testing
 - [ ] Unit tests for the Linux parsers (`/proc/net/tcp` rows, route and address messages) — run in WSL
-- [ ] `scripts/linux-lab.sh`: build the namespaces, veths, NAT and 10 Mbit/s `tc` shaping, plus an HTTP/iperf3 server and DNS in "the internet"; tear it all down on exit
+- [x] `scripts/linux-lab.sh`: build the namespaces, veths, NAT and 10 Mbit/s `tc` shaping, plus an HTTP/iperf3 server and DNS in "the internet"; tear it all down on exit
 - [ ] Lab test — spread: 8 parallel connections ≈ 20 Mbit/s split ~50/50; a single connection ≈ 10 Mbit/s
 - [ ] Lab test — failover: bring ISP 2 down mid-download → its flows close, new ones go to ISP 1; bring it back → new flows return
 - [ ] Lab test — health: blackhole ISP 2's internet (link stays up) → marked down within ~10 s, recovers after
