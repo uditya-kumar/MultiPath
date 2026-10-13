@@ -40,7 +40,7 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
 
   const header = headerStatus(status, pending);
   const busy = pending !== null || status.busy;
-  const notice = error ?? status.error;
+  const notice = error ?? (status.error && errorText(status.error));
 
   return (
     <>
@@ -81,9 +81,11 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
             </button>
             {!status.elevated && (
               <span className="muted">
-                {status.platform === "linux"
-                  ? "Linux will ask for your password once, to give MultiPath network access."
-                  : "Windows will ask for administrator permission the first time."}
+                {!status.canElevate
+                  ? "The AppImage needs to run with sudo. Install the .deb to turn on without it."
+                  : status.platform === "linux"
+                    ? "Linux will ask for your password once, to give MultiPath network access."
+                    : "Windows will ask for administrator permission the first time."}
               </span>
             )}
           </div>

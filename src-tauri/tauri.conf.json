@@ -32,6 +32,10 @@
   },
   "bundle": {
     "active": true,
+    "publisher": "MultiPath",
+    "category": "Utility",
+    "shortDescription": "Spreads the PC's traffic across several networks at once",
+    "longDescription": "MultiPath sends each new connection through the network where it can expect the most bandwidth: Wi-Fi, Ethernet or a USB-tethered phone. A single download gets faster only if it opens several connections.",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico"]
   }
 }

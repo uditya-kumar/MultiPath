@@ -38,6 +38,7 @@ export interface Status {
   on: boolean;
   busy: boolean;
   elevated: boolean;
+  canElevate: boolean;
   error: string | null;
   ipv6: boolean;
   rxRate: number;

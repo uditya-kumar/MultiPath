@@ -4,6 +4,11 @@ pub fn is_elevated() -> bool {
     unsafe { windows_sys::Win32::UI::Shell::IsUserAnAdmin() != 0 }
 }
 
+/// The UAC prompt is always there to ask.
+pub fn can_elevate() -> bool {
+    true
+}
+
 pub(super) fn wide(s: &str) -> Vec<u16> {
     s.encode_utf16().chain(std::iter::once(0)).collect()
 }

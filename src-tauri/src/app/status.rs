@@ -20,6 +20,9 @@ pub struct Status {
     pub on: bool,
     pub busy: bool,
     pub elevated: bool,
+    /// Whether turning on can ask for the permissions it needs: not from an
+    /// AppImage on Linux.
+    pub can_elevate: bool,
     pub error: Option<String>,
     pub ipv6: bool,
     /// Bytes per second across every network.
@@ -182,6 +185,7 @@ pub fn build(state: &AppState) -> Status {
         on: flows.is_some(),
         busy: state.busy.load(Ordering::Relaxed),
         elevated: sys::is_elevated(),
+        can_elevate: sys::can_elevate(),
         error: state.error.lock().unwrap().clone(),
         ipv6: flows.is_some() && settings.capture_ipv6,
         rx_rate: links.iter().map(|l| l.rx_rate).sum(),

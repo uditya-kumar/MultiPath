@@ -17,6 +17,8 @@ export const setOption = (change: OptionChange) => invoke<Status>("set_option", 
 export const listConnections = () => invoke<Connection[]>("list_connections");
 
 /** Commands reject with the message string the Rust side returned. */
+/** Rust errors start in lower case; the popup shows them as sentences. */
 export function errorText(err: unknown): string {
-  return typeof err === "string" ? err : err instanceof Error ? err.message : String(err);
+  const text = typeof err === "string" ? err : err instanceof Error ? err.message : String(err);
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }

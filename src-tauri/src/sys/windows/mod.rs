@@ -11,7 +11,7 @@ mod sockets;
 
 pub use adapters::has_connector;
 pub use clock::local_date;
-pub use elevation::{is_elevated, relaunch_elevated, run_elevated};
+pub use elevation::{can_elevate, is_elevated, relaunch_elevated, run_elevated};
 pub use icmp::icmp_echo;
 pub use instance::Instance;
 pub use prefix_policy::PreferIpv4;

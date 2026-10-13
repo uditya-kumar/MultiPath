@@ -23,12 +23,17 @@ fn effective_caps(status: &str) -> Option<u64> {
 /// routes, and binding sockets to a device plus raw ICMP.
 const CAPABILITIES: &str = "cap_net_admin,cap_net_raw+ep";
 
+/// Whether `relaunch_elevated` can work: an AppImage runs from a read-only
+/// mount that ignores capabilities.
+pub fn can_elevate() -> bool {
+    std::env::var_os("APPIMAGE").is_none()
+}
+
 /// Gives this executable its capabilities once, through the polkit password
 /// prompt, then starts a new copy (capabilities apply from the next start),
 /// passing it `args`.
 pub fn relaunch_elevated(args: &str) -> io::Result<()> {
-    // An AppImage runs from a read-only mount that ignores capabilities.
-    if std::env::var_os("APPIMAGE").is_some() {
+    if !can_elevate() {
         return Err(io::Error::new(
             io::ErrorKind::Unsupported,
             "the AppImage can't be given network permissions: install the .deb, or run it with sudo",

@@ -1,6 +1,12 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "bundle": {
-    "targets": ["deb", "appimage"]
+    "targets": ["deb", "appimage"],
+    "linux": {
+      "deb": {
+        "depends": ["libcap2-bin"],
+        "postInstallScript": "./linux/postinst.sh"
+      }
+    }
   }
 }

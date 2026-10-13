@@ -29,6 +29,7 @@ const off: Status = {
   on: false,
   busy: false,
   elevated: false,
+  canElevate: true,
   error: null,
   ipv6: false,
   rxRate: 0,
