@@ -203,6 +203,10 @@ impl Link {
 }
 
 fn kind_of(itf: &netdev::Interface) -> &'static str {
+    #[cfg(target_os = "linux")]
+    if let Some(kind) = sys::adapter_kind(&itf.name) {
+        return kind;
+    }
     let desc = itf
         .description
         .as_deref()
@@ -264,8 +268,12 @@ fn discover() -> Vec<(String, LinkInfo)> {
                 .filter(|_| gw_v6.is_some());
             let present = i.oper_state == OperState::Up && (ipv4.is_some() || ipv6.is_some());
             let kind = kind_of(&i);
-            let description = i.description.clone().unwrap_or_default();
-            // Virtual adapters (Hyper-V, VPNs, Bluetooth PAN) have no connector.
+            let description = i.description.clone();
+            #[cfg(target_os = "linux")]
+            let description = description.or_else(|| sys::adapter_description(i.index));
+            let description = description.unwrap_or_default();
+            // Virtual adapters (Hyper-V, VPNs, veth pairs) have no connector,
+            // and Bluetooth PAN isn't worth a share.
             let hardware = kind != "other"
                 && !description.to_lowercase().contains("bluetooth")
                 && sys::has_connector(i.index);

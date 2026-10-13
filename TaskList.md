@@ -98,7 +98,7 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] ICMP echo with an unprivileged ping socket (`SOCK_DGRAM` + `IPPROTO_ICMP`), falling back to a raw socket (`CAP_NET_RAW`) where `ping_group_range` leaves it out (WSL); bound to the link's device
 - [x] Privileges: run with `cap_net_admin,cap_net_raw` (set once with `pkexec setcap`, then relaunch); clear message when missing. Only root may set systemd-resolved's DNS (polkit ignores capabilities), so with capabilities DNS stays with the system resolver, which still works
 - [x] Single instance (a socket in `$XDG_RUNTIME_DIR` is both the lock and the "show" channel; a crashed copy's socket is taken over); local date via `localtime_r`
-- [ ] Link discovery: tag `usb0` / `rndis` / `enx…` as phone tethers, `wl…` as Wi-Fi, `en…`/`eth…` as Ethernet
+- [x] Link discovery: phone tethers by driver (`rndis_host`, `ipheth`, `cdc_ncm`, `cdc_ether`) or `usb…`, Wi-Fi by `wireless/` or `wl…`, cellular, `en…`/`eth…` as Ethernet; descriptions from udev's hardware database
 
 ### App (`app/`)
 - [ ] Tray on Linux (AppIndicator): menu with Open, Turn on/off, Quit (Linux trays don't report left clicks)
