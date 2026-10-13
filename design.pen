@@ -5252,6 +5252,69 @@
           "height": 4
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "MJDx1",
+      "x": 400,
+      "y": 820,
+      "name": "Note — Linux wording",
+      "width": 360,
+      "fill": "#202020",
+      "cornerRadius": 8,
+      "layout": "vertical",
+      "gap": 8,
+      "padding": 16,
+      "children": [
+        {
+          "type": "text",
+          "id": "U4wkMA",
+          "name": "Title",
+          "fill": "#FFFFFF",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "On Linux, these texts change (layout stays the same):",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "GnR7V",
+          "name": "Status Text (Off)",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Status Text (Off): “Off · Linux is using Wi-Fi only”",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "L0oCy",
+          "name": "Admin Note (Off)",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Admin Note (Off): “Linux will ask for your password once, to give MultiPath network access.”",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "Wj8e0",
+          "name": "Settings › App label",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Settings › App label: “Start on login”",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
     }
   ],
   "variables": {
