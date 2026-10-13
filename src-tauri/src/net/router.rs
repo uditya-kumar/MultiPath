@@ -13,7 +13,9 @@ use super::balancer::{self, Candidate, Policy, Sticky};
 use super::dial;
 use super::links::{Link, Links, Meter};
 
-const CONNECT_TIMEOUT: Duration = Duration::from_secs(10);
+/// Long enough for a slow mobile handshake, short enough that the app is
+/// still waiting when the retry on another network answers.
+const CONNECT_TIMEOUT: Duration = Duration::from_secs(5);
 /// The first try plus one failover.
 const ATTEMPTS: usize = 2;
 

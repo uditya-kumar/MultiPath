@@ -3,10 +3,11 @@
 
 use std::collections::HashMap;
 use std::net::SocketAddr;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock};
 use std::time::Instant;
 
+use tokio::sync::Notify;
 use tokio::task::AbortHandle;
 
 use crate::net::router::Proto;
@@ -23,6 +24,10 @@ pub struct Flow {
     pub link: OnceLock<String>,
     pub rx: AtomicU64,
     pub tx: AtomicU64,
+    /// Told when a TCP flow's network has gone, so its relay can close the
+    /// app's end properly.
+    pub lost: Notify,
+    losing: AtomicBool,
     abort: Mutex<Option<AbortHandle>>,
 }
 
@@ -39,6 +44,21 @@ impl Flow {
         if let Some(handle) = self.abort.lock().unwrap().as_ref() {
             handle.abort();
         }
+    }
+
+    /// Ends a flow whose network has gone. Dropping a TCP connection would
+    /// leave the app waiting for data that never comes; closing it makes the
+    /// app reconnect, through another network. UDP has nothing to close.
+    /// False if it was already told, as it stays listed while it closes.
+    fn lose(&self) -> bool {
+        if self.losing.swap(true, Ordering::Relaxed) {
+            return false;
+        }
+        match self.proto {
+            Proto::Tcp => self.lost.notify_one(),
+            Proto::Udp => self.abort(),
+        }
+        true
     }
 }
 
@@ -60,6 +80,8 @@ impl Flows {
             link: OnceLock::new(),
             rx: AtomicU64::new(0),
             tx: AtomicU64::new(0),
+            lost: Notify::new(),
+            losing: AtomicBool::new(false),
             abort: Mutex::new(None),
         });
         self.map.lock().unwrap().insert(flow.id, flow.clone());
@@ -93,8 +115,7 @@ impl Flows {
             .into_iter()
             .filter(|f| f.link.get().map(String::as_str) == Some(link_id))
             .collect();
-        flows.iter().for_each(|f| f.abort());
-        flows.len()
+        flows.iter().filter(|f| f.lose()).count()
     }
 
     pub fn abort_all(&self) {
@@ -127,21 +148,31 @@ mod tests {
     async fn aborting_a_link_closes_only_its_flows() {
         let flows = Arc::new(Flows::default());
         let mut tasks = Vec::new();
-        for (port, link) in [(1, "wifi"), (2, "phone"), (3, "wifi")] {
-            let flow = flows.open(Proto::Tcp, addr(port), addr(443));
+        let open = [
+            (1, Proto::Tcp, "wifi"),
+            (2, Proto::Tcp, "phone"),
+            (3, Proto::Udp, "wifi"),
+        ];
+        for (port, proto, link) in open {
+            let flow = flows.open(proto, addr(port), addr(443));
             flow.link.set(link.into()).unwrap();
             let guard = FlowGuard {
                 flows: flows.clone(),
                 flow: flow.clone(),
             };
+            // A TCP relay ends itself when told; a UDP one is stopped.
             let task = tokio::spawn(async move {
-                let _guard = guard;
-                std::future::pending::<()>().await;
+                match guard.flow.proto {
+                    Proto::Tcp => guard.flow.lost.notified().await,
+                    Proto::Udp => std::future::pending::<()>().await,
+                }
             });
             flows.set_abort(flow.id, task.abort_handle());
             tasks.push(task);
         }
         assert_eq!(flows.abort_on_link("wifi"), 2);
+        // Still closing: not counted again.
+        assert_eq!(flows.abort_on_link("wifi"), 0);
         for task in tasks {
             let _ = tokio::time::timeout(std::time::Duration::from_millis(50), task).await;
         }

@@ -31,13 +31,34 @@ pub async fn probe(link: &Link) -> Option<u32> {
 }
 
 /// Whether IPv6 works through `link`, probed on its own because it can
-/// fail while IPv4 is fine.
-async fn probe_ipv6(link: &Link, rtt: Option<u32>) -> bool {
+/// fail while IPv4 is fine. `None` for an IPv6-only link, which `probe`
+/// already answers for.
+async fn probe_ipv6(link: &Link) -> Option<bool> {
     let info = link.info();
     match (info.ipv4, info.ipv6) {
-        (_, None) => false,
-        (None, Some(_)) => rtt.is_some(),
-        (Some(_), Some(_)) => reach(&info, TARGETS_V6).await.is_some(),
+        (_, None) => Some(false),
+        (None, Some(_)) => None,
+        (Some(_), Some(_)) => Some(reach(&info, TARGETS_V6).await.is_some()),
+    }
+}
+
+/// Probes `link` and records the result.
+async fn check(link: &Link) {
+    let (rtt, ipv6_ok) = tokio::join!(probe(link), probe_ipv6(link));
+    link.set_ipv6_ok(ipv6_ok.unwrap_or(rtt.is_some()));
+    match rtt {
+        Some(ms) => link.record_success(Some(ms)),
+        None => {
+            link.record_failure();
+            // One miss can be a lost packet. Asking again at once, rather
+            // than after the interval, takes a dead link out in seconds.
+            if link.usable() {
+                match probe(link).await {
+                    Some(ms) => link.record_success(Some(ms)),
+                    None => link.record_failure(),
+                }
+            }
+        }
     }
 }
 
@@ -57,14 +78,7 @@ pub async fn run(links: Arc<Links>, mut stop: watch::Receiver<bool>) {
     loop {
         let mut probes = JoinSet::new();
         for link in links.present() {
-            probes.spawn(async move {
-                let rtt = probe(&link).await;
-                match rtt {
-                    Some(ms) => link.record_success(Some(ms)),
-                    None => link.record_failure(),
-                }
-                link.set_ipv6_ok(probe_ipv6(&link, rtt).await);
-            });
+            probes.spawn(async move { check(&link).await });
         }
         while probes.join_next().await.is_some() {}
 

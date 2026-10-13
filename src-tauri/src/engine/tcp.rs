@@ -17,6 +17,8 @@ const SNIFF_PORTS: [u16; 4] = [80, 443, 8080, 8443];
 /// How long to wait for that first message before connecting without it.
 const SNIFF_WAIT: Duration = Duration::from_millis(400);
 const COPY_BUFFER: usize = 64 * 1024;
+/// How long the close may wait for the app to take what was already sent.
+const CLOSE_WAIT: Duration = Duration::from_secs(2);
 
 pub async fn handle(mut inbound: IpStackTcpStream, router: Arc<Router>, flow: Arc<Flow>) {
     let dst = flow.dst;
@@ -58,9 +60,19 @@ pub async fn handle(mut inbound: IpStackTcpStream, router: Arc<Router>, flow: Ar
     let (mut in_r, mut in_w) = tokio::io::split(inbound);
     let up = pump(&mut in_r, &mut out_w, |n| count_tx(&lease, &flow, n));
     let down = pump(&mut out_r, &mut in_w, |n| count_rx(&lease, &flow, n));
-    // Either side failing ends both; a clean close lets the other side finish.
-    if let Err(err) = tokio::try_join!(up, down) {
-        log::trace!("tcp {dst}: {err}");
+    let lost = tokio::select! {
+        // Either side failing ends both; a clean close lets the other side finish.
+        relayed = async { tokio::try_join!(up, down) } => {
+            if let Err(err) = relayed {
+                log::trace!("tcp {dst}: {err}");
+            }
+            false
+        }
+        _ = flow.lost.notified() => true,
+    };
+    if lost {
+        // The network under it has gone. A close tells the app to reconnect.
+        let _ = tokio::time::timeout(CLOSE_WAIT, in_w.shutdown()).await;
     }
 }
 
