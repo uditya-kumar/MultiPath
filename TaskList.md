@@ -117,7 +117,7 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [ ] GitHub Actions workflow: build, unit tests, and the lab tests on `ubuntu-latest` (the user pushes; nothing is pushed from here)
 
 ### Ship
-- [ ] Bundle `.deb` and AppImage (`npm run tauri build` in WSL); the `.deb` sets capabilities in its post-install script
+- [x] Bundle `.deb` and AppImage (`npm run tauri build` in WSL); the `.deb` sets capabilities in its post-install script. Checked on Kali: the `.deb` installs with apt, runs as the user with `cap_net_admin,cap_net_raw` and turns on without a prompt (fast.com: 18 Mbit/s over Ethernet + phone, 50/50); the AppImage runs and says it needs sudo
 - [ ] Install test in Docker: the `.deb` installs on Ubuntu 24.04 and Debian 12 with its dependencies, and the binary starts
 - [x] Popup check in WSLg and on Kali (XFCE, VirtualBox): layout matches `design.pen`; the tray icon registers as a StatusNotifier item; "Turn on" asks through `pkexec` and the relaunched copy turns on
 - [ ] Optional real-hardware check: boot an Ubuntu live USB on the Windows PC, run the AppImage with Wi-Fi + USB tether (needs the user)
