@@ -1,21 +1,21 @@
-//! Thin wrappers over the Win32 APIs MultiPath needs: elevation, single
+//! Thin wrappers over the OS APIs MultiPath needs: elevation, single
 //! instance, adapter and clock queries, egress pinning, routes on the
 //! virtual adapter, IPv4/IPv6 preference, socket owner lookup, and ICMP.
+//!
+//! Each OS has its own module with the same functions and types, so the
+//! rest of the app doesn't need to know which one it runs on.
 
-mod adapters;
-mod clock;
-mod elevation;
-mod icmp;
-mod instance;
-mod prefix_policy;
-mod routes;
-mod sockets;
+use std::collections::HashMap;
 
-pub use adapters::has_connector;
-pub use clock::local_date;
-pub use elevation::{is_elevated, relaunch_elevated, run_elevated};
-pub use icmp::icmp_echo;
-pub use instance::Instance;
-pub use prefix_policy::PreferIpv4;
-pub use routes::{add_unicast_address, Route};
-pub use sockets::{pin_socket_to_interface, process_name, socket_owners};
+#[cfg(target_os = "linux")]
+mod linux;
+#[cfg(windows)]
+mod windows;
+
+#[cfg(target_os = "linux")]
+pub use linux::*;
+#[cfg(windows)]
+pub use windows::*;
+
+/// Which process owns a local socket, keyed by (is_tcp, local port).
+pub type SocketOwners = HashMap<(bool, u16), u32>;

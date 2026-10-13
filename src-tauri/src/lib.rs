@@ -3,29 +3,18 @@ mod engine;
 mod net;
 mod sys;
 
-use std::path::PathBuf;
 use std::time::Duration;
 
-use tauri::path::BaseDirectory;
-use tauri::{App, Manager, RunEvent, WindowEvent};
+use tauri::{Manager, RunEvent, WindowEvent};
 
 use app::state::AppState;
-use app::{autostart, commands, popup, ticker, tray};
-
-/// `wintun.dll` ships as a bundle resource; in development it's read from
-/// the source tree.
-fn wintun_path(app: &App) -> PathBuf {
-    let bundled = app
-        .path()
-        .resolve("resources/wintun.dll", BaseDirectory::Resource);
-    match bundled {
-        Ok(path) if path.is_file() => path,
-        _ => PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/wintun.dll")),
-    }
-}
+use app::{autostart, commands, headless, popup, ticker, tray};
 
 pub fn run() {
     let has_arg = |arg: &str| std::env::args().any(|a| a == arg);
+    if has_arg(headless::HEADLESS_ARG) {
+        std::process::exit(headless::run());
+    }
     let relaunched = has_arg(commands::ELEVATED_ARG);
     let turn_on = has_arg(commands::TURN_ON_ARG);
     let at_sign_in = has_arg(autostart::AUTOSTART_ARG);
@@ -64,11 +53,7 @@ pub fn run() {
             if elevated {
                 engine::clean_up_stale();
             }
-            let state = AppState::new(
-                app.path().app_config_dir()?,
-                wintun_path(app),
-                autostart::is_enabled(),
-            );
+            let state = AppState::new(app.path().app_config_dir()?, autostart::is_enabled());
             let start = elevated && (turn_on || state.settings().on);
             app.manage(state);
             tray::create(app.handle())?;

@@ -14,6 +14,7 @@ mod udp;
 use std::future::Future;
 use std::io;
 use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
+#[cfg(windows)]
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
@@ -27,15 +28,18 @@ pub use flows::{Flow, Flows};
 
 use crate::net::links::Links;
 use crate::net::router::{Proto, Router};
-use crate::sys::{self, PreferIpv4, Route};
+#[cfg(windows)]
+use crate::sys::PreferIpv4;
+use crate::sys::{self, Route};
 use flows::FlowGuard;
 
-/// Name of the Wintun adapter MultiPath creates.
+/// Name of the virtual adapter MultiPath creates.
 pub const TUN_NAME: &str = "MultiPath";
 pub const TUN_V4: Ipv4Addr = Ipv4Addr::new(10, 77, 0, 1);
 /// A unique local address, so IPv6 can be captured too.
 pub const TUN_V6: Ipv6Addr = Ipv6Addr::new(0xfd77, 0x6d70, 0, 0, 0, 0, 0, 1);
 const MTU: u16 = 1500;
+#[cfg(windows)]
 const TUN_METRIC: u16 = 5;
 
 /// Two halves of the address space: more specific than any default route,
@@ -56,8 +60,6 @@ const UDP_IDLE_TIMEOUT: Duration = Duration::from_secs(60);
 const TCP_WINDOW: usize = 256 * 1024;
 
 pub struct EngineConfig {
-    /// Full path of `wintun.dll`.
-    pub wintun: PathBuf,
     /// DNS servers set on the adapter, so lookups go through MultiPath too.
     pub dns: Vec<IpAddr>,
 }
@@ -65,6 +67,7 @@ pub struct EngineConfig {
 pub struct Engine {
     pub flows: Arc<Flows>,
     routes: Vec<Route>,
+    #[cfg(windows)]
     prefer_ipv4: Option<PreferIpv4>,
     stop: watch::Sender<bool>,
     tasks: Vec<JoinHandle<()>>,
@@ -77,19 +80,34 @@ impl Engine {
         links: Arc<Links>,
         router: Arc<Router>,
     ) -> io::Result<Engine> {
-        if !config.wintun.is_file() {
+        #[cfg(windows)]
+        let wintun = wintun_path();
+        #[cfg(windows)]
+        if !wintun.is_file() {
             return Err(io::Error::new(
                 io::ErrorKind::NotFound,
-                format!("{} is missing", config.wintun.display()),
+                format!("{} is missing", wintun.display()),
             ));
         }
         clean_up_stale();
 
-        let device = tokio::task::spawn_blocking(move || create_adapter(&config))
+        let dns = config.dns;
+        #[cfg(windows)]
+        let setup = {
+            let dns = dns.clone();
+            move || create_adapter(&dns, wintun)
+        };
+        #[cfg(target_os = "linux")]
+        let setup = create_adapter;
+        let device = tokio::task::spawn_blocking(setup)
             .await
             .map_err(io::Error::other)??;
         let if_index = device.tun_index().map_err(io::Error::other)? as u32;
         let device = tun::AsyncDevice::new(device)?;
+        #[cfg(target_os = "linux")]
+        if let Err(err) = sys::set_dns(if_index, &dns) {
+            log::warn!("couldn't set the adapter's DNS servers: {err}");
+        }
 
         let mut routes = Vec::new();
         // IPv6 is always captured, even when no network has it yet or it's
@@ -103,6 +121,9 @@ impl Engine {
 
         // Sites with both families are reached over IPv4, which every
         // network has, so their connections can be spread across all of them.
+        // glibc already does this on Linux: the adapter's unique local
+        // address doesn't share a label with global IPv6 (RFC 6724, rule 5).
+        #[cfg(windows)]
         let prefer_ipv4 = PreferIpv4::apply()
             .inspect_err(|err| log::warn!("couldn't make IPv4 preferred: {err}"))
             .ok();
@@ -118,6 +139,7 @@ impl Engine {
         Ok(Engine {
             flows,
             routes,
+            #[cfg(windows)]
             prefer_ipv4,
             stop,
             tasks,
@@ -133,6 +155,7 @@ impl Engine {
     pub async fn stop(self) {
         // Routes first, so traffic goes straight back to the real networks.
         drop(self.routes);
+        #[cfg(windows)]
         drop(self.prefer_ipv4);
         let _ = self.stop.send(true);
         for task in self.tasks {
@@ -142,24 +165,48 @@ impl Engine {
     }
 }
 
-fn create_adapter(config: &EngineConfig) -> io::Result<tun::Device> {
-    let mut tun_config = tun::Configuration::default();
-    tun_config
+/// `wintun.dll` is installed in `resources/` next to the executable; in
+/// development it's read from the source tree.
+#[cfg(windows)]
+fn wintun_path() -> PathBuf {
+    let installed = std::env::current_exe()
+        .ok()
+        .and_then(|exe| Some(exe.parent()?.join("resources/wintun.dll")));
+    match installed {
+        Some(path) if path.is_file() => path,
+        _ => PathBuf::from(concat!(env!("CARGO_MANIFEST_DIR"), "/resources/wintun.dll")),
+    }
+}
+
+fn tun_config() -> tun::Configuration {
+    let mut config = tun::Configuration::default();
+    config
         .tun_name(TUN_NAME)
         .address(TUN_V4)
         .netmask(Ipv4Addr::new(255, 255, 255, 0))
         .mtu(MTU)
-        .metric(TUN_METRIC)
         .up();
-    let wintun = config.wintun.clone();
-    let dns = config.dns.clone();
-    tun_config.platform_config(move |p| {
+    config
+}
+
+/// Wintun takes the adapter's DNS servers as it creates it.
+#[cfg(windows)]
+fn create_adapter(dns: &[IpAddr], wintun: PathBuf) -> io::Result<tun::Device> {
+    let mut config = tun_config();
+    config.metric(TUN_METRIC);
+    let dns = dns.to_vec();
+    config.platform_config(move |p| {
         p.wintun_file(wintun.into_os_string());
         if !dns.is_empty() {
             p.dns_servers(&dns);
         }
     });
-    tun::create(&tun_config).map_err(io::Error::other)
+    tun::create(&config).map_err(io::Error::other)
+}
+
+#[cfg(target_os = "linux")]
+fn create_adapter() -> io::Result<tun::Device> {
+    tun::create(&tun_config()).map_err(io::Error::other)
 }
 
 fn stack_config() -> IpStackConfig {
@@ -175,13 +222,15 @@ fn stack_config() -> IpStackConfig {
     config
 }
 
+/// Windows names the adapter in its friendly name, Linux in the interface name.
+pub fn is_tun(itf: &netdev::Interface) -> bool {
+    itf.name == TUN_NAME || itf.friendly_name.as_deref() == Some(TUN_NAME)
+}
+
 /// Removes capture routes a crashed run left on the adapter, which would
 /// otherwise send all traffic into an adapter nobody reads.
 pub fn clean_up_stale() {
-    let Some(adapter) = netdev::get_interfaces()
-        .into_iter()
-        .find(|i| i.friendly_name.as_deref() == Some(TUN_NAME))
-    else {
+    let Some(adapter) = netdev::get_interfaces().into_iter().find(is_tun) else {
         return;
     };
     for (prefix, len) in CAPTURE_V4.into_iter().chain(CAPTURE_V6) {

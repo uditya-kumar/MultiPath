@@ -57,14 +57,15 @@ MultiPath/
     └── src/
         ├── main.rs        calls multipath_lib::run()
         ├── lib.rs         module tree + Tauri builder
-        ├── app/           Tauri glue: state, settings, status, commands, ticker, usage, autostart, tray + popup
+        ├── app/           Tauri glue: state, settings, status, commands, ticker, usage, autostart, tray + popup,
+        │                  and the headless runner (`--headless`) that drives the same state without Tauri
         ├── engine/        TUN capture and relays: lifecycle, gate, flows, tcp, udp, icmp, sniff
         ├── net/           physical networks: links, health, dial, balancer, router (pick + failover)
-        └── sys/           Win32 wrappers: elevation, routes, sockets, icmp
+        └── sys/           OS wrappers with one API: windows/ (Win32) and linux/ (Phase 7, in progress)
 ```
 
 ### Boundaries
-- `unsafe` and `windows_sys` calls live in `sys/` only; everything else uses its safe wrappers.
+- `unsafe`, `windows_sys` and `libc` calls live in `sys/` only; everything else uses its safe wrappers.
 - `net/` knows nothing about the TUN or Tauri. `engine/` uses `net/` to pick and dial links. `app/` owns the
   engine and is the only layer that touches Tauri.
 - The frontend talks to Rust only through `src/api/`. Components get data through props; views compose them.

@@ -3,7 +3,6 @@
 
 use std::io;
 use std::net::{IpAddr, SocketAddr};
-use std::os::windows::io::AsRawSocket;
 use std::time::Duration;
 
 use socket2::{Domain, Protocol, SockAddr, Socket, Type};
@@ -28,12 +27,12 @@ fn source_ip(link: &LinkInfo, v6: bool) -> io::Result<IpAddr> {
 }
 
 /// A socket bound to the link's address and pinned to its interface.
-/// Binding picks the source address; pinning makes Windows route by it.
+/// Binding picks the source address; pinning makes the OS route by it.
 fn pinned_socket(link: &LinkInfo, v6: bool, ty: Type, protocol: Protocol) -> io::Result<Socket> {
     let source = source_ip(link, v6)?;
     let domain = if v6 { Domain::IPV6 } else { Domain::IPV4 };
     let socket = Socket::new(domain, ty, Some(protocol))?;
-    sys::pin_socket_to_interface(socket.as_raw_socket(), link.if_index, v6)?;
+    sys::pin_socket_to_interface(&socket, link.if_index, v6)?;
     socket.bind(&SockAddr::from(SocketAddr::new(source, 0)))?;
     socket.set_nonblocking(true)?;
     Ok(socket)

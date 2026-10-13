@@ -22,6 +22,8 @@ netdev = "0.46"
 socket2 = { version = "0.6", features = ["all"] }
 etherparse = "0.20"
 log = "0.4"
+
+[target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.61", features = [
     "Win32_Foundation",
     "Win32_Networking_WinSock",
@@ -35,3 +37,6 @@ windows-sys = { version = "0.61", features = [
     "Win32_UI_Shell",
     "Win32_UI_WindowsAndMessaging",
 ] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"

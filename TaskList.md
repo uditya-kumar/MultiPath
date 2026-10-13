@@ -75,7 +75,8 @@ Phases run roughly in order, but a later phase can start once the tasks it depen
 - [x] README: how it works, and its limits (one TCP connection can't be split without a server)
 
 ## Phase 7 — Linux support
-Linux code sits next to the Windows code in the same files, behind `#[cfg(windows)]` / `#[cfg(target_os = "linux")]`.
+Each OS has its own `sys/windows/` and `sys/linux/` behind one API; elsewhere the few differences sit in the same files,
+behind `#[cfg(windows)]` / `#[cfg(target_os = "linux")]`.
 The Windows build must stay green after every task.
 
 **Testing without a Linux PC.** Development and tests run in WSL2 (Ubuntu). WSL has only one virtual network, so a
@@ -84,9 +85,9 @@ capped at 10 Mbit/s with `tc`. MultiPath runs headless inside the "PC" namespace
 The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages are install-tested in Docker containers.
 
 ### Setup
-- [ ] WSL2 Ubuntu 24.04 dev box: `wsl --install -d Ubuntu-24.04` (needs the user), then Rust, Node and Tauri's Linux deps (`libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, …)
-- [ ] Workspace builds on Linux: `cargo check` passes with Windows-only modules and crates behind `cfg` (`windows-sys`, `wintun.dll` resource only on Windows)
-- [ ] Headless runner (`cargo run --example headless`): starts the engine and health checks without Tauri and prints link stats, so the lab can drive it
+- [x] WSL2 Ubuntu 24.04 dev box: `wsl --install -d Ubuntu-24.04` (needs the user), then Rust, Node and Tauri's Linux deps (`libwebkit2gtk-4.1-dev`, `libayatana-appindicator3-dev`, …)
+- [x] Workspace builds on Linux: `cargo check` passes with Windows-only modules and crates behind `cfg` (`windows-sys`, `wintun.dll` resource only on Windows) — `sys/windows/` and `sys/linux/` share one API; bundle settings per OS in `tauri.windows.conf.json` / `tauri.linux.conf.json`
+- [x] Headless runner (`multipath --headless [--config <dir>]`): starts the engine and health checks without Tauri and prints the status as a JSON line a second, so the lab can drive it
 
 ### System layer (`sys/`, Linux side)
 - [ ] TUN device via `tun` (no DLL); interface address and MTU via netlink

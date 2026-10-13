@@ -1,8 +1,8 @@
-use std::collections::HashMap;
 use std::io;
 use std::net::{Ipv4Addr, Ipv6Addr};
-use std::os::windows::io::RawSocket;
+use std::os::windows::io::AsRawSocket;
 
+use socket2::Socket;
 use windows_sys::Win32::Foundation::{CloseHandle, NO_ERROR};
 use windows_sys::Win32::NetworkManagement::IpHelper::*;
 use windows_sys::Win32::Networking::WinSock::{
@@ -12,10 +12,12 @@ use windows_sys::Win32::System::Threading::{
     OpenProcess, QueryFullProcessImageNameW, PROCESS_NAME_WIN32, PROCESS_QUERY_LIMITED_INFORMATION,
 };
 
+use crate::sys::SocketOwners;
+
 /// Forces a socket's traffic out of one interface, whatever the routing table
 /// says. This is what keeps MultiPath's own connections from looping back into
 /// the virtual adapter that captures everything else.
-pub fn pin_socket_to_interface(sock: RawSocket, if_index: u32, v6: bool) -> io::Result<()> {
+pub fn pin_socket_to_interface(socket: &Socket, if_index: u32, v6: bool) -> io::Result<()> {
     // IPv4 takes the index in network byte order, IPv6 in host order.
     let (level, name, value) = if v6 {
         (IPPROTO_IPV6, IPV6_UNICAST_IF, if_index)
@@ -24,7 +26,7 @@ pub fn pin_socket_to_interface(sock: RawSocket, if_index: u32, v6: bool) -> io::
     };
     let rc = unsafe {
         setsockopt(
-            sock as SOCKET,
+            socket.as_raw_socket() as SOCKET,
             level,
             name,
             &value as *const u32 as *const u8,
@@ -37,9 +39,6 @@ pub fn pin_socket_to_interface(sock: RawSocket, if_index: u32, v6: bool) -> io::
         Err(io::Error::last_os_error())
     }
 }
-
-/// Which process owns a local socket, keyed by (is_tcp, local port).
-pub type SocketOwners = HashMap<(bool, u16), u32>;
 
 fn read_table(fetch: impl Fn(*mut core::ffi::c_void, *mut u32) -> u32) -> Option<Vec<u8>> {
     let mut size = 0u32;

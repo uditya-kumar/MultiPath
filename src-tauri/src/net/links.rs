@@ -9,7 +9,7 @@ use std::time::{Duration, Instant};
 use netdev::interface::state::OperState;
 use netdev::interface::types::InterfaceType;
 
-use crate::engine::TUN_NAME;
+use crate::engine;
 use crate::sys;
 
 /// Seconds of throughput history kept for the charts.
@@ -241,7 +241,7 @@ fn is_global_v6(ip: &Ipv6Addr) -> bool {
 fn discover() -> Vec<(String, LinkInfo)> {
     netdev::get_interfaces()
         .into_iter()
-        .filter(|i| !i.is_loopback() && i.friendly_name.as_deref() != Some(TUN_NAME))
+        .filter(|i| !i.is_loopback() && !engine::is_tun(i))
         .filter_map(|i| {
             let (gw_v4, gw_v6) = match &i.gateway {
                 Some(gw) => (

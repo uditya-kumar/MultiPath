@@ -34,34 +34,55 @@ fn total_bytes(links: &Links) -> u64 {
         .sum()
 }
 
+/// One second of bookkeeping, shared with the headless runner.
+pub struct Ticks {
+    n: u64,
+    last_total: u64,
+}
+
+impl Ticks {
+    pub fn new(state: &AppState) -> Ticks {
+        Ticks {
+            n: 0,
+            last_total: total_bytes(&state.links),
+        }
+    }
+
+    /// Rates, today's data, a fresh network list now and then, and cleaning
+    /// up after an engine that stopped by itself.
+    pub async fn tick(&mut self, state: &AppState) {
+        self.n += 1;
+        state.links.tick(Instant::now());
+
+        let total = total_bytes(&state.links);
+        state
+            .usage
+            .lock()
+            .unwrap()
+            .add(sys::local_date(), total.saturating_sub(self.last_total));
+        self.last_total = total;
+        if self.n.is_multiple_of(SAVE_USAGE_EVERY) {
+            state.save_usage();
+        }
+
+        if self.n.is_multiple_of(REFRESH_EVERY) {
+            let links = state.links.clone();
+            let _ = tokio::task::spawn_blocking(move || links.refresh()).await;
+        }
+        state.check_engine().await;
+    }
+}
+
 pub fn spawn(app: AppHandle) {
     let state = app.state::<AppState>();
     tauri::async_runtime::spawn(health::run(state.links.clone(), state.health_stop()));
 
     tauri::async_runtime::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_secs(1));
-        let mut last_total = total_bytes(&app.state::<AppState>().links);
-        for n in 1u64.. {
+        let mut ticks = Ticks::new(&app.state::<AppState>());
+        loop {
             interval.tick().await;
-            let state = app.state::<AppState>();
-            state.links.tick(Instant::now());
-
-            let total = total_bytes(&state.links);
-            state
-                .usage
-                .lock()
-                .unwrap()
-                .add(sys::local_date(), total.saturating_sub(last_total));
-            last_total = total;
-            if n % SAVE_USAGE_EVERY == 0 {
-                state.save_usage();
-            }
-
-            if n % REFRESH_EVERY == 0 {
-                let links = state.links.clone();
-                let _ = tauri::async_runtime::spawn_blocking(move || links.refresh()).await;
-            }
-            state.check_engine().await;
+            ticks.tick(&app.state::<AppState>()).await;
             publish(&app);
         }
     });

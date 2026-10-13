@@ -33,7 +33,6 @@ pub struct AppState {
     settings_path: PathBuf,
     pub usage: Mutex<Usage>,
     usage_path: PathBuf,
-    wintun: PathBuf,
     engine: tokio::sync::Mutex<Option<Engine>>,
     /// The running engine's flows, readable without waiting on the engine lock.
     pub flows: RwLock<Option<Arc<Flows>>>,
@@ -48,7 +47,7 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub fn new(config_dir: PathBuf, wintun: PathBuf, start_with_windows: bool) -> AppState {
+    pub fn new(config_dir: PathBuf, start_with_windows: bool) -> AppState {
         let settings_path = config_dir.join("settings.json");
         let usage_path = config_dir.join("usage.json");
         let settings = Settings::load(&settings_path);
@@ -62,7 +61,6 @@ impl AppState {
             settings_path,
             usage: Mutex::new(Usage::load(&usage_path)),
             usage_path,
-            wintun,
             engine: tokio::sync::Mutex::new(None),
             flows: RwLock::new(None),
             busy: AtomicBool::new(false),
@@ -106,7 +104,6 @@ impl AppState {
         self.busy.store(true, Ordering::Relaxed);
         let settings = self.settings();
         let config = EngineConfig {
-            wintun: self.wintun.clone(),
             dns: settings.dns.clone(),
         };
         let started = Engine::start(config, self.links.clone(), self.router.clone()).await;
