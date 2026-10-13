@@ -239,6 +239,17 @@ fn is_global_v6(ip: &Ipv6Addr) -> bool {
     (ip.segments()[0] & 0xe000) == 0x2000
 }
 
+fn is_connected(itf: &netdev::Interface) -> bool {
+    match itf.oper_state {
+        OperState::Up => true,
+        // Linux drivers that never report a state, such as RNDIS for Android
+        // tethering, stay "unknown"; the running flag still follows the carrier.
+        #[cfg(target_os = "linux")]
+        OperState::Unknown => itf.is_up() && itf.is_running(),
+        _ => false,
+    }
+}
+
 /// Interfaces that could reach the internet (up, addressed, with a
 /// gateway), plus disconnected hardware adapters so they can be shown as
 /// "not connected".
@@ -266,7 +277,7 @@ fn discover() -> Vec<(String, LinkInfo)> {
                 .map(|n| n.addr())
                 .find(is_global_v6)
                 .filter(|_| gw_v6.is_some());
-            let present = i.oper_state == OperState::Up && (ipv4.is_some() || ipv6.is_some());
+            let present = is_connected(&i) && (ipv4.is_some() || ipv6.is_some());
             let kind = kind_of(&i);
             let description = i.description.clone();
             #[cfg(target_os = "linux")]
