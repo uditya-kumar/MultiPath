@@ -3,9 +3,11 @@ use std::net::Ipv4Addr;
 use windows_sys::Win32::Foundation::{HANDLE, INVALID_HANDLE_VALUE};
 use windows_sys::Win32::NetworkManagement::IpHelper::*;
 
-/// Sends an ICMP echo from `source` (which pins it to that interface) and
-/// waits for the reply. Returns the echoed payload. Blocking.
+/// Sends an ICMP echo from `source` (which pins it to that interface, so
+/// `if_index` isn't needed) and waits for the reply. Returns the echoed
+/// payload. Blocking.
 pub fn icmp_echo(
+    _if_index: u32,
     source: Ipv4Addr,
     dest: Ipv4Addr,
     payload: &[u8],

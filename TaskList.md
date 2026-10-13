@@ -95,7 +95,7 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] Socket pinning with `SO_BINDTODEVICE` (`socket2::bind_device`); set `rp_filter` to loose (2) on links while on, restore on stop
 - [x] DNS while on: `resolvectl dns MultiPath …` + `resolvectl domain MultiPath ~.`; fall back to a warning without systemd-resolved
 - [x] Socket owners from `/proc/net/{tcp,tcp6,udp,udp6}` + `/proc/<pid>/fd`; process names from `/proc/<pid>/comm`
-- [ ] ICMP echo with an unprivileged ping socket (`SOCK_DGRAM` + `IPPROTO_ICMP`)
+- [x] ICMP echo with an unprivileged ping socket (`SOCK_DGRAM` + `IPPROTO_ICMP`), falling back to a raw socket (`CAP_NET_RAW`) where `ping_group_range` leaves it out (WSL); bound to the link's device
 - [ ] Privileges: run with `cap_net_admin,cap_net_raw` (set once with `pkexec setcap`); clear message when missing
 - [ ] Single instance (lock file in `$XDG_RUNTIME_DIR`, a second launch shows the popup); clock via `Instant`
 - [ ] Link discovery: tag `usb0` / `rndis` / `enx…` as phone tethers, `wl…` as Wi-Fi, `en…`/`eth…` as Ethernet

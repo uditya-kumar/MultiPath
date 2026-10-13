@@ -25,14 +25,18 @@ pub async fn handle(packet: IpStackUnknownTransport, router: Arc<Router>) {
         return;
     };
     let data = data.to_vec();
-    let Some(source) = router
-        .choose(false, Some(&dest.to_string()), &[])
-        .and_then(|link| link.info().ipv4)
+    let Some((if_index, source)) =
+        router
+            .choose(false, Some(&dest.to_string()), &[])
+            .and_then(|link| {
+                let info = link.info();
+                Some((info.if_index, info.ipv4?))
+            })
     else {
         return;
     };
     let echoed = tokio::task::spawn_blocking(move || {
-        sys::icmp_echo(source, dest, &data, TTL, ECHO_TIMEOUT_MS)
+        sys::icmp_echo(if_index, source, dest, &data, TTL, ECHO_TIMEOUT_MS)
     })
     .await;
     if let Ok(Some(echoed)) = echoed {
