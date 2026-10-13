@@ -30,10 +30,11 @@ export interface SettingsStatus {
   sticky: boolean;
   captureIpv6: boolean;
   dns: string[];
-  startWithWindows: boolean;
+  startOnLogin: boolean;
 }
 
 export interface Status {
+  platform: "windows" | "linux";
   on: boolean;
   busy: boolean;
   elevated: boolean;
@@ -68,5 +69,5 @@ export interface OptionChange {
   sticky?: boolean;
   captureIpv6?: boolean;
   dns?: string[];
-  startWithWindows?: boolean;
+  startOnLogin?: boolean;
 }

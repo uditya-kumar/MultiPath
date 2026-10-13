@@ -1,26 +1,12 @@
 //! Start MultiPath when the user signs in, quietly in the tray.
 
 #[cfg(target_os = "linux")]
-use std::io;
-
+pub use desktop_entry::{is_enabled, set_enabled};
 #[cfg(windows)]
 pub use scheduled_task::{is_enabled, set_enabled};
 
 /// Tells MultiPath it was started at sign-in, so it stays in the tray.
 pub const AUTOSTART_ARG: &str = "--autostart";
-
-#[cfg(target_os = "linux")]
-pub fn is_enabled() -> bool {
-    false
-}
-
-#[cfg(target_os = "linux")]
-pub fn set_enabled(_enabled: bool) -> io::Result<()> {
-    Err(io::Error::new(
-        io::ErrorKind::Unsupported,
-        "starting on login isn't supported on Linux yet",
-    ))
-}
 
 /// MultiPath needs administrator rights, which a Run key can't give without
 /// a UAC prompt at every sign-in, so it registers a scheduled task that runs
@@ -141,6 +127,83 @@ mod scheduled_task {
             assert!(xml.contains("<RunLevel>HighestAvailable</RunLevel>"));
             assert!(xml.contains(r"<UserId>PC\me</UserId>"));
             assert!(xml.contains("<ExecutionTimeLimit>PT0S</ExecutionTimeLimit>"));
+        }
+    }
+}
+
+/// Desktop sessions start whatever has an entry in the autostart folder. The
+/// network permissions live on the executable itself, so no prompt is needed.
+#[cfg(target_os = "linux")]
+mod desktop_entry {
+    use std::io;
+    use std::path::PathBuf;
+
+    use super::AUTOSTART_ARG;
+
+    pub fn is_enabled() -> bool {
+        entry_path().is_some_and(|path| path.exists())
+    }
+
+    pub fn set_enabled(enabled: bool) -> io::Result<()> {
+        let path =
+            entry_path().ok_or_else(|| io::Error::other("could not find the home folder"))?;
+        if enabled {
+            let exe = std::env::current_exe()?;
+            if let Some(dir) = path.parent() {
+                std::fs::create_dir_all(dir)?;
+            }
+            std::fs::write(&path, entry(&exe.to_string_lossy()))
+        } else {
+            match std::fs::remove_file(&path) {
+                Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(()),
+                other => other,
+            }
+        }
+    }
+
+    fn entry_path() -> Option<PathBuf> {
+        let config = std::env::var_os("XDG_CONFIG_HOME")
+            .filter(|dir| !dir.is_empty())
+            .map(PathBuf::from)
+            .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".config")))?;
+        Some(config.join("autostart").join("multipath.desktop"))
+    }
+
+    /// The executable is quoted as the desktop entry spec asks, with `%`
+    /// doubled so it isn't read as a field code.
+    fn entry(exe: &str) -> String {
+        let mut quoted = String::new();
+        for c in exe.chars() {
+            match c {
+                '"' | '`' | '$' | '\\' => {
+                    quoted.push('\\');
+                    quoted.push(c);
+                }
+                '%' => quoted.push_str("%%"),
+                c => quoted.push(c),
+            }
+        }
+        format!(
+            "[Desktop Entry]\n\
+             Type=Application\n\
+             Name=MultiPath\n\
+             Comment=Starts MultiPath when you sign in.\n\
+             Exec=\"{quoted}\" {AUTOSTART_ARG}\n\
+             Icon=multipath\n\
+             Terminal=false\n\
+             X-GNOME-Autostart-enabled=true\n"
+        )
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn entry_runs_the_app_at_sign_in() {
+            let text = entry("/opt/Multi Path/50%/multi\"path");
+            assert!(text.starts_with("[Desktop Entry]\nType=Application\n"));
+            assert!(text.contains("Exec=\"/opt/Multi Path/50%%/multi\\\"path\" --autostart\n"));
         }
     }
 }

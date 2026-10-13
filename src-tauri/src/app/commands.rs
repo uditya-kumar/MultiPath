@@ -94,7 +94,7 @@ pub struct OptionChange {
     pub sticky: Option<bool>,
     pub capture_ipv6: Option<bool>,
     pub dns: Option<Vec<String>>,
-    pub start_with_windows: Option<bool>,
+    pub start_on_login: Option<bool>,
 }
 
 /// Parses DNS servers typed by the user; empty entries are skipped.
@@ -111,12 +111,12 @@ fn parse_dns(servers: &[String]) -> Result<Vec<IpAddr>, String> {
 pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, String> {
     let state = app.state::<AppState>();
     let dns = change.dns.as_deref().map(parse_dns).transpose()?;
-    if let Some(enabled) = change.start_with_windows {
+    if let Some(enabled) = change.start_on_login {
         tauri::async_runtime::spawn_blocking(move || autostart::set_enabled(enabled))
             .await
             .map_err(|e| e.to_string())?
             .map_err(|e| format!("Couldn't change Start with Windows: {e}"))?;
-        state.start_with_windows.store(enabled, Ordering::Relaxed);
+        state.start_on_login.store(enabled, Ordering::Relaxed);
     }
 
     let before = state.settings();

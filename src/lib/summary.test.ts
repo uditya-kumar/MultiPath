@@ -25,6 +25,7 @@ const phone: LinkStatus = { ...wifi, id: "2", name: "Phone", kind: "phone", isDe
 const cable: LinkStatus = { ...wifi, id: "3", name: "Ethernet", kind: "ethernet", isDefault: false, present: false };
 
 const off: Status = {
+  platform: "windows",
   on: false,
   busy: false,
   elevated: false,
@@ -35,13 +36,14 @@ const off: Status = {
   connections: 0,
   todayBytes: 0,
   links: [wifi, phone, cable],
-  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startWithWindows: false },
+  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false },
 };
 const on: Status = { ...off, on: true, connections: 142, todayBytes: 3_400_000_000 };
 
 describe("summary", () => {
   it("says what MultiPath is doing", () => {
     expect(headerStatus(off, null).text).toBe("Off · Windows is using Wi-Fi only");
+    expect(headerStatus({ ...off, platform: "linux" }, null).text).toBe("Off · Linux is using Wi-Fi only");
     expect(headerStatus(on, null)).toEqual({ text: "Combining 2 networks", dot: "var(--ok)" });
     expect(headerStatus({ ...on, links: [wifi] }, null).text).toBe("On · using 1 network");
     expect(headerStatus(off, "on").text).toBe("Turning on…");

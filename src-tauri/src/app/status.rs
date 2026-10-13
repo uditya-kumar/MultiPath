@@ -15,6 +15,8 @@ use crate::sys;
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Status {
+    /// "windows" or "linux", for the wording that differs.
+    pub platform: &'static str,
     pub on: bool,
     pub busy: bool,
     pub elevated: bool,
@@ -64,7 +66,7 @@ pub struct SettingsStatus {
     pub sticky: bool,
     pub capture_ipv6: bool,
     pub dns: Vec<String>,
-    pub start_with_windows: bool,
+    pub start_on_login: bool,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -176,6 +178,7 @@ pub fn build(state: &AppState) -> Status {
 
     let flows = state.flows.read().unwrap().clone();
     Status {
+        platform: std::env::consts::OS,
         on: flows.is_some(),
         busy: state.busy.load(Ordering::Relaxed),
         elevated: sys::is_elevated(),
@@ -191,7 +194,7 @@ pub fn build(state: &AppState) -> Status {
             sticky: settings.sticky,
             capture_ipv6: settings.capture_ipv6,
             dns: settings.dns.iter().map(|d| d.to_string()).collect(),
-            start_with_windows: state.start_with_windows.load(Ordering::Relaxed),
+            start_on_login: state.start_on_login.load(Ordering::Relaxed),
         },
     }
 }

@@ -40,14 +40,14 @@ pub struct AppState {
     pub busy: AtomicBool,
     /// Why MultiPath last failed to turn on, or stopped by itself.
     pub error: Mutex<Option<String>>,
-    pub start_with_windows: AtomicBool,
+    pub start_on_login: AtomicBool,
     pub flow_counts: Mutex<FlowCounts>,
     /// Keeps the health probes running for as long as the app does.
     health_stop: watch::Sender<bool>,
 }
 
 impl AppState {
-    pub fn new(config_dir: PathBuf, start_with_windows: bool) -> AppState {
+    pub fn new(config_dir: PathBuf, start_on_login: bool) -> AppState {
         let settings_path = config_dir.join("settings.json");
         let usage_path = config_dir.join("usage.json");
         let settings = Settings::load(&settings_path);
@@ -65,7 +65,7 @@ impl AppState {
             flows: RwLock::new(None),
             busy: AtomicBool::new(false),
             error: Mutex::new(None),
-            start_with_windows: AtomicBool::new(start_with_windows),
+            start_on_login: AtomicBool::new(start_on_login),
             flow_counts: Mutex::new(FlowCounts::default()),
             health_stop: watch::channel(false).0,
         }

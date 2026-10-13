@@ -103,11 +103,11 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 ### App (`app/`)
 - [ ] Tray on Linux (AppIndicator): menu with Open, Turn on/off, Quit (Linux trays don't report left clicks)
 - [ ] Popup on Linux: same 360 px window, placed at the top-right of the work area, hides on minimize / Esc
-- [ ] Start on login: `~/.config/autostart/multipath.desktop`; the Settings label reads "Start on login" on Linux
-- [ ] Off-state admin note and README wording per OS (UAC on Windows, one-time permission on Linux)
+- [x] Start on login: `~/.config/autostart/multipath.desktop` (`$XDG_CONFIG_HOME` honoured); the Settings label reads "Start on login" on Linux
+- [x] Off-state admin note and status line per OS (UAC on Windows, one-time permission on Linux), from `Status.platform`; the README part is in the docs task
 
 ### Testing
-- [ ] Unit tests for the Linux parsers (`/proc/net/tcp` rows, route and address messages) — run in WSL
+- [x] Unit tests for the Linux parsers (`/proc/net/tcp` rows, route and address messages) — run in WSL
 - [x] `scripts/linux-lab.sh`: build the namespaces, veths, NAT and 10 Mbit/s `tc` shaping, plus an HTTP/iperf3 server and DNS in "the internet"; tear it all down on exit
 - [ ] Lab test — spread: 8 parallel connections ≈ 20 Mbit/s split ~50/50; a single connection ≈ 10 Mbit/s
 - [ ] Lab test — failover: bring ISP 2 down mid-download → its flows close, new ones go to ISP 1; bring it back → new flows return

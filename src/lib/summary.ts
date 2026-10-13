@@ -24,9 +24,14 @@ export function headerStatus(status: Status, pending: Pending): { text: string; 
   }
   const fallback = status.links.find((l) => l.isDefault);
   return {
-    text: fallback ? `Off · Windows is using ${fallback.name} only` : "Off",
+    text: fallback ? `Off · ${osName(status)} is using ${fallback.name} only` : "Off",
     dot: status.error ? "var(--warn)" : "var(--text-3)",
   };
+}
+
+/** The system's own name, for the lines that talk about it. */
+function osName(status: Status): string {
+  return status.platform === "linux" ? "Linux" : "Windows";
 }
 
 /** The footer's one-line summary. */

@@ -24,7 +24,7 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
   const turn = (on: boolean) => {
     setPending(on ? "on" : "off");
     setError(null);
-    // Without admin rights this restarts MultiPath through the UAC prompt.
+    // Without admin rights this restarts MultiPath through the UAC (or pkexec) prompt.
     setEnabled(on)
       .then(onStatus)
       .catch((e) => setError(errorText(e)))
@@ -81,7 +81,9 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
             </button>
             {!status.elevated && (
               <span className="muted">
-                Windows will ask for administrator permission the first time.
+                {status.platform === "linux"
+                  ? "Linux will ask for your password once, to give MultiPath network access."
+                  : "Windows will ask for administrator permission the first time."}
               </span>
             )}
           </div>

@@ -89,9 +89,9 @@ export function Settings({ status, onStatus, onBack }: Props) {
       <div className="divider" />
       <Section title="App">
         <SwitchRow
-          label="Start with Windows"
-          on={settings.startWithWindows}
-          onChange={(startWithWindows) => change({ startWithWindows })}
+          label={status.platform === "linux" ? "Start on login" : "Start with Windows"}
+          on={settings.startOnLogin}
+          onChange={(startOnLogin) => change({ startOnLogin })}
         />
         <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
       </Section>
