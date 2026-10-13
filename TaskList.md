@@ -121,4 +121,4 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [ ] Install test in Docker: the `.deb` installs on Ubuntu 24.04 and Debian 12 with its dependencies, and the binary starts
 - [x] Popup check in WSLg and on Kali (XFCE, VirtualBox): layout matches `design.pen`; the tray icon registers as a StatusNotifier item; "Turn on" asks through `pkexec` and the relaunched copy turns on
 - [ ] Optional real-hardware check: boot an Ubuntu live USB on the Windows PC, run the AppImage with Wi-Fi + USB tether (needs the user)
-- [ ] Docs: CLAUDE.md (no longer Windows-only, Linux gotchas, folder notes), README (Linux install, badges), release notes
+- [x] Docs: CLAUDE.md (Windows and Linux, gotchas split per OS, folder notes), README (Linux badge and install, tech stack), release notes (the v1.1.0 draft)
