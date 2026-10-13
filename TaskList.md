@@ -119,6 +119,6 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 ### Ship
 - [ ] Bundle `.deb` and AppImage (`npm run tauri build` in WSL); the `.deb` sets capabilities in its post-install script
 - [ ] Install test in Docker: the `.deb` installs on Ubuntu 24.04 and Debian 12 with its dependencies, and the binary starts
-- [ ] Popup check in WSLg (it shows the window; there's no tray there): layout matches `design.pen`; "Turn on" asks through `pkexec` and the relaunched copy turns on
+- [x] Popup check in WSLg and on Kali (XFCE, VirtualBox): layout matches `design.pen`; the tray icon registers as a StatusNotifier item; "Turn on" asks through `pkexec` and the relaunched copy turns on
 - [ ] Optional real-hardware check: boot an Ubuntu live USB on the Windows PC, run the AppImage with Wi-Fi + USB tether (needs the user)
 - [ ] Docs: CLAUDE.md (no longer Windows-only, Linux gotchas, folder notes), README (Linux install, badges), release notes
