@@ -1,4 +1,5 @@
 use std::io;
+use std::process::Command;
 
 /// `CAP_NET_ADMIN`: creating the TUN device and changing routes.
 const CAP_NET_ADMIN: u32 = 12;
@@ -18,8 +19,36 @@ fn effective_caps(status: &str) -> Option<u64> {
     u64::from_str_radix(hex.trim(), 16).ok()
 }
 
-pub fn relaunch_elevated(_args: &str) -> io::Result<()> {
-    Err(super::not_yet("asking for network permissions"))
+/// The capabilities MultiPath runs with instead of root: the adapter and
+/// routes, and binding sockets to a device plus raw ICMP.
+const CAPABILITIES: &str = "cap_net_admin,cap_net_raw+ep";
+
+/// Gives this executable its capabilities once, through the polkit password
+/// prompt, then starts a new copy (capabilities apply from the next start),
+/// passing it `args`.
+pub fn relaunch_elevated(args: &str) -> io::Result<()> {
+    // An AppImage runs from a read-only mount that ignores capabilities.
+    if std::env::var_os("APPIMAGE").is_some() {
+        return Err(io::Error::new(
+            io::ErrorKind::Unsupported,
+            "the AppImage can't be given network permissions: install the .deb, or run it with sudo",
+        ));
+    }
+    let exe = std::env::current_exe()?;
+    let status = Command::new("pkexec")
+        .arg("setcap")
+        .arg(CAPABILITIES)
+        .arg(&exe)
+        .status()
+        .map_err(|err| io::Error::new(err.kind(), format!("couldn't run pkexec: {err}")))?;
+    match status.code() {
+        Some(0) => {}
+        // pkexec: the prompt was dismissed, or the user isn't allowed.
+        Some(126 | 127) => return Err(io::Error::other("the permission prompt was cancelled")),
+        _ => return Err(io::Error::other(format!("setcap failed ({status})"))),
+    }
+    Command::new(exe).args(args.split_whitespace()).spawn()?;
+    Ok(())
 }
 
 #[cfg(test)]

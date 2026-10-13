@@ -17,6 +17,15 @@ const CONFIG_ARG: &str = "--config";
 /// The app's identifier in `tauri.conf.json`, which names its config folder.
 const IDENTIFIER: &str = "dev.multipath.app";
 
+#[cfg(windows)]
+const MISSING_RIGHTS: &str =
+    "MultiPath needs administrator rights: run it from an elevated terminal";
+#[cfg(target_os = "linux")]
+const MISSING_RIGHTS: &str = concat!(
+    "MultiPath needs network permissions: run it with sudo, or once: sudo setcap ",
+    "cap_net_admin,cap_net_raw+ep <path to multipath>"
+);
+
 /// Runs until asked to stop, and returns the exit code.
 pub fn run() -> i32 {
     log::set_logger(&StderrLog).ok();
@@ -47,6 +56,10 @@ pub fn run() -> i32 {
 }
 
 async fn serve(config_dir: PathBuf) -> i32 {
+    if !sys::is_elevated() {
+        eprintln!("{MISSING_RIGHTS}");
+        return 1;
+    }
     engine::clean_up_stale();
     let state = AppState::new(config_dir, false);
     // Turning on is remembered for the app; a headless run shouldn't change it.

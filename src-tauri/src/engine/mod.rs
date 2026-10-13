@@ -110,7 +110,7 @@ impl Engine {
         let device = tun::AsyncDevice::new(device)?;
         #[cfg(target_os = "linux")]
         if let Err(err) = sys::set_dns(if_index, &dns) {
-            log::warn!("couldn't set the adapter's DNS servers: {err}");
+            log::info!("DNS stays with the system resolver: {err}");
         }
 
         let mut routes = Vec::new();
