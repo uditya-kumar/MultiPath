@@ -101,8 +101,8 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] Link discovery: phone tethers by driver (`rndis_host`, `ipheth`, `cdc_ncm`, `cdc_ether`) or `usb…`, Wi-Fi by `wireless/` or `wl…`, cellular, `en…`/`eth…` as Ethernet; descriptions from udev's hardware database
 
 ### App (`app/`)
-- [ ] Tray on Linux (AppIndicator): menu with Open, Turn on/off, Quit (Linux trays don't report left clicks)
-- [ ] Popup on Linux: same 360 px window, placed at the top-right of the work area, hides on minimize / Esc
+- [x] Tray on Linux (AppIndicator, or an XEmbed icon without a StatusNotifier host): menu with Open, Turn on/off, Quit (Linux trays don't report left clicks)
+- [x] Popup on Linux: same 360 px window in the corner of the work area (top-right under a top panel, else bottom-right; through XWayland, as Wayland windows can't place themselves), hides on minimize / Esc
 - [x] Start on login: `~/.config/autostart/multipath.desktop` (`$XDG_CONFIG_HOME` honoured); the Settings label reads "Start on login" on Linux
 - [x] Off-state admin note and status line per OS (UAC on Windows, one-time permission on Linux), from `Status.platform`; the README part is in the docs task
 

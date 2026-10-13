@@ -1,7 +1,7 @@
-//! The tray popup window: sized to its content and placed above the tray like a
-//! Windows 11 flyout. It stays open when it loses focus, so it can be watched
+//! The tray popup window: sized to its content and placed next to the tray like
+//! a Windows 11 flyout. It stays open when it loses focus, so it can be watched
 //! while working elsewhere; it hides through its minimize button, Esc, or
-//! another click on the tray icon.
+//! another click on the tray icon (Linux trays only open their menu).
 
 use std::sync::Mutex;
 
@@ -54,14 +54,20 @@ fn place(app: &AppHandle, window: &WebviewWindow) -> tauri::Result<()> {
     let margin = MARGIN * scale;
     let mut x = right - width - margin;
     let mut y = bottom - height - margin;
-    if let Some((ax, ay)) = anchor {
+    match anchor {
         // The tray sits outside the work area, on whichever side the taskbar is.
-        if ay < top {
-            y = top + margin;
+        Some((ax, ay)) => {
+            if ay < top {
+                y = top + margin;
+            }
+            if ax < left {
+                x = left + margin;
+            }
         }
-        if ax < left {
-            x = left + margin;
-        }
+        // Not clicked yet, or a Linux tray, which doesn't say where it is: a
+        // panel at the top (as in GNOME) pushes the work area down.
+        None if top > monitor.position().y as f64 => y = top + margin,
+        None => {}
     }
     window.set_size(PhysicalSize::new(
         width.round() as u32,

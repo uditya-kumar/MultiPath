@@ -15,6 +15,12 @@ pub fn run() {
     if has_arg(headless::HEADLESS_ARG) {
         std::process::exit(headless::run());
     }
+    // Wayland doesn't let a window place itself, so the popup would land
+    // wherever the compositor puts it; through XWayland it goes in the corner.
+    #[cfg(target_os = "linux")]
+    if std::env::var_os("GDK_BACKEND").is_none() && std::env::var_os("DISPLAY").is_some() {
+        std::env::set_var("GDK_BACKEND", "x11");
+    }
     let relaunched = has_arg(commands::ELEVATED_ARG);
     let turn_on = has_arg(commands::TURN_ON_ARG);
     let at_sign_in = has_arg(autostart::AUTOSTART_ARG);
