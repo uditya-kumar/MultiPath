@@ -69,6 +69,11 @@ fn place(app: &AppHandle, window: &WebviewWindow) -> tauri::Result<()> {
         None if top > monitor.position().y as f64 => y = top + margin,
         None => {}
     }
+    // GTK keeps a non-resizable window at its first size. Without a frame
+    // there's nothing to drag anyway. Set each time: tao puts the configured
+    // value back once the window is first shown.
+    #[cfg(target_os = "linux")]
+    window.set_resizable(true)?;
     window.set_size(PhysicalSize::new(
         width.round() as u32,
         height.round() as u32,
