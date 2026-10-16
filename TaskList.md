@@ -145,9 +145,15 @@ logs them instead of running them.
 - [x] Menu bar app: `LSUIElement` + `ActivationPolicy::Accessory`; popup centred below the menu bar icon
 - [x] Open at login: a LaunchAgent in `~/Library/LaunchAgents`
 - [x] macOS wording from `Status.platform` ("macOS will ask for an administrator password each time…", "Open at login")
+- [x] Plain-language popup (`UI_REQUIREMENTS.md`): state hero, "Where connections go", link-change messages, Advanced details, empty states, privacy line; light/dark, Reduce Motion and VoiceOver labels on macOS
+
+### Testing
+- [x] Unit tests for macOS discovery, route/address/DNS commands (fake), cleanup idempotency, `IP_BOUND_IF`, helper hand-off, prompt quoting, lsof parsing, LaunchAgent
+- [x] Playwright e2e (`npm run e2e`) over every popup state in dark and light, with axe and console checks
+- [x] Linux fmt/clippy/test in Docker and Windows clippy (cross, check only) after the shared changes
 
 ### Ship
-- [ ] Bundle an arm64 `.app` and `.dmg` (`npm run tauri build`), ad-hoc signed
-- [ ] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits), `BUILD_RESULT.md`
+- [x] Bundle an arm64 `.app` and `.dmg` (`npm run tauri build`), ad-hoc signed
+- [x] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits), `BUILD_RESULT.md`
 - [ ] Live test with Wi-Fi + an iPhone/Android USB tether and the admin password (needs the user: checklist in `BUILD_RESULT.md`)
 - [ ] Signed, notarised release with an `SMAppService` privileged helper or a Network Extension (needs an Apple Developer ID)
