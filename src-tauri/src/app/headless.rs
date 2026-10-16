@@ -26,6 +26,9 @@ const MISSING_RIGHTS: &str = concat!(
     "cap_net_admin,cap_net_raw+ep <path to multipath>"
 );
 
+#[cfg(target_os = "macos")]
+const MISSING_RIGHTS: &str = "MultiPath needs administrator rights: run it with sudo";
+
 /// Runs until asked to stop, and returns the exit code.
 pub fn run() -> i32 {
     log::set_logger(&StderrLog).ok();
@@ -104,7 +107,10 @@ fn config_dir() -> Option<PathBuf> {
     }
     #[cfg(windows)]
     let base = std::env::var_os("APPDATA").map(PathBuf::from);
-    #[cfg(not(windows))]
+    #[cfg(target_os = "macos")]
+    let base = std::env::var_os("HOME")
+        .map(|home| PathBuf::from(home).join("Library/Application Support"));
+    #[cfg(target_os = "linux")]
     let base = std::env::var_os("XDG_CONFIG_HOME")
         .map(PathBuf::from)
         .or_else(|| Some(PathBuf::from(std::env::var_os("HOME")?).join(".config")));

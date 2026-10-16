@@ -31,7 +31,41 @@ export function headerStatus(status: Status, pending: Pending): { text: string; 
 
 /** The system's own name, for the lines that talk about it. */
 function osName(status: Status): string {
-  return status.platform === "linux" ? "Linux" : "Windows";
+  switch (status.platform) {
+    case "linux":
+      return "Linux";
+    case "macos":
+      return "macOS";
+    default:
+      return "Windows";
+  }
+}
+
+/** What turning on will ask for, shown while MultiPath lacks the rights. */
+export function elevationNote(status: Status): string {
+  if (!status.canElevate) {
+    return "The AppImage needs to run with sudo. Install the .deb to turn on without it.";
+  }
+  switch (status.platform) {
+    case "linux":
+      return "Linux will ask for your password once, to give MultiPath network access.";
+    case "macos":
+      return "macOS will ask for an administrator password each time you turn it on.";
+    default:
+      return "Windows will ask for administrator permission the first time.";
+  }
+}
+
+/** The settings switch for starting with the system, in each system's words. */
+export function startAtLoginLabel(status: Status): string {
+  switch (status.platform) {
+    case "linux":
+      return "Start on login";
+    case "macos":
+      return "Open at login";
+    default:
+      return "Start with Windows";
+  }
 }
 
 /** The footer's one-line summary. */

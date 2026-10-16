@@ -20,13 +20,14 @@ pub const ELEVATED_ARG: &str = "--elevated";
 pub const TURN_ON_ARG: &str = "--turn-on";
 
 /// Turns MultiPath on or off. Turning on without administrator rights
-/// restarts MultiPath elevated, through the UAC prompt, and this copy exits.
+/// restarts MultiPath elevated, through the UAC (or pkexec) prompt, and this
+/// copy exits. macOS asks for the password as it turns on instead.
 pub async fn switch(app: &AppHandle, on: bool) -> Result<(), String> {
     let state = app.state::<AppState>();
     let result = if !on {
         state.turn_off(true).await;
         Ok(())
-    } else if sys::is_elevated() {
+    } else if sys::is_elevated() || sys::elevates_in_place() {
         state.turn_on().await
     } else {
         sys::relaunch_elevated(&format!("{ELEVATED_ARG} {TURN_ON_ARG}"))
@@ -115,7 +116,7 @@ pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, 
         tauri::async_runtime::spawn_blocking(move || autostart::set_enabled(enabled))
             .await
             .map_err(|e| e.to_string())?
-            .map_err(|e| format!("Couldn't change Start with Windows: {e}"))?;
+            .map_err(|e| format!("Couldn't change starting at sign-in: {e}"))?;
         state.start_on_login.store(enabled, Ordering::Relaxed);
     }
 

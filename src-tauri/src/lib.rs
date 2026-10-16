@@ -15,6 +15,11 @@ pub fn run() {
     if has_arg(headless::HEADLESS_ARG) {
         std::process::exit(headless::run());
     }
+    #[cfg(target_os = "macos")]
+    if has_arg(engine::HELPER_ARG) {
+        let args: Vec<String> = std::env::args().collect();
+        std::process::exit(engine::run_helper(&args));
+    }
     // Wayland doesn't let a window place itself, so the popup would land
     // wherever the compositor puts it; through XWayland it goes in the corner.
     #[cfg(target_os = "linux")]
@@ -55,12 +60,16 @@ pub fn run() {
             commands::list_connections,
         ])
         .setup(move |app| {
+            // A menu bar app: no Dock icon, no app menu.
+            #[cfg(target_os = "macos")]
+            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
             let elevated = sys::is_elevated();
             if elevated {
                 engine::clean_up_stale();
             }
             let state = AppState::new(app.path().app_config_dir()?, autostart::is_enabled());
-            let start = elevated && (turn_on || state.settings().on);
+            let can_start = elevated || sys::elevates_in_place();
+            let start = can_start && (turn_on || state.settings().on);
             app.manage(state);
             tray::create(app.handle())?;
             ticker::spawn(app.handle().clone());

@@ -15,7 +15,7 @@ use crate::sys;
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Status {
-    /// "windows" or "linux", for the wording that differs.
+    /// "windows", "linux" or "macos", for the wording that differs.
     pub platform: &'static str,
     pub on: bool,
     pub busy: bool,
@@ -51,7 +51,7 @@ pub struct LinkStatus {
     pub health: &'static str,
     /// Connected, with an address and a gateway.
     pub present: bool,
-    /// The network Windows uses on its own.
+    /// The network the system uses on its own.
     pub is_default: bool,
     pub enabled: bool,
     pub weight: u32,

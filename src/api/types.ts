@@ -34,7 +34,7 @@ export interface SettingsStatus {
 }
 
 export interface Status {
-  platform: "windows" | "linux";
+  platform: "windows" | "linux" | "macos";
   on: boolean;
   busy: boolean;
   elevated: boolean;

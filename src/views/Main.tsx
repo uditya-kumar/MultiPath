@@ -7,7 +7,7 @@ import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { NetworkRow } from "../components/NetworkRow";
 import { ShareRing } from "../components/ShareRing";
-import { footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
+import { elevationNote, footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
 
 interface Props {
   status: Status;
@@ -24,7 +24,7 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
   const turn = (on: boolean) => {
     setPending(on ? "on" : "off");
     setError(null);
-    // Without admin rights this restarts MultiPath through the UAC (or pkexec) prompt.
+    // Without admin rights this asks through the UAC, pkexec or macOS password prompt.
     setEnabled(on)
       .then(onStatus)
       .catch((e) => setError(errorText(e)))
@@ -80,13 +80,7 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
               Turn on
             </button>
             {!status.elevated && (
-              <span className="muted">
-                {!status.canElevate
-                  ? "The AppImage needs to run with sudo. Install the .deb to turn on without it."
-                  : status.platform === "linux"
-                    ? "Linux will ask for your password once, to give MultiPath network access."
-                    : "Windows will ask for administrator permission the first time."}
-              </span>
+              <span className="muted">{elevationNote(status)}</span>
             )}
           </div>
         </section>

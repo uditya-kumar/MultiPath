@@ -1,5 +1,5 @@
-//! The notification-area icon: a left click toggles the popup, a right click
-//! opens a small menu. Linux trays (AppIndicator) open the menu on any click
+//! The notification-area (macOS: menu bar) icon: a left click toggles the
+//! popup, a right click opens a small menu. Linux trays (AppIndicator) open the menu on any click
 //! and don't report clicks, so there the menu's "Open" shows the popup.
 
 use std::sync::Mutex;

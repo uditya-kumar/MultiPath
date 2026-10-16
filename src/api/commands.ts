@@ -3,7 +3,10 @@ import type { Connection, OptionChange, Status } from "./types";
 
 export const getStatus = () => invoke<Status>("get_status");
 
-/** Turning on without admin rights restarts MultiPath through the UAC (or pkexec) prompt. */
+/**
+ * Turning on without admin rights restarts MultiPath through the UAC (or pkexec) prompt; on macOS
+ * it asks for the administrator password instead.
+ */
 export const setEnabled = (enabled: boolean) => invoke<Status>("set_enabled", { enabled });
 
 export const setLinkEnabled = (id: string, enabled: boolean) =>

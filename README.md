@@ -6,13 +6,14 @@
 
 **Use Wi-Fi, Ethernet and a USB-tethered phone at the same time, for the whole PC.**
 
-A small tray app for **Windows and Linux**, built with **Tauri v2 and Rust**. Everything runs on your PC: no server,
-no relay, no account.
+A small tray app for **Windows, Linux and macOS (Apple silicon)**, built with **Tauri v2 and Rust**. Everything runs
+on your computer: no server, no relay, no account.
 
 <a href="https://github.com/uditya-kumar/MultiPath/releases/latest"><img src="https://img.shields.io/badge/Download-Latest%20release-4CC2FF?style=for-the-badge&logoColor=white" alt="Download the latest release" /></a>
 
 ![Windows 10/11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-deb%20%7C%20AppImage-FCC624?logo=linux&logoColor=black)
+![macOS](https://img.shields.io/badge/macOS-Apple%20silicon-000000?logo=apple&logoColor=white)
 ![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC131?logo=tauri&logoColor=white)
 ![Rust](https://img.shields.io/badge/Rust-stable-B7410E?logo=rust&logoColor=white)
 [![MIT License](https://img.shields.io/badge/License-MIT-22C55E)](LICENSE)
@@ -61,16 +62,16 @@ server on the internet.
 | App shell | <img src="https://cdn.simpleicons.org/tauri" width="16" height="16" alt="" /> [Tauri v2](https://tauri.app/) |
 | Backend | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> Rust |
 | Async runtime | <img src="https://cdn.simpleicons.org/tokio/8A8A8A" width="16" height="16" alt="" /> [Tokio](https://tokio.rs/) |
-| Traffic capture | <img src="https://cdn.simpleicons.org/wireguard" width="16" height="16" alt="" /> [Wintun](https://www.wintun.net/) adapter on Windows, `/dev/net/tun` on Linux, via the [`tun`](https://crates.io/crates/tun) crate |
+| Traffic capture | <img src="https://cdn.simpleicons.org/wireguard" width="16" height="16" alt="" /> [Wintun](https://www.wintun.net/) adapter on Windows, `/dev/net/tun` on Linux, a `utun` on macOS, via the [`tun`](https://crates.io/crates/tun) crate |
 | TCP/IP stack | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`ipstack`](https://crates.io/crates/ipstack) (userspace) |
 | Packets, sockets | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`etherparse`](https://crates.io/crates/etherparse), [`socket2`](https://crates.io/crates/socket2), [`netdev`](https://crates.io/crates/netdev) |
-| System APIs | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`windows-sys`](https://crates.io/crates/windows-sys), and [`libc`](https://crates.io/crates/libc) with netlink on Linux (routes, sockets, elevation) |
+| System APIs | <img src="https://cdn.simpleicons.org/rust/CE422B" width="16" height="16" alt="" /> [`windows-sys`](https://crates.io/crates/windows-sys), [`libc`](https://crates.io/crates/libc) with netlink on Linux, and on macOS `IP_BOUND_IF` plus `route`/`ifconfig`/`scutil` (routes, sockets, elevation) |
 | Frontend | <img src="https://cdn.simpleicons.org/react" width="16" height="16" alt="" /> React 19 |
 | Language | <img src="https://cdn.simpleicons.org/typescript" width="16" height="16" alt="" /> TypeScript |
 | Build tool | <img src="https://cdn.simpleicons.org/vite" width="16" height="16" alt="" /> Vite |
 | Icons | <img src="https://cdn.simpleicons.org/lucide/F56565" width="16" height="16" alt="" /> [Lucide](https://lucide.dev/) |
 | Tests | <img src="https://cdn.simpleicons.org/vitest" width="16" height="16" alt="" /> [Vitest](https://vitest.dev/), `cargo test` |
-| Packaging | <img src="https://cdn.simpleicons.org/nsis/8A8A8A" width="16" height="16" alt="" /> NSIS, <img src="https://cdn.simpleicons.org/debian/A80030" width="16" height="16" alt="" /> `.deb` and AppImage (through Tauri) |
+| Packaging | <img src="https://cdn.simpleicons.org/nsis/8A8A8A" width="16" height="16" alt="" /> NSIS, <img src="https://cdn.simpleicons.org/debian/A80030" width="16" height="16" alt="" /> `.deb` and AppImage, <img src="https://cdn.simpleicons.org/apple/8A8A8A" width="16" height="16" alt="" /> `.app` and `.dmg` (through Tauri) |
 
 ## How it works
 
@@ -133,14 +134,26 @@ chmod +x MultiPath_<version>_amd64.AppImage
 sudo ./MultiPath_<version>_amd64.AppImage
 ```
 
+### macOS (Apple silicon)
+
+1. Open `MultiPath_<version>_aarch64.dmg` and drag MultiPath to Applications.
+2. The build isn't notarised, so the first time, right-click MultiPath → **Open** (or allow it under System Settings →
+   Privacy & Security).
+3. Click the MultiPath icon in the menu bar and turn it on. macOS asks for an administrator password **each time** you
+   turn it on: a small helper runs as root just long enough to add the adapter, routes and DNS, then hands the adapter
+   to the app and waits to remove them again. The app itself never runs as root.
+
+USB tethering: an iPhone shows up as *iPhone USB* once you trust the Mac and turn on Personal Hotspot. Android phones
+need USB tethering over NCM (most phones since Android 11); RNDIS-only phones don't work on Apple silicon.
+
 | Requirement | Why |
 |---|---|
-| Windows 10 or 11 (64-bit), or a 64-bit Linux desktop | Uses each system's networking APIs |
-| Administrator rights, or `CAP_NET_ADMIN` on Linux | Needed to add the adapter and routes |
+| Windows 10 or 11 (64-bit), a 64-bit Linux desktop, or macOS 12+ on Apple silicon | Uses each system's networking APIs |
+| Administrator rights (`CAP_NET_ADMIN` on Linux, the admin password on macOS) | Needed to add the adapter and routes |
 | Two or more working networks | Otherwise there's nothing to combine |
 
-*Start with Windows* / *Start on login* (in Settings) puts MultiPath in the tray when you sign in, with no
-permission prompt.
+*Start with Windows* / *Start on login* / *Open at login* (in Settings) puts MultiPath in the tray when you sign in.
+On Windows and Linux there's no permission prompt; on macOS the password is asked when it turns on.
 
 **On Linux,** the tray icon needs a panel that shows app indicators — GNOME needs the *AppIndicator* extension. Only
 `systemd-resolved` systems get MultiPath's own DNS settings; elsewhere the system resolver is used, which works too.
@@ -152,7 +165,8 @@ permission prompt.
 - [Rust](https://rustup.rs/) (stable)
 - [Node.js](https://nodejs.org/) 20 or newer
 - [Tauri prerequisites](https://tauri.app/start/prerequisites/) — WebView2 and MSVC build tools on Windows;
-  `libwebkit2gtk-4.1-dev`, `libgtk-3-dev` and `libayatana-appindicator3-dev` on Linux
+  `libwebkit2gtk-4.1-dev`, `libgtk-3-dev` and `libayatana-appindicator3-dev` on Linux; the Xcode command line tools
+  on macOS
 
 **Run it:**
 
@@ -166,7 +180,7 @@ npm run tauri dev       # opens the app; run it as administrator or root, or acc
 **Build the packages:**
 
 ```sh
-npm run tauri build     # Windows: bundle/nsis/ · Linux: bundle/deb/ and bundle/appimage/
+npm run tauri build     # Windows: bundle/nsis/ · Linux: bundle/deb/ and bundle/appimage/ · macOS: bundle/macos/ and bundle/dmg/
 ```
 
 **Check before committing:**
@@ -184,12 +198,15 @@ cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings &
 | `src-tauri/src/app/` | Tauri glue: settings, status, commands, tray and popup |
 | `src-tauri/src/engine/` | Traffic capture and relaying (TCP, UDP, ICMP) |
 | `src-tauri/src/net/` | Networks, health checks, the balancer |
-| `src-tauri/src/sys/` | System API wrappers: `windows/` and `linux/`, behind one API |
+| `src-tauri/src/sys/` | System API wrappers: `windows/`, `linux/` and `macos/`, behind one API |
 
 ## Limits
 
 - One connection always uses one network.
 - A full-tunnel VPN takes over the routes while it's connected.
+- On macOS, Tailscale and other split-tunnel VPNs keep their own routes and DNS; MultiPath only spreads what's left.
+- The macOS build is ad-hoc signed and asks for the administrator password at every turn-on. A signed, notarised
+  release would use a privileged helper (`SMAppService`) or a Network Extension instead.
 - Some sites sign you out if your requests come from different addresses. Turn on *Keep sites on one network* for those.
 
 ## License

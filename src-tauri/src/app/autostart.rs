@@ -2,6 +2,8 @@
 
 #[cfg(target_os = "linux")]
 pub use desktop_entry::{is_enabled, set_enabled};
+#[cfg(target_os = "macos")]
+pub use launch_agent::{is_enabled, set_enabled};
 #[cfg(windows)]
 pub use scheduled_task::{is_enabled, set_enabled};
 
@@ -204,6 +206,106 @@ mod desktop_entry {
             let text = entry("/opt/Multi Path/50%/multi\"path");
             assert!(text.starts_with("[Desktop Entry]\nType=Application\n"));
             assert!(text.contains("Exec=\"/opt/Multi Path/50%%/multi\\\"path\" --autostart\n"));
+        }
+    }
+}
+
+/// launchd starts every agent in `~/Library/LaunchAgents` when the user logs
+/// in. MultiPath asks for administrator rights as it turns on, so the agent
+/// itself needs none.
+#[cfg(target_os = "macos")]
+mod launch_agent {
+    use std::io;
+    use std::path::PathBuf;
+
+    use super::AUTOSTART_ARG;
+
+    const LABEL: &str = "dev.multipath.app";
+
+    pub fn is_enabled() -> bool {
+        agent_path().is_some_and(|path| path.exists())
+    }
+
+    pub fn set_enabled(enabled: bool) -> io::Result<()> {
+        let path =
+            agent_path().ok_or_else(|| io::Error::other("could not find the home folder"))?;
+        if enabled {
+            let exe = std::env::current_exe()?;
+            if let Some(dir) = path.parent() {
+                std::fs::create_dir_all(dir)?;
+            }
+            std::fs::write(&path, plist(&exe.to_string_lossy()))
+        } else {
+            match std::fs::remove_file(&path) {
+                Err(err) if err.kind() == io::ErrorKind::NotFound => Ok(()),
+                other => other,
+            }
+        }
+    }
+
+    fn agent_path() -> Option<PathBuf> {
+        let home = std::env::var_os("HOME").filter(|home| !home.is_empty())?;
+        Some(
+            PathBuf::from(home)
+                .join("Library/LaunchAgents")
+                .join(format!("{LABEL}.plist")),
+        )
+    }
+
+    fn escape(s: &str) -> String {
+        s.replace('&', "&amp;")
+            .replace('<', "&lt;")
+            .replace('>', "&gt;")
+    }
+
+    /// Runs once at login, in the user's session, and isn't restarted after Quit.
+    fn plist(exe: &str) -> String {
+        let exe = escape(exe);
+        format!(
+            r#"<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>{LABEL}</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>{exe}</string>
+    <string>{AUTOSTART_ARG}</string>
+  </array>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <false/>
+  <key>ProcessType</key>
+  <string>Interactive</string>
+  <key>LimitLoadToSessionType</key>
+  <string>Aqua</string>
+</dict>
+</plist>
+"#
+        )
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn agent_runs_the_app_at_login() {
+            let text = plist("/Applications/A&B <x>.app/Contents/MacOS/multipath");
+            assert!(text.contains(
+                "<string>/Applications/A&amp;B &lt;x&gt;.app/Contents/MacOS/multipath</string>"
+            ));
+            assert!(text.contains("<string>--autostart</string>"));
+            assert!(text.contains("<key>RunAtLoad</key>\n  <true/>"));
+            assert!(text.contains("<string>dev.multipath.app</string>"));
+        }
+
+        #[test]
+        fn agent_lives_in_the_users_library() {
+            let path = agent_path().unwrap();
+            assert!(path.ends_with("Library/LaunchAgents/dev.multipath.app.plist"));
         }
     }
 }

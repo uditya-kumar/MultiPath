@@ -7,6 +7,8 @@
 mod flows;
 mod gate;
 mod icmp;
+#[cfg(target_os = "macos")]
+mod privileged;
 mod sniff;
 mod tcp;
 mod udp;
@@ -22,20 +24,26 @@ use std::time::Duration;
 use ipstack::{IpStack, IpStackConfig, IpStackStream, TcpConfig};
 use tokio::sync::watch;
 use tokio::task::JoinHandle;
+#[cfg(not(target_os = "macos"))]
 use tun::AbstractDevice;
 
 pub use flows::{Flow, Flows};
+#[cfg(target_os = "macos")]
+pub use privileged::{run_helper, HELPER_ARG};
 
 use crate::net::links::Links;
 use crate::net::router::{Proto, Router};
 #[cfg(target_os = "linux")]
+use crate::sys;
+#[cfg(target_os = "linux")]
 use crate::sys::LooseRpFilter;
 #[cfg(windows)]
 use crate::sys::PreferIpv4;
-use crate::sys::{self, Route};
+use crate::sys::Route;
 use flows::FlowGuard;
 
-/// Name of the virtual adapter MultiPath creates.
+/// Name of the virtual adapter MultiPath creates. macOS names every utun
+/// itself (`utunN`), so there the adapter is known by its address.
 pub const TUN_NAME: &str = "MultiPath";
 pub const TUN_V4: Ipv4Addr = Ipv4Addr::new(10, 77, 0, 1);
 /// A unique local address, so IPv6 can be captured too.
@@ -68,7 +76,11 @@ pub struct EngineConfig {
 
 pub struct Engine {
     pub flows: Arc<Flows>,
+    #[cfg(not(target_os = "macos"))]
     routes: Vec<Route>,
+    /// The routes and DNS, held by the privileged helper or by this process.
+    #[cfg(target_os = "macos")]
+    tunnel: privileged::Tunnel,
     #[cfg(windows)]
     prefer_ipv4: Option<PreferIpv4>,
     #[cfg(target_os = "linux")]
@@ -84,49 +96,16 @@ impl Engine {
         links: Arc<Links>,
         router: Arc<Router>,
     ) -> io::Result<Engine> {
-        #[cfg(windows)]
-        let wintun = wintun_path();
-        #[cfg(windows)]
-        if !wintun.is_file() {
-            return Err(io::Error::new(
-                io::ErrorKind::NotFound,
-                format!("{} is missing", wintun.display()),
-            ));
-        }
-        clean_up_stale();
-
-        let dns = config.dns;
-        #[cfg(windows)]
-        let setup = {
-            let dns = dns.clone();
-            move || create_adapter(&dns, wintun)
-        };
-        #[cfg(target_os = "linux")]
-        let setup = create_adapter;
-        let device = tokio::task::spawn_blocking(setup)
-            .await
-            .map_err(io::Error::other)??;
-        let if_index = device.tun_index().map_err(io::Error::other)? as u32;
-        let device = tun::AsyncDevice::new(device)?;
-        #[cfg(target_os = "linux")]
-        if let Err(err) = sys::set_dns(if_index, &dns) {
-            log::info!("DNS stays with the system resolver: {err}");
-        }
-
-        let mut routes = Vec::new();
-        // IPv6 is always captured, even when no network has it yet or it's
-        // switched off: otherwise it would go straight out of whichever
-        // network has an IPv6 route, around MultiPath. Flows the router has
-        // no link for are refused.
-        sys::add_unicast_address(if_index, IpAddr::V6(TUN_V6), 64)?;
-        for (prefix, len) in CAPTURE_V4.into_iter().chain(CAPTURE_V6) {
-            routes.push(Route::add(if_index, prefix, len)?);
-        }
+        #[cfg(not(target_os = "macos"))]
+        let (device, routes) = open_adapter(config.dns).await?;
+        #[cfg(target_os = "macos")]
+        let (device, tunnel) = privileged::open(config.dns).await?;
 
         // Sites with both families are reached over IPv4, which every
         // network has, so their connections can be spread across all of them.
-        // glibc already does this on Linux: the adapter's unique local
-        // address doesn't share a label with global IPv6 (RFC 6724, rule 5).
+        // glibc already does this on Linux, and so does macOS: the adapter's
+        // unique local address doesn't share a label with global IPv6
+        // (RFC 6724, rule 5).
         #[cfg(windows)]
         let prefer_ipv4 = PreferIpv4::apply()
             .inspect_err(|err| log::warn!("couldn't make IPv4 preferred: {err}"))
@@ -143,10 +122,13 @@ impl Engine {
             tokio::spawn(accept(stack, router, flows.clone(), stopped.clone())),
             tokio::spawn(close_flows_on_lost_links(links, flows.clone(), stopped)),
         ];
-        log::info!("engine started on interface {if_index}");
+        log::info!("engine started");
         Ok(Engine {
             flows,
+            #[cfg(not(target_os = "macos"))]
             routes,
+            #[cfg(target_os = "macos")]
+            tunnel,
             #[cfg(windows)]
             prefer_ipv4,
             #[cfg(target_os = "linux")]
@@ -164,7 +146,10 @@ impl Engine {
     /// Stops capturing and removes the adapter.
     pub async fn stop(self) {
         // Routes first, so traffic goes straight back to the real networks.
+        #[cfg(not(target_os = "macos"))]
         drop(self.routes);
+        #[cfg(target_os = "macos")]
+        self.tunnel.close().await;
         #[cfg(windows)]
         drop(self.prefer_ipv4);
         #[cfg(target_os = "linux")]
@@ -175,6 +160,37 @@ impl Engine {
         }
         log::info!("engine stopped");
     }
+}
+
+/// Creates the adapter, points its DNS at `dns` and adds the capture routes.
+#[cfg(not(target_os = "macos"))]
+async fn open_adapter(dns: Vec<IpAddr>) -> io::Result<(tun::AsyncDevice, Vec<Route>)> {
+    #[cfg(windows)]
+    let wintun = wintun_path();
+    #[cfg(windows)]
+    if !wintun.is_file() {
+        return Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("{} is missing", wintun.display()),
+        ));
+    }
+    clean_up_stale();
+
+    #[cfg(windows)]
+    let setup = move || create_adapter(&dns, wintun);
+    #[cfg(target_os = "linux")]
+    let setup = create_adapter;
+    let device = tokio::task::spawn_blocking(setup)
+        .await
+        .map_err(io::Error::other)??;
+    let if_index = device.tun_index().map_err(io::Error::other)? as u32;
+    let device = tun::AsyncDevice::new(device)?;
+    #[cfg(target_os = "linux")]
+    if let Err(err) = sys::set_dns(if_index, &dns) {
+        log::info!("DNS stays with the system resolver: {err}");
+    }
+    log::info!("adapter up on interface {if_index}");
+    Ok((device, add_capture(if_index)?))
 }
 
 /// `wintun.dll` is installed in `resources/` next to the executable; in
@@ -190,10 +206,29 @@ fn wintun_path() -> PathBuf {
     }
 }
 
+/// The routes that send everything into the adapter, IPv6 included: it's
+/// always captured, even when no network has it yet or it's switched off,
+/// otherwise it would go straight out of whichever network has an IPv6
+/// route, around MultiPath. Flows the router has no link for are refused.
+/// Needs administrator rights.
+fn add_capture(if_index: u32) -> io::Result<Vec<Route>> {
+    crate::sys::add_unicast_address(if_index, IpAddr::V6(TUN_V6), 64)?;
+    CAPTURE_V4
+        .into_iter()
+        .chain(CAPTURE_V6)
+        .map(|(prefix, len)| Route::add(if_index, prefix, len))
+        .collect()
+}
+
 fn tun_config() -> tun::Configuration {
     let mut config = tun::Configuration::default();
+    #[cfg(not(target_os = "macos"))]
+    config.tun_name(TUN_NAME);
+    // A utun is point-to-point; naming itself as the other end is how macOS
+    // VPNs configure one.
+    #[cfg(target_os = "macos")]
+    config.destination(TUN_V4);
     config
-        .tun_name(TUN_NAME)
         .address(TUN_V4)
         .netmask(Ipv4Addr::new(255, 255, 255, 0))
         .mtu(MTU)
@@ -234,14 +269,21 @@ fn stack_config() -> IpStackConfig {
     config
 }
 
-/// Windows names the adapter in its friendly name, Linux in the interface name.
+/// Windows names the adapter in its friendly name, Linux in the interface
+/// name; on macOS (`utunN`) only its address tells it from a VPN's utun.
 pub fn is_tun(itf: &netdev::Interface) -> bool {
-    itf.name == TUN_NAME || itf.friendly_name.as_deref() == Some(TUN_NAME)
+    itf.name == TUN_NAME
+        || itf.friendly_name.as_deref() == Some(TUN_NAME)
+        || itf.ipv4.iter().any(|net| net.addr() == TUN_V4)
 }
 
 /// Removes capture routes a crashed run left on the adapter, which would
 /// otherwise send all traffic into an adapter nobody reads.
 pub fn clean_up_stale() {
+    #[cfg(target_os = "macos")]
+    if crate::sys::ResolverOverride::remove_stale() {
+        log::info!("removed stale DNS servers");
+    }
     let Some(adapter) = netdev::get_interfaces().into_iter().find(is_tun) else {
         return;
     };

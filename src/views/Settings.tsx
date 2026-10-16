@@ -13,6 +13,7 @@ import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
 import { networkColor } from "../lib/format";
+import { startAtLoginLabel } from "../lib/summary";
 
 interface Props {
   status: Status;
@@ -89,7 +90,7 @@ export function Settings({ status, onStatus, onBack }: Props) {
       <div className="divider" />
       <Section title="App">
         <SwitchRow
-          label={status.platform === "linux" ? "Start on login" : "Start with Windows"}
+          label={startAtLoginLabel(status)}
           on={settings.startOnLogin}
           onChange={(startOnLogin) => change({ startOnLogin })}
         />

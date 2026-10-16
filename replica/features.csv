@@ -1,34 +1,34 @@
 feature,area,priority,original,clone,notes
-Native arm64 macOS build of the Tauri app,platform,must,no,no,new target; Windows and Linux must keep building
-Menu-bar (tray) icon with Open / Turn on-off / Quit,app,must,yes,no,macOS: accessory app with no Dock icon
-360 px popup placed under the menu-bar icon,app,must,yes,no,
-Enumerate physical Wi-Fi / Ethernet / USB-tether links,net,must,yes,no,macOS: enN ports by SystemConfiguration name
-Exclude loopback / virtual / VPN tunnels / own adapter,net,must,yes,no,macOS: utun awdl llw ap bridge anpi Thunderbolt ports
-Classify iPhone / Android USB tethers as phone,net,must,yes,no,
-Create the virtual adapter,sys,must,yes,no,macOS: utunN via tun crate; IPv6 ULA alias
-Capture routes 0/1 128/1 ::/1 8000::/1 and remove on stop,sys,must,yes,no,macOS: route(8) commands with -interface
-Clean stale capture routes at startup (idempotent),sys,must,yes,no,
-Pin relay sockets to the chosen link,sys,must,yes,no,macOS: IP_BOUND_IF / IPV6_BOUND_IF
-ICMP echo relay so ping works while on,sys,should,yes,no,macOS: SOCK_DGRAM ICMP socket bound with IP_BOUND_IF
-Per-connection balancing weight x capacity / (busy + 1),engine,must,yes,no,shared code; must stay unchanged
-Sticky destinations option,engine,must,yes,no,shared code
-Health probes every 5 s; two misses take a link down,net,must,yes,no,shared code
-Close flows on a lost link so apps reconnect,engine,must,yes,no,shared code
-IPv6 gate: refuse IPv6 SYNs when no link carries IPv6,engine,must,yes,no,shared code
-Per-link counters and combined-speed ring,app,must,yes,no,shared code
-Connections page with owning app,app,should,yes,no,macOS: socket owners via libproc
-DNS servers on the adapter while on,sys,should,yes,no,macOS: scutil dynamic-store supplemental resolver; removed on stop and at start
-Admin privileges prompt and relaunch,sys,must,yes,no,macOS: osascript administrator prompt for an unsigned dev build
-Single instance with show-on-second-launch,sys,must,yes,no,
-Start on login,app,should,yes,no,macOS: LaunchAgent plist in ~/Library/LaunchAgents
-macOS wording in the popup (platform = macos),ui,must,yes,no,
-Headless runner (--headless) on macOS,app,should,yes,no,
-Dry-run of route and DNS commands (no system change),sys,must,no,no,safety rule for automated testing
-Unit tests for macOS filtering / commands / binding / cleanup,test,must,no,no,
+Native arm64 macOS build of the Tauri app,platform,must,no,yes,cargo check/clippy/test green on arm64; release build pending
+Menu-bar (tray) icon with Open / Turn on-off / Quit,app,must,yes,yes,accessory app (LSUIElement + ActivationPolicy::Accessory); not clicked live yet
+360 px popup placed under the menu-bar icon,app,must,yes,yes,"centred under the clicked icon, clamped to the work area"
+Enumerate physical Wi-Fi / Ethernet / USB-tether links,net,must,yes,yes,verified live: en0 Wi-Fi found with gateway; tether not plugged in (unverified)
+Exclude loopback / virtual / VPN tunnels / own adapter,net,must,yes,yes,verified live: utun8 (Tailscale) bridge0 en1-3 en4-6 awdl llw ap anpi excluded; own utun by 10.77.0.1
+Classify iPhone / Android USB tethers as phone,net,must,yes,partial,"by SystemConfiguration name (iPhone/iPad USB, Pixel, Galaxy, …); Android names vary"
+Create the virtual adapter,sys,must,yes,partial,utunN via tun crate in the root helper; needs admin to verify live
+Capture routes 0/1 128/1 ::/1 8000::/1 and remove on stop,sys,must,yes,partial,route(8) argv unit-tested with a fake; live run needs admin
+Clean stale capture routes at startup (idempotent),sys,must,yes,yes,routes die with the utun; stale DNS key and live-utun routes removed; idempotent (tested)
+Pin relay sockets to the chosen link,sys,must,yes,yes,IP_BOUND_IF/IPV6_BOUND_IF; verified live: health probe through en0 in 13 ms
+ICMP echo relay so ping works while on,sys,should,yes,yes,"verified live: echo to 1.1.1.1 via en0 with IP_BOUND_IF, unprivileged"
+Per-connection balancing weight x capacity / (busy + 1),engine,must,yes,yes,shared code unchanged; tests pass on macOS
+Sticky destinations option,engine,must,yes,yes,shared code
+Health probes every 5 s; two misses take a link down,net,must,yes,yes,shared code; live probe works on macOS
+Close flows on a lost link so apps reconnect,engine,must,yes,yes,shared code
+IPv6 gate: refuse IPv6 SYNs when no link carries IPv6,engine,must,yes,yes,shared code
+Per-link counters and combined-speed ring,app,must,yes,yes,shared code
+Connections page with owning app,app,should,yes,yes,lsof -F parsing (tested) + proc_name
+DNS servers on the adapter while on,sys,should,yes,partial,scutil supplemental resolver; script unit-tested; effect on live resolver unverified
+Admin privileges prompt and relaunch,sys,must,yes,partial,osascript admin prompt starts a root helper that passes the utun fd; protocol tested; live prompt unverified
+Single instance with show-on-second-launch,sys,must,yes,yes,Linux POSIX implementation reused; tests pass on macOS
+Start on login,app,should,yes,yes,LaunchAgent plist (tested)
+macOS wording in the popup (platform = macos),ui,must,yes,yes,"header, permission note, Open at login (tested)"
+Headless runner (--headless) on macOS,app,should,yes,yes,sudo; in-process setup without the helper
+Dry-run of route and DNS commands (no system change),sys,must,no,yes,MULTIPATH_DRY_RUN=1; also blocks the admin prompt
+Unit tests for macOS filtering / commands / binding / cleanup,test,must,no,yes,
 Package .app (arm64),ship,must,no,no,
 Package .dmg,ship,should,no,no,if the toolchain allows
 macOS setup and limits docs,docs,must,no,no,README + BUILD_RESULT.md
-Prefer IPv4 over adapter ULA,sys,could,yes,no,macOS getaddrinfo already prefers global IPv6 over ULA (RFC 6724) - nothing to change
+Prefer IPv4 over adapter ULA,sys,could,yes,yes,not needed: macOS RFC 6724 policy table already prefers IPv4 over the ULA
 Popup vibrancy (Mica on Windows),ui,could,yes,no,
 Signed + notarised build with privileged helper (SMAppService),ship,could,no,skip,needs an Apple Developer ID; documented only
 Network Extension packet tunnel,platform,could,no,skip,needs entitlement and signing; documented only
