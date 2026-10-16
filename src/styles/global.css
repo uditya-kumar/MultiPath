@@ -63,7 +63,12 @@ button {
 }
 
 .dim {
-  opacity: 0.55;
+  opacity: var(--dim);
+}
+
+/* On macOS only the icon fades, so the "Not connected" text stays readable. */
+:root[data-platform="macos"] .dim .icon-box {
+  opacity: 0.45;
 }
 
 .muted {

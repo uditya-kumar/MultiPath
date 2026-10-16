@@ -36,6 +36,14 @@
   --radius-sm: 4px;
   --radius: 6px;
   --radius-lg: 8px;
+  /* Opacity of a network that isn't connected. */
+  --dim: 0.55;
+}
+
+/* macOS: muted 11 px text at WCAG AA contrast (4.5:1) on the translucent popup. */
+:root[data-platform="macos"] {
+  --text-3: #a8a8a8;
+  --dim: 1;
 }
 
 /* Windows and Linux keep the design's dark flyout; macOS follows its appearance setting. */
@@ -50,7 +58,7 @@
     --border: #00000017;
     --text: #1d1d1f;
     --text-2: #3c3c43;
-    --text-3: #6b6b70;
+    --text-3: #57575c;
     --accent: #0067c0;
     --accent-hover: #0a74d0;
     --on-accent: #ffffff;
