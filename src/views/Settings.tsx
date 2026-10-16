@@ -13,6 +13,7 @@ import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
 import { networkColor } from "../lib/format";
+import { deviceName } from "../lib/hero";
 import { startAtLoginLabel } from "../lib/summary";
 
 interface Props {
@@ -48,19 +49,19 @@ export function Settings({ status, onStatus, onBack }: Props) {
       <Section title="Balancing">
         <SwitchRow
           label="Adaptive weighting"
-          desc="Faster networks get more new connections, based on what they actually deliver."
+          desc="Faster networks get more new connections, based on the speed each one really delivers."
           on={settings.adaptive}
           onChange={(adaptive) => change({ adaptive })}
         />
         <SwitchRow
           label="Keep sites on one network"
-          desc="Fixes sign-outs on banking sites, but one site no longer gets the combined speed."
+          desc="Sends every connection to one website through the same network. Fixes sites that sign you out (like some banks), but that site no longer gets the combined speed."
           on={settings.sticky}
           onChange={(sticky) => change({ sticky })}
         />
         <SwitchRow
           label="Include IPv6"
-          desc="Balance IPv6 traffic on networks that have it."
+          desc="Also spread the newer kind of internet address (IPv6), on networks where it works."
           on={settings.captureIpv6}
           onChange={(captureIpv6) => change({ captureIpv6 })}
         />
@@ -95,6 +96,19 @@ export function Settings({ status, onStatus, onBack }: Props) {
           onChange={(startOnLogin) => change({ startOnLogin })}
         />
         <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
+      </Section>
+
+      <div className="divider" />
+      <Section title="Privacy">
+        <div className="setting-row">
+          <div className="setting-text">
+            <span className="setting-label">Everything stays on {deviceName(status)}</span>
+            <span className="setting-desc">
+              MultiPath has no server, no relay and no account. Your traffic goes straight out
+              through your own networks.
+            </span>
+          </div>
+        </div>
       </Section>
       <div className="bottom-spacer" />
     </>
@@ -217,7 +231,9 @@ function DnsRow({ dns, onSave }: DnsRowProps) {
       <button type="button" className="setting-row" onClick={open}>
         <div className="setting-text">
           <span className="setting-label">DNS servers</span>
-          <span className="setting-desc">{dns.join(", ")}</span>
+          <span className="setting-desc">
+            Look up website names while MultiPath is on: {dns.join(", ")}
+          </span>
         </div>
         <ChevronRight size={16} />
       </button>

@@ -63,16 +63,22 @@ export function networkColor(kind: LinkKind): string {
   }
 }
 
-/** The second line of a network row: "192.168.1.40 · 18 ms". */
-export function networkMeta(link: LinkStatus): string {
+/** A network's health in plain words, and whether it's a problem. */
+export function healthText(link: LinkStatus, live: boolean): { text: string; problem: boolean } {
   if (!link.present) {
-    return link.kind === "ethernet" ? "Cable unplugged" : "Not connected";
+    return { text: link.kind === "ethernet" ? "Cable unplugged" : "Not connected", problem: false };
   }
-  const parts: string[] = [];
-  if (link.address) parts.push(link.address);
-  if (link.health === "down") parts.push("No internet");
-  else if (link.latencyMs != null) parts.push(`${link.latencyMs} ms`);
-  return parts.join(" · ");
+  if (!link.enabled) return { text: "Switched off", problem: false };
+  if (link.health === "down") return { text: "No internet", problem: true };
+  if (link.health === "unknown") return { text: "Checking…", problem: false };
+  const latency = link.latencyMs != null ? ` · ${link.latencyMs} ms` : "";
+  return { text: `${live ? "In use" : "Working"}${latency}`, problem: false };
+}
+
+/** A link speed the adapter reports, in bits per second: "866 Mbit/s". */
+export function formatLinkSpeed(bitsPerSecond: number): string {
+  if (bitsPerSecond >= 1e9) return `${(bitsPerSecond / 1e9).toFixed(1)} Gbit/s`;
+  return `${Math.round(bitsPerSecond / 1e6)} Mbit/s`;
 }
 
 /** How long a connection has been open: "45 s", "3 min", "2 h". */

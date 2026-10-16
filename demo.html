@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MultiPath — states</title>
+    <style>
+      /* A desktop behind the translucent popup, as on screen. */
+      html body.demo {
+        background: #1d2633;
+      }
+      /* The popup's real width (headless browsers won't open a window this narrow). */
+      html body.demo .popup {
+        width: 360px;
+      }
+      @media (prefers-color-scheme: light) {
+        html body.demo {
+          background: #d9e1ea;
+        }
+      }
+    </style>
+  </head>
+  <body class="demo">
+    <!-- Development only (npm run dev, then /demo.html?state=active): never bundled. -->
+    <div id="root"></div>
+    <script type="module" src="/src/demo/main.tsx"></script>
+  </body>
+</html>

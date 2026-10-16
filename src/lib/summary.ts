@@ -16,7 +16,9 @@ export function headerStatus(status: Status, pending: Pending): { text: string; 
     return { text: switching === "on" ? "Turning on…" : "Turning off…", dot: "var(--text-3)" };
   }
   if (status.on) {
-    const n = inUse(status.links).length;
+    // Networks that can take new connections right now, as the hero counts them.
+    const n = inUse(status.links).filter((l) => l.health !== "down").length;
+    if (n === 0) return { text: "On · no network is working", dot: "var(--warn)" };
     return {
       text: n === 1 ? "On · using 1 network" : `Combining ${n} networks`,
       dot: status.error ? "var(--warn)" : "var(--ok)",

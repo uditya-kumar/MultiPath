@@ -1,6 +1,10 @@
-/* Design tokens, from the variables in design.pen (read through Pencil). */
+/* Design tokens, from the variables in design.pen (read through Pencil). The status colours and
+   the light set were added for the macOS port. */
 :root {
   --bg: #2b2b2b;
+  --popup-bg: rgb(43 43 43 / 0.9);
+  --footer-bg: rgb(32 32 32 / 0.9);
+  --input-bg: rgb(0 0 0 / 0.2);
   --bg-footer: #202020;
   --surface: #ffffff0d;
   --surface-hover: #ffffff14;
@@ -9,9 +13,13 @@
   --text-2: #c8c8c8;
   --text-3: #8e8e8e;
   --accent: #4cc2ff;
+  --accent-hover: #5fcaff;
   --on-accent: #000000;
   --ok: #6ccb5f;
   --warn: #fce100;
+  --warn-bg: rgb(252 225 0 / 0.08);
+  --danger: #ff99a4;
+  --danger-bg: rgb(255 153 164 / 0.08);
   --net-wifi: #4cc2ff;
   --net-phone: #ffb454;
   --net-eth: #b98cff;
@@ -23,8 +31,43 @@
   --thumb: #454545;
   --thumb-border: #ffffff1f;
 
-  --font: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --font:
+    "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, Inter, system-ui, sans-serif;
   --radius-sm: 4px;
   --radius: 6px;
   --radius-lg: 8px;
+}
+
+/* Windows and Linux keep the design's dark flyout; macOS follows its appearance setting. */
+@media (prefers-color-scheme: light) {
+  :root[data-platform="macos"] {
+    --bg: #f6f6f6;
+    --popup-bg: rgb(246 246 246 / 0.94);
+    --footer-bg: rgb(236 236 236 / 0.94);
+    --input-bg: #ffffff;
+    --surface: #0000000a;
+    --surface-hover: #00000012;
+    --border: #00000017;
+    --text: #1d1d1f;
+    --text-2: #3c3c43;
+    --text-3: #6b6b70;
+    --accent: #0067c0;
+    --accent-hover: #0a74d0;
+    --on-accent: #ffffff;
+    --ok: #107c10;
+    --warn: #8a5300;
+    --warn-bg: rgb(138 83 0 / 0.08);
+    --danger: #c42b1c;
+    --danger-bg: rgb(196 43 28 / 0.07);
+    --net-wifi: #0a7bbf;
+    --net-phone: #b86200;
+    --net-eth: #7c4dcc;
+
+    --track: #0000000f;
+    --toggle-off: #0000008a;
+    --knob-off: #000000a0;
+    --rail: #00000024;
+    --thumb: #ffffff;
+    --thumb-border: #00000029;
+  }
 }

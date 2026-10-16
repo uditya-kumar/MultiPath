@@ -1,5 +1,5 @@
 feature,area,priority,original,clone,notes
-Native arm64 macOS build of the Tauri app,platform,must,no,yes,cargo check/clippy/test green on arm64; release build pending
+Native arm64 macOS build of the Tauri app,platform,must,no,yes,cargo fmt/clippy/test green on arm64; release .app built
 Menu-bar (tray) icon with Open / Turn on-off / Quit,app,must,yes,yes,accessory app (LSUIElement + ActivationPolicy::Accessory); not clicked live yet
 360 px popup placed under the menu-bar icon,app,must,yes,yes,"centred under the clicked icon, clamped to the work area"
 Enumerate physical Wi-Fi / Ethernet / USB-tether links,net,must,yes,yes,verified live: en0 Wi-Fi found with gateway; tether not plugged in (unverified)
@@ -25,11 +25,18 @@ macOS wording in the popup (platform = macos),ui,must,yes,yes,"header, permissio
 Headless runner (--headless) on macOS,app,should,yes,yes,sudo; in-process setup without the helper
 Dry-run of route and DNS commands (no system change),sys,must,no,yes,MULTIPATH_DRY_RUN=1; also blocks the admin prompt
 Unit tests for macOS filtering / commands / binding / cleanup,test,must,no,yes,
-Package .app (arm64),ship,must,no,no,
-Package .dmg,ship,should,no,no,if the toolchain allows
-macOS setup and limits docs,docs,must,no,no,README + BUILD_RESULT.md
+Package .app (arm64),ship,must,no,yes,ad-hoc signed
+Package .dmg,ship,should,no,yes,CI=true skips the Finder styling AppleScript
+macOS setup and limits docs,docs,must,no,yes,README + BUILD_RESULT.md
 Prefer IPv4 over adapter ULA,sys,could,yes,yes,not needed: macOS RFC 6724 policy table already prefers IPv4 over the ULA
-Popup vibrancy (Mica on Windows),ui,could,yes,no,
+Popup vibrancy (Mica on Windows),ui,could,yes,partial,transparent window on macOS via macOSPrivateApi; no NSVisualEffect material
 Signed + notarised build with privileged helper (SMAppService),ship,could,no,skip,needs an Apple Developer ID; documented only
 Network Extension packet tunnel,platform,could,no,skip,needs entitlement and signing; documented only
 Live Wi-Fi + tether validation in this session,test,should,no,skip,needs admin approval and hardware; manual checklist
+Hero state (Off / Starting / Active / Limited / Needs attention) in plain words,ui,must,no,yes,UI_REQUIREMENTS.md
+Live view of connections spreading across links,ui,must,no,yes,lanes per link; never implies one connection is split
+Link failure message with what MultiPath did,ui,must,no,yes,shown 20 s
+Technical details behind Advanced,ui,should,no,yes,
+Empty and onboarding states,ui,must,no,yes,one link / permissions / no phone / no internet / all off
+Privacy reassurance (local only),ui,must,no,yes,
+Light and dark mode + Reduce Motion + VoiceOver labels on macOS,ui,should,no,yes,Windows/Linux stay dark as designed

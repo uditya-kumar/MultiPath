@@ -23,6 +23,12 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [view]);
 
+  // Lets the styles follow each system's conventions (light mode on macOS).
+  const platform = status?.platform;
+  useEffect(() => {
+    if (platform) document.documentElement.dataset.platform = platform;
+  }, [platform]);
+
   const back = () => setView("main");
 
   return (

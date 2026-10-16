@@ -49,6 +49,8 @@ describe("summary", () => {
     expect(headerStatus(on, null)).toEqual({ text: "Combining 2 networks", dot: "var(--ok)" });
     expect(headerStatus({ ...on, links: [wifi] }, null).text).toBe("On · using 1 network");
     expect(headerStatus(off, "on").text).toBe("Turning on…");
+    const allDown = { ...on, links: [{ ...wifi, health: "down" as const }] };
+    expect(headerStatus(allDown, null)).toEqual({ text: "On · no network is working", dot: "var(--warn)" });
     expect(headerStatus({ ...on, busy: true }, null).text).toBe("Turning off…");
   });
 
