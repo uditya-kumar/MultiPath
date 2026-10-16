@@ -11,6 +11,7 @@ use std::os::fd::{AsRawFd, FromRawFd, OwnedFd, RawFd};
 use std::os::unix::fs::DirBuilderExt;
 use std::os::unix::net::{UnixListener, UnixStream};
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::thread;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
@@ -26,13 +27,7 @@ pub struct HelperListener {
 
 impl HelperListener {
     pub fn new() -> io::Result<HelperListener> {
-        let nanos = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .map_or(0, |d| d.subsec_nanos());
-        // macOS gives every user their own $TMPDIR; the 0700 folder inside
-        // keeps the socket to this user (and root).
-        let dir = std::env::temp_dir().join(format!("multipath-{}-{nanos}", std::process::id()));
-        DirBuilder::new().mode(0o700).create(&dir)?;
+        let dir = private_dir()?;
         let path = dir.join("helper.sock");
         let listener = match UnixListener::bind(&path) {
             Ok(listener) => listener,
@@ -112,6 +107,25 @@ impl HelperListener {
 impl Drop for HelperListener {
     fn drop(&mut self) {
         let _ = fs::remove_dir_all(&self.dir);
+    }
+}
+
+/// A new 0700 folder in `$TMPDIR`, which macOS gives every user for
+/// themselves: the socket inside is reachable by this user and root only.
+fn private_dir() -> io::Result<PathBuf> {
+    static NEXT: AtomicU32 = AtomicU32::new(0);
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_or(0, |d| d.subsec_nanos());
+    loop {
+        let n = NEXT.fetch_add(1, Ordering::Relaxed);
+        let name = format!("multipath-{}-{nanos}-{n}", std::process::id());
+        let dir = std::env::temp_dir().join(name);
+        match DirBuilder::new().mode(0o700).create(&dir) {
+            // Left behind by an earlier process with the same id.
+            Err(err) if err.kind() == io::ErrorKind::AlreadyExists => continue,
+            other => return other.map(|()| dir),
+        }
     }
 }
 
