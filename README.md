@@ -183,10 +183,14 @@ npm run tauri dev       # opens the app; run it as administrator or root, or acc
 npm run tauri build     # Windows: bundle/nsis/ · Linux: bundle/deb/ and bundle/appimage/ · macOS: bundle/macos/ and bundle/dmg/
 ```
 
+On macOS, a build without access to Finder (SSH, an agent) needs `CI=true npm run tauri build`: that skips the
+AppleScript that only arranges the `.dmg` window.
+
 **Check before committing:**
 
 ```sh
 npm run lint && npm test && npm run build
+npm run e2e             # the popup's states in Chrome, with an accessibility scan
 cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 
