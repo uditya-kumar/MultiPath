@@ -268,22 +268,26 @@ mod tests {
             _dns: Some(ResolverOverride::apply(1, &["1.1.1.1".parse().unwrap()]).unwrap()),
         };
         let added = fake.lines().len();
-        // The IPv6 address, then four routes, then DNS.
-        assert_eq!(added, 6);
+        let routes = super::super::capture_routes().count();
+        // The IPv6 address, then the routes, then DNS.
+        assert_eq!(added, 1 + routes + 1);
         drop(setup);
         let lines = fake.lines();
         let removed = &lines[added..];
+        assert_eq!(removed.len(), routes + 1);
+        assert!(removed[..routes]
+            .iter()
+            .all(|l| l.starts_with("/sbin/route -n delete ")));
         assert_eq!(
-            &removed[..4],
+            [&removed[0], &removed[7], &removed[8], &removed[routes - 1]],
             [
-                "/sbin/route -n delete -inet 0.0.0.0/1 -interface lo0",
+                "/sbin/route -n delete -inet 1.0.0.0/8 -interface lo0",
                 "/sbin/route -n delete -inet 128.0.0.0/1 -interface lo0",
-                "/sbin/route -n delete -inet6 ::/1 -interface lo0",
+                "/sbin/route -n delete -inet6 1::/16 -interface lo0",
                 "/sbin/route -n delete -inet6 8000::/1 -interface lo0",
             ]
         );
-        assert_eq!(removed[4], "/usr/sbin/scutil");
-        assert_eq!(removed.len(), 5);
+        assert_eq!(removed[routes], "/usr/sbin/scutil");
     }
 
     #[test]
@@ -309,8 +313,8 @@ mod tests {
         assert_eq!(
             deletes,
             [
-                "/sbin/route -n delete -inet 0.0.0.0/1 -interface lo0",
-                "/sbin/route -n delete -inet 128.0.0.0/1 -interface lo0",
+                "/sbin/route -n delete -inet 1.0.0.0/8 -interface lo0",
+                "/sbin/route -n delete -inet 2.0.0.0/7 -interface lo0",
             ]
         );
     }

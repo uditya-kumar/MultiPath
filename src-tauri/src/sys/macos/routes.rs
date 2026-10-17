@@ -64,7 +64,7 @@ fn delete_route(interface: &str, prefix: IpAddr, prefix_len: u8) -> io::Result<b
     }
 }
 
-/// `route -n add -inet 0.0.0.0/1 -interface utun5`: on-link through the
+/// `route -n add -inet 128.0.0.0/1 -interface utun5`: on-link through the
 /// adapter, as wg-quick does on macOS.
 fn route_cmd(action: &str, interface: &str, prefix: IpAddr, prefix_len: u8) -> Cmd {
     let family = match prefix {

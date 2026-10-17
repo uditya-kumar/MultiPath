@@ -34,7 +34,8 @@ A tray app for **Windows, Linux and macOS (Apple silicon)**, inspired by [Plexo]
 ## How it works
 1. An adapter named `MultiPath` (10.77.0.1/24, Wintun on Windows, `/dev/net/tun` on Linux, an unnamed `utunN` on
    macOS, known by its address) captures traffic through split routes 0.0.0.0/1 and 128.0.0.0/1 (plus ::/1 and
-   8000::/1 for IPv6), which beat the default route without replacing it. IPv6 is captured even when it's switched off or no link has it, otherwise it leaks out of any link
+   8000::/1 for IPv6), which beat the default route without replacing it (macOS: everything but 0.0.0.0/8 and ::/16
+   instead, see the macOS gotchas). IPv6 is captured even when it's switched off or no link has it, otherwise it leaks out of any link
    with an IPv6 route.
 2. `ipstack` (a userspace TCP/IP stack) turns the adapter's packets back into TCP streams and UDP flows.
 3. For each new flow, the balancer picks the link where it can expect the most bandwidth:
@@ -156,8 +157,14 @@ sudo ./scripts/linux-lab.sh up     # two shaped ISPs in namespaces; `down` remov
   virtual and is never a link, even with a gateway (Tailscale's utun has one). `en1-3` ("Thunderbolt N") are bridge
   members and `en4-6` ("Ethernet Adapter (enN)") are internal on Apple silicon: kind `other`, hidden while idle.
 - `IP_BOUND_IF` makes the kernel use the interface's *scoped* routes, so a pinned socket takes the link's own default
-  gateway instead of the capture routes. macOS adds a scoped default for every interface with a router.
-- Routes added with `route -n add -inet 0.0.0.0/1 -interface utunN` go away with the utun, even after `kill -9`, and
+  gateway instead of the capture routes. configd adds a scoped default (`UGScIg`) for every interface with a router
+  **except the primary one**, which only has the unscoped default (`UGScg`).
+- For the primary interface XNU falls back to the unscoped default by a longest-prefix lookup of 0.0.0.0 (or ::)
+  (`node_lookup_default` in `route.c`). A capture route that covers that address (0.0.0.0/1, ::/1) wins the lookup,
+  the interface doesn't match, and every pinned socket on the primary network has no route: no probes, no relays,
+  no internet. So macOS captures everything but 0.0.0.0/8 and ::/16 (1.0.0.0/8, 2.0.0.0/7 … 128.0.0.0/1 and
+  1::/16 … 8000::/1, `engine::capture_routes`), which are never destinations.
+- Routes added with `route -n add -inet 128.0.0.0/1 -interface utunN` go away with the utun, even after `kill -9`, and
   the utun goes when its last descriptor closes. The helper therefore closes its copy after handing it over.
 - `route` says "File exists" for a route that's there and "not in table" for one that isn't; both are success, so
   setup and cleanup are idempotent.
