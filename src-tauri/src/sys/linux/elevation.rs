@@ -19,6 +19,12 @@ fn effective_caps(status: &str) -> Option<u64> {
     u64::from_str_radix(hex.trim(), 16).ok()
 }
 
+/// Turning on relaunches MultiPath with the rights it needs
+/// (`relaunch_elevated`) rather than asking for them as it goes.
+pub fn elevates_in_place() -> bool {
+    false
+}
+
 /// The capabilities MultiPath runs with instead of root: the adapter and
 /// routes, and binding sockets to a device plus raw ICMP.
 const CAPABILITIES: &str = "cap_net_admin,cap_net_raw+ep";

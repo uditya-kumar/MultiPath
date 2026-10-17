@@ -4,3 +4,9 @@ src-tauri/target/
 src-tauri/gen/schemas/
 *.log
 .claude/settings.local.json
+# Updater signing keys never belong in the repo (the real one lives in ~/.config/multipath/).
+*.key
+*.key.pub
+updater.key*
+# Built release assets (scripts/release.sh).
+release-assets/

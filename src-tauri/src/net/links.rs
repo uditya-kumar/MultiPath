@@ -207,6 +207,10 @@ fn kind_of(itf: &netdev::Interface) -> &'static str {
     if let Some(kind) = sys::adapter_kind(&itf.name) {
         return kind;
     }
+    #[cfg(target_os = "macos")]
+    if let Some(kind) = sys::adapter_kind(&itf.name, itf.friendly_name.as_deref()) {
+        return kind;
+    }
     let desc = itf
         .description
         .as_deref()
@@ -257,6 +261,10 @@ fn discover() -> Vec<(String, LinkInfo)> {
     netdev::get_interfaces()
         .into_iter()
         .filter(|i| !i.is_loopback() && !engine::is_tun(i))
+        // macOS lists VPN tunnels (Tailscale's among them), AirDrop and
+        // bridges next to its ports, with gateways of their own; only the
+        // ports are networks.
+        .filter(|i| !cfg!(target_os = "macos") || sys::has_connector(i.index))
         .filter_map(|i| {
             let (gw_v4, gw_v6) = match &i.gateway {
                 Some(gw) => (

@@ -38,6 +38,10 @@ pub struct Settings {
     pub adaptive: bool,
     pub capture_ipv6: bool,
     pub dns: Vec<IpAddr>,
+    /// Look for a new version when MultiPath starts. Off by default: it's the
+    /// only thing MultiPath would contact on its own, and it never installs
+    /// anything without the user's say-so.
+    pub check_updates: bool,
 }
 
 impl Default for Settings {
@@ -50,6 +54,7 @@ impl Default for Settings {
             capture_ipv6: true,
             // Some ISPs (Jio among them) drop DNS queries to 1.1.1.1.
             dns: vec!["8.8.8.8".parse().unwrap(), "1.1.1.1".parse().unwrap()],
+            check_updates: false,
         }
     }
 }
@@ -97,5 +102,20 @@ impl Settings {
                 let _ = std::fs::rename(&tmp, path);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn update_checks_stay_off_unless_chosen() {
+        assert!(!Settings::default().check_updates);
+        // A settings file from 1.1.0 has no such field.
+        let old: Settings = serde_json::from_str(r#"{"on":false,"sticky":true}"#).unwrap();
+        assert!(!old.check_updates && old.sticky && !old.on);
+        let chosen: Settings = serde_json::from_str(r#"{"checkUpdates":true}"#).unwrap();
+        assert!(chosen.check_updates);
     }
 }

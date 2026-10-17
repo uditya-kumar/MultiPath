@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LinkStatus, Status } from "../api/types";
-import { footerInfo, headerStatus } from "./summary";
+import { elevationNote, footerInfo, headerStatus, startAtLoginLabel } from "./summary";
 
 const wifi: LinkStatus = {
   id: "1",
@@ -26,6 +26,7 @@ const cable: LinkStatus = { ...wifi, id: "3", name: "Ethernet", kind: "ethernet"
 
 const off: Status = {
   platform: "windows",
+  version: "1.2.0",
   on: false,
   busy: false,
   elevated: false,
@@ -37,7 +38,7 @@ const off: Status = {
   connections: 0,
   todayBytes: 0,
   links: [wifi, phone, cable],
-  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false },
+  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false, checkUpdates: false },
 };
 const on: Status = { ...off, on: true, connections: 142, todayBytes: 3_400_000_000 };
 
@@ -45,6 +46,7 @@ describe("summary", () => {
   it("says what MultiPath is doing", () => {
     expect(headerStatus(off, null).text).toBe("Off · Windows is using Wi-Fi only");
     expect(headerStatus({ ...off, platform: "linux" }, null).text).toBe("Off · Linux is using Wi-Fi only");
+    expect(headerStatus({ ...off, platform: "macos" }, null).text).toBe("Off · macOS is using Wi-Fi only");
     expect(headerStatus(on, null)).toEqual({ text: "Combining 2 networks", dot: "var(--ok)" });
     expect(headerStatus({ ...on, links: [wifi] }, null).text).toBe("On · using 1 network");
     expect(headerStatus(off, "on").text).toBe("Turning on…");
@@ -58,5 +60,16 @@ describe("summary", () => {
   it("sums up in the footer", () => {
     expect(footerInfo(on)).toBe("142 connections · 3.4 GB today");
     expect(footerInfo(off)).toBe("2 networks ready");
+  });
+
+  it("words the permission note and login switch per system", () => {
+    expect(elevationNote({ ...off, platform: "macos" })).toBe(
+      "macOS will ask for an administrator password each time you turn it on.",
+    );
+    expect(elevationNote(off)).toBe("Windows will ask for administrator permission the first time.");
+    expect(elevationNote({ ...off, platform: "linux", canElevate: false })).toMatch(/AppImage/);
+    expect(startAtLoginLabel({ ...off, platform: "macos" })).toBe("Open at login");
+    expect(startAtLoginLabel({ ...off, platform: "linux" })).toBe("Start on login");
+    expect(startAtLoginLabel(off)).toBe("Start with Windows");
   });
 });

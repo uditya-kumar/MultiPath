@@ -23,7 +23,7 @@
   --thumb: #454545;
   --thumb-border: #ffffff1f;
 
-  --font: "Segoe UI Variable Text", "Segoe UI", Inter, system-ui, sans-serif;
+  --font: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, Inter, system-ui, sans-serif;
   --radius-sm: 4px;
   --radius: 6px;
   --radius-lg: 8px;

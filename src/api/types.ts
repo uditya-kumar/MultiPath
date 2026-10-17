@@ -31,10 +31,16 @@ export interface SettingsStatus {
   captureIpv6: boolean;
   dns: string[];
   startOnLogin: boolean;
+  /** Look for a new version when MultiPath starts (never installs on its own). */
+  checkUpdates: boolean;
 }
 
+export type Platform = "windows" | "linux" | "macos";
+
 export interface Status {
-  platform: "windows" | "linux";
+  platform: Platform;
+  /** The running version, such as "1.2.0". */
+  version: string;
   on: boolean;
   busy: boolean;
   elevated: boolean;
@@ -71,4 +77,5 @@ export interface OptionChange {
   captureIpv6?: boolean;
   dns?: string[];
   startOnLogin?: boolean;
+  checkUpdates?: boolean;
 }

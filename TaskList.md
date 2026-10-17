@@ -122,3 +122,55 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] Popup check in WSLg and on Kali (XFCE, VirtualBox): layout matches `design.pen`; the tray icon registers as a StatusNotifier item; "Turn on" asks through `pkexec` and the relaunched copy turns on
 - [ ] Optional real-hardware check: boot an Ubuntu live USB on the Windows PC, run the AppImage with Wi-Fi + USB tether (needs the user)
 - [x] Docs: CLAUDE.md (Windows and Linux, gotchas split per OS, folder notes), README (Linux badge and install, tech stack), release notes (the v1.1.0 draft)
+
+## Phase 8 — macOS support (Apple silicon)
+
+Port to macOS arm64 as a third `sys/` backend, without changing what Windows and Linux do. Nothing here adds
+system-wide routes during development: route/DNS commands are unit-tested through a fake, and `MULTIPATH_DRY_RUN=1`
+logs them instead of running them.
+
+### System layer (`sys/macos/`)
+- [x] Rust toolchain on the Mac (rustup, per user); `cargo fmt`/`clippy`/`test` green on arm64
+- [x] Link discovery: only `enN` ports are links (utun/bridge/awdl/llw/ap/anpi never, even with a gateway); kind from the SystemConfiguration name (Wi-Fi, iPhone/iPad USB, Android names, USB LAN; Thunderbolt and internal ports `other`)
+- [x] Socket pinning with `IP_BOUND_IF` / `IPV6_BOUND_IF` (`socket2::bind_device_by_index_v4/v6`); checked live: health probe through Wi-Fi in 13 ms
+- [x] Routes and the IPv6 address through `route`/`ifconfig`, argv built by pure functions; "File exists" / "not in table" are success; removed on drop
+- [x] DNS: supplemental resolver for every domain in the dynamic store via `scutil`; removed on stop and before every start
+- [x] ICMP echo with an unprivileged `SOCK_DGRAM` socket pinned with `IP_BOUND_IF` (checked live)
+- [x] Socket owners from `lsof -F pPn`; process names from `proc_name`; clock and single instance reuse the Linux files
+- [x] Privileges: osascript administrator prompt starts the same executable as a root helper (`--tunnel-helper`), which hands the utun's descriptor over a Unix socket (`SCM_RIGHTS`) and undoes its changes on "stop" or EOF; the app never runs as root
+
+### Engine and app
+- [x] `engine::privileged`: utun + routes + DNS in the helper, or in-process when already root (headless with `sudo`); `is_tun` by address
+- [x] Menu bar app: `LSUIElement` + `ActivationPolicy::Accessory`; popup centred below the menu bar icon
+- [x] Open at login: a LaunchAgent in `~/Library/LaunchAgents`
+- [x] macOS wording from `Status.platform` ("macOS will ask for an administrator password each time…", "Open at login")
+
+### Testing
+- [x] Unit tests for macOS discovery, route/address/DNS commands (fake), cleanup idempotency, `IP_BOUND_IF`, helper hand-off, prompt quoting, lsof parsing, LaunchAgent
+- [x] Linux fmt/clippy/test in Docker and Windows clippy (cross, check only) after the shared changes
+
+### Ship
+- [x] Bundle an arm64 `.app` and `.dmg` (`npm run tauri build`), ad-hoc signed
+- [x] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits)
+- [ ] Live test with Wi-Fi + an iPhone/Android USB tether and the admin password (needs the user)
+- [ ] Signed, notarised release with an `SMAppService` privileged helper or a Network Extension (needs an Apple Developer ID)
+
+## Phase 9 — Signed self-updates (all systems, 1.2.0)
+
+Updates come from the latest release of `uditya-kumar/MultiPath` (`latest.json`), are signed with a dedicated
+updater key and are installed only after the user confirms. The popup stays as designed in `design.pen`.
+
+- [x] Official `tauri-plugin-updater` and `tauri-plugin-process`; endpoint, public key and `requireSignedVersion` in `tauri.conf.json`
+- [x] Least-privilege capability: `updater:allow-check`, `updater:allow-download`, `updater:allow-install`, `process:allow-restart` only
+- [x] Updater key at `~/.config/multipath/updater.key` (0600, never committed); `.gitignore` covers keys and built assets
+- [x] Design first: Settings → Updates section, the update states and the main-page banner in `design.pen`
+- [x] Settings → Updates: check, up to date, available (notes + Install and restart / Not now), download progress, installing, restarting, and errors in each system's words
+- [x] Optional check at start (off by default): a banner on the main page, never installs on its own
+- [x] Download (verified) → `prepare_update_install` (Windows: the engine turns off, since the installer exits the process without `RunEvent::Exit`) → install; the NSIS uninstall hook keeps the Start with Windows task under `/UPDATE`
+- [x] Restart after an update: the single-instance socket is released before the new copy starts
+- [x] `scripts/release.sh`: per-system signed bundles (NSIS, `.deb` + AppImage, `.app`) merged into one `latest.json`; `createUpdaterArtifacts` only there, so plain builds need no key
+- [x] Version 1.2.0 in package.json, Cargo.toml and tauri.conf.json, with a test that they agree
+- [x] Tests: Vitest (flow, per-system wording), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
+- [x] PR #5 merged without the off-design UI (hero, connection spread, light mode, router note), the replica/e2e/demo files and the fork endpoint
+- [ ] Publish the v1.2.0 GitHub release with the assets from all three systems (needs the user)
+- [ ] Live update test from 1.2.0 to a later release on each system (needs a published newer release)

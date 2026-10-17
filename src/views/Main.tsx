@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Gauge, ShieldCheck } from "lucide-react";
+import { CircleArrowUp, Gauge, ShieldCheck } from "lucide-react";
 import { errorText, setEnabled, setLinkEnabled } from "../api/commands";
 import type { Status } from "../api/types";
 import { hidePopup } from "../api/window";
@@ -7,24 +7,27 @@ import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { NetworkRow } from "../components/NetworkRow";
 import { ShareRing } from "../components/ShareRing";
-import { footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
+import { elevationNote, footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
+import type { UpdateState } from "../lib/update";
 
 interface Props {
   status: Status;
   onStatus: (status: Status) => void;
   onSettings: () => void;
   onConnections: () => void;
+  update: UpdateState;
 }
 
 /** The popup's first page: live traffic when on, an explanation when off. */
-export function Main({ status, onStatus, onSettings, onConnections }: Props) {
+export function Main({ status, onStatus, onSettings, onConnections, update }: Props) {
   const [pending, setPending] = useState<Pending>(null);
   const [error, setError] = useState<string | null>(null);
 
   const turn = (on: boolean) => {
     setPending(on ? "on" : "off");
     setError(null);
-    // Without admin rights this restarts MultiPath through the UAC (or pkexec) prompt.
+    // Without admin rights this restarts MultiPath through the UAC (or pkexec) prompt; macOS asks
+    // for the administrator password instead.
     setEnabled(on)
       .then(onStatus)
       .catch((e) => setError(errorText(e)))
@@ -57,6 +60,15 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
           {notice}
         </div>
       )}
+      {update.step === "available" && (
+        <div className="update-banner" role="status">
+          <CircleArrowUp size={14} />
+          <span className="update-banner-text">MultiPath {update.version} is available.</span>
+          <button type="button" className="link-button" onClick={onSettings}>
+            Review
+          </button>
+        </div>
+      )}
 
       {status.on ? (
         <section className="throughput" aria-label="Throughput">
@@ -80,13 +92,7 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
               Turn on
             </button>
             {!status.elevated && (
-              <span className="muted">
-                {!status.canElevate
-                  ? "The AppImage needs to run with sudo. Install the .deb to turn on without it."
-                  : status.platform === "linux"
-                    ? "Linux will ask for your password once, to give MultiPath network access."
-                    : "Windows will ask for administrator permission the first time."}
-              </span>
+              <span className="muted">{elevationNote(status)}</span>
             )}
           </div>
         </section>

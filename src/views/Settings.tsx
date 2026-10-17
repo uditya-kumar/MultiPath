@@ -12,17 +12,21 @@ import type { OptionChange, Status } from "../api/types";
 import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
+import { UpdatePanel } from "../components/UpdatePanel";
 import { networkColor } from "../lib/format";
+import { startAtLoginLabel } from "../lib/summary";
+import type { UpdateControls } from "../lib/useUpdater";
 
 interface Props {
   status: Status;
   onStatus: (status: Status) => void;
   onBack: () => void;
+  update: UpdateControls;
 }
 
 const WEIGHT_DELAY_MS = 250;
 
-export function Settings({ status, onStatus, onBack }: Props) {
+export function Settings({ status, onStatus, onBack, update }: Props) {
   const [error, setError] = useState<string | null>(null);
   const settings = status.settings;
   const present = status.links.filter((l) => l.present);
@@ -89,11 +93,22 @@ export function Settings({ status, onStatus, onBack }: Props) {
       <div className="divider" />
       <Section title="App">
         <SwitchRow
-          label={status.platform === "linux" ? "Start on login" : "Start with Windows"}
+          label={startAtLoginLabel(status)}
           on={settings.startOnLogin}
           onChange={(startOnLogin) => change({ startOnLogin })}
         />
         <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
+      </Section>
+
+      <div className="divider" />
+      <Section title="Updates">
+        <UpdatePanel status={status} update={update} />
+        <SwitchRow
+          label="Check for updates at start"
+          desc="Asks GitHub for a newer version when MultiPath opens. Never installs without asking."
+          on={settings.checkUpdates}
+          onChange={(checkUpdates) => change({ checkUpdates })}
+        />
       </Section>
       <div className="bottom-spacer" />
     </>
