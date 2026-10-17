@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LinkStatus, Status } from "../api/types";
-import { footerInfo, headerStatus } from "./summary";
+import { elevationNote, footerInfo, headerStatus, sharesRouter, startAtLoginLabel } from "./summary";
 
 const wifi: LinkStatus = {
   id: "1",
@@ -26,6 +26,7 @@ const cable: LinkStatus = { ...wifi, id: "3", name: "Ethernet", kind: "ethernet"
 
 const off: Status = {
   platform: "windows",
+  version: "1.2.0",
   on: false,
   busy: false,
   elevated: false,
@@ -37,7 +38,7 @@ const off: Status = {
   connections: 0,
   todayBytes: 0,
   links: [wifi, phone, cable],
-  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false },
+  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false, checkUpdates: false },
 };
 const on: Status = { ...off, on: true, connections: 142, todayBytes: 3_400_000_000 };
 
@@ -45,9 +46,12 @@ describe("summary", () => {
   it("says what MultiPath is doing", () => {
     expect(headerStatus(off, null).text).toBe("Off · Windows is using Wi-Fi only");
     expect(headerStatus({ ...off, platform: "linux" }, null).text).toBe("Off · Linux is using Wi-Fi only");
+    expect(headerStatus({ ...off, platform: "macos" }, null).text).toBe("Off · macOS is using Wi-Fi only");
     expect(headerStatus(on, null)).toEqual({ text: "Combining 2 networks", dot: "var(--ok)" });
     expect(headerStatus({ ...on, links: [wifi] }, null).text).toBe("On · using 1 network");
     expect(headerStatus(off, "on").text).toBe("Turning on…");
+    const allDown = { ...on, links: [{ ...wifi, health: "down" as const }] };
+    expect(headerStatus(allDown, null)).toEqual({ text: "On · no network is working", dot: "var(--warn)" });
     expect(headerStatus({ ...on, busy: true }, null).text).toBe("Turning off…");
   });
 
@@ -58,5 +62,36 @@ describe("summary", () => {
   it("sums up in the footer", () => {
     expect(footerInfo(on)).toBe("142 connections · 3.4 GB today");
     expect(footerInfo(off)).toBe("2 networks ready");
+  });
+
+  it("words the permission note and login switch per system", () => {
+    expect(elevationNote({ ...off, platform: "macos" })).toBe(
+      "macOS will ask for an administrator password each time you turn it on.",
+    );
+    expect(elevationNote(off)).toBe("Windows will ask for administrator permission the first time.");
+    expect(elevationNote({ ...off, platform: "linux", canElevate: false })).toMatch(/AppImage/);
+    expect(startAtLoginLabel({ ...off, platform: "macos" })).toBe("Open at login");
+    expect(startAtLoginLabel({ ...off, platform: "linux" })).toBe("Start on login");
+    expect(startAtLoginLabel(off)).toBe("Start with Windows");
+  });
+
+  it("notices networks that share a router", () => {
+    const sameGateway = { ...phone };
+    expect(sharesRouter([wifi, sameGateway])).toBe(true);
+    expect(sharesRouter([wifi, { ...phone, gateway: " 192.168.1.1 " }])).toBe(true);
+    expect(sharesRouter([wifi, { ...phone, gateway: "172.20.10.1" }])).toBe(false);
+    expect(sharesRouter([wifi])).toBe(false);
+    expect(sharesRouter([])).toBe(false);
+  });
+
+  it("ignores networks that are absent, switched off or without a gateway", () => {
+    expect(sharesRouter([wifi, { ...phone, present: false }])).toBe(false);
+    expect(sharesRouter([wifi, { ...phone, enabled: false }])).toBe(false);
+    expect(sharesRouter([{ ...wifi, gateway: null }, { ...phone, gateway: null }])).toBe(false);
+    expect(sharesRouter([{ ...wifi, gateway: "" }, { ...phone, gateway: "  " }])).toBe(false);
+  });
+
+  it("needs only two of three networks to share", () => {
+    expect(sharesRouter([wifi, { ...phone, gateway: "172.20.10.1" }, { ...cable, present: true }])).toBe(true);
   });
 });

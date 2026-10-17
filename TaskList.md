@@ -122,3 +122,67 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 - [x] Popup check in WSLg and on Kali (XFCE, VirtualBox): layout matches `design.pen`; the tray icon registers as a StatusNotifier item; "Turn on" asks through `pkexec` and the relaunched copy turns on
 - [ ] Optional real-hardware check: boot an Ubuntu live USB on the Windows PC, run the AppImage with Wi-Fi + USB tether (needs the user)
 - [x] Docs: CLAUDE.md (Windows and Linux, gotchas split per OS, folder notes), README (Linux badge and install, tech stack), release notes (the v1.1.0 draft)
+
+## Phase 8 — macOS support (Apple silicon)
+
+Port to macOS arm64 as a third `sys/` backend, without changing what Windows and Linux do. Plan and evidence in
+`replica/` (recon, architecture, build log, test plan, bug report); results in `BUILD_RESULT.md`. Nothing here adds
+system-wide routes during development: route/DNS commands are unit-tested through a fake, and `MULTIPATH_DRY_RUN=1`
+logs them instead of running them.
+
+### System layer (`sys/macos/`)
+- [x] Rust toolchain on the Mac (rustup, per user); `cargo fmt`/`clippy`/`test` green on arm64
+- [x] Link discovery: only `enN` ports are links (utun/bridge/awdl/llw/ap/anpi never, even with a gateway); kind from the SystemConfiguration name (Wi-Fi, iPhone/iPad USB, Android names, USB LAN; Thunderbolt and internal ports `other`)
+- [x] Socket pinning with `IP_BOUND_IF` / `IPV6_BOUND_IF` (`socket2::bind_device_by_index_v4/v6`); checked live: health probe through Wi-Fi in 13 ms
+- [x] Routes and the IPv6 address through `route`/`ifconfig`, argv built by pure functions; "File exists" / "not in table" are success; removed on drop
+- [x] DNS: supplemental resolver for every domain in the dynamic store via `scutil`; removed on stop and before every start
+- [x] ICMP echo with an unprivileged `SOCK_DGRAM` socket pinned with `IP_BOUND_IF` (checked live)
+- [x] Socket owners from `lsof -F pPn`; process names from `proc_name`; clock and single instance reuse the Linux files
+- [x] Privileges: osascript administrator prompt starts the same executable as a root helper (`--tunnel-helper`), which hands the utun's descriptor over a Unix socket (`SCM_RIGHTS`) and undoes its changes on "stop" or EOF; the app never runs as root
+
+### Engine and app
+- [x] `engine::privileged`: utun + routes + DNS in the helper, or in-process when already root (headless with `sudo`); `is_tun` by address
+- [x] Menu bar app: `LSUIElement` + `ActivationPolicy::Accessory`; popup centred below the menu bar icon
+- [x] Open at login: a LaunchAgent in `~/Library/LaunchAgents`
+- [x] macOS wording from `Status.platform` ("macOS will ask for an administrator password each time…", "Open at login")
+- [x] Plain-language popup (`UI_REQUIREMENTS.md`): state hero, "Where connections go", link-change messages, Advanced details, empty states, privacy line; light/dark, Reduce Motion and VoiceOver labels on macOS
+
+### Testing
+- [x] Unit tests for macOS discovery, route/address/DNS commands (fake), cleanup idempotency, `IP_BOUND_IF`, helper hand-off, prompt quoting, lsof parsing, LaunchAgent
+- [x] Playwright e2e (`npm run e2e`) over every popup state in dark and light, with axe and console checks
+- [x] Linux fmt/clippy/test in Docker and Windows clippy (cross, check only) after the shared changes
+
+### Ship
+- [x] Bundle an arm64 `.app` and `.dmg` (`npm run tauri build`), ad-hoc signed
+- [x] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits), `BUILD_RESULT.md`
+- [ ] Live test with Wi-Fi + an iPhone/Android USB tether and the admin password (needs the user: checklist in `BUILD_RESULT.md`)
+- [ ] Signed, notarised release with an `SMAppService` privileged helper or a Network Extension (needs an Apple Developer ID)
+
+## Phase 9 — Signed self-updates (macOS, 1.2.0)
+
+Updates come from the latest release of `timowse/MultiPath` (`latest.json`), are signed with a dedicated
+updater key and are installed only after the user confirms. Plan and evidence in `replica/` and `BUILD_RESULT.md`.
+
+- [x] Official `tauri-plugin-updater` and `tauri-plugin-process`; endpoint, public key and `requireSignedVersion` in `tauri.conf.json`; `createUpdaterArtifacts` for macOS
+- [x] Least-privilege capability: `updater:allow-check`, `updater:allow-download-and-install`, `process:allow-restart` only
+- [x] Updater key at `~/.config/multipath/updater.key` (0600, never committed); `.gitignore` covers keys and built assets
+- [x] Settings → Updates: Check for updates with idle, checking, up to date, available (notes + explicit Install and restart / Not now), downloading progress, installing, restarting, and actionable errors; accessible (status/alert roles, progress bar, keyboard)
+- [x] Optional check at start (off by default): points out a new version on the main page, never installs on its own
+- [x] Restart after an update: the single-instance socket is released before the new copy starts
+- [x] Version 1.2.0 in package.json, Cargo.toml and tauri.conf.json, with a test that they agree
+- [x] Tests with a mocked updater: Vitest (flow and every UI state), Playwright (fake update server, no network), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
+- [x] Signed arm64 `.app`, `.dmg` and updater archive; `release-assets/` with `latest.json` and `RELEASE_INSTRUCTIONS.md` (`scripts/release-macos.sh`)
+- [x] Canonical repo is `timowse/MultiPath` (fork): updater endpoint, release script, docs and tests, assets re-signed
+- [x] Main page note (informational, never blocking) when two or more networks in use share a gateway: "These connections use the same router, so your maximum internet speed may not increase." Vitest, view and Playwright tests
+- [ ] Publish the v1.2.0 GitHub release (needs the user: `release-assets/RELEASE_INSTRUCTIONS.md`)
+- [ ] Live update test from 1.2.0 to a later release (needs a published newer release: 1.2.1 below)
+
+## Phase 10 — Updater validation release (macOS, 1.2.1)
+
+A no-op maintenance release so the installed 1.2.0 has a real newer release to update to. No functional change.
+
+- [x] Version 1.2.1 in package.json (and lock), Cargo.toml (and lock) and tauri.conf.json; no product code changed
+- [x] Signed arm64 `.app` archive, signature, `.dmg`, `SHA256SUMS` and `latest.json` (notes say "updater validation and maintenance release, no behavior changes", URL under `…/releases/download/v1.2.1/`) with the existing key; the 1.2.0 set kept in `release-assets/v1.2.0/`
+- [x] Release docs: `release-assets/RELEASE_INSTRUCTIONS.md`, `BUILD_RESULT.md`
+- [x] Lint, Vitest, build, Playwright, `cargo fmt`/`clippy`/`test`, release signature test, DMG verify; no route activation, installed 1.2.0 untouched
+- [ ] Publish the v1.2.1 GitHub release, then run the live update from the installed 1.2.0 (needs the user)

@@ -3,8 +3,9 @@ import type { LinkStatus } from "../api/types";
 import {
   formatAge,
   formatBytes,
+  formatLinkSpeed,
   formatRate,
-  networkMeta,
+  healthText,
   plural,
   rateIn,
   ringSegments,
@@ -52,10 +53,19 @@ describe("format", () => {
     expect(plural(1420, "connection")).toBe("1,420 connections");
   });
 
-  it("describes a network", () => {
-    expect(networkMeta(link)).toBe("192.168.1.40 · 18 ms");
-    expect(networkMeta({ ...link, health: "down" })).toBe("192.168.1.40 · No internet");
-    expect(networkMeta({ ...link, kind: "ethernet", present: false })).toBe("Cable unplugged");
+  it("describes a network's health in plain words", () => {
+    expect(healthText(link, false)).toEqual({ text: "Working · 18 ms", problem: false });
+    expect(healthText(link, true).text).toBe("In use · 18 ms");
+    expect(healthText({ ...link, health: "down" }, true)).toEqual({ text: "No internet", problem: true });
+    expect(healthText({ ...link, health: "unknown" }, true).text).toBe("Checking…");
+    expect(healthText({ ...link, enabled: false }, true).text).toBe("Switched off");
+    expect(healthText({ ...link, kind: "ethernet", present: false }, true).text).toBe("Cable unplugged");
+    expect(healthText({ ...link, kind: "phone", present: false }, true).text).toBe("Not connected");
+  });
+
+  it("formats link speeds", () => {
+    expect(formatLinkSpeed(866_000_000)).toBe("866 Mbit/s");
+    expect(formatLinkSpeed(2_500_000_000)).toBe("2.5 Gbit/s");
   });
 
   it("tells a connection's age", () => {

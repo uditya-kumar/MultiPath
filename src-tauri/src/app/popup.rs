@@ -1,5 +1,5 @@
 //! The tray popup window: sized to its content and placed next to the tray like
-//! a Windows 11 flyout. It stays open when it loses focus, so it can be watched
+//! a Windows 11 flyout (below the menu bar icon on macOS). It stays open when it loses focus, so it can be watched
 //! while working elsewhere; it hides through its minimize button, Esc, or
 //! another click on the tray icon (Linux trays only open their menu).
 
@@ -60,8 +60,15 @@ fn place(app: &AppHandle, window: &WebviewWindow) -> tauri::Result<()> {
             if ay < top {
                 y = top + margin;
             }
+            #[cfg(not(target_os = "macos"))]
             if ax < left {
                 x = left + margin;
+            }
+            // The macOS menu bar has its icons anywhere along the top: the
+            // popup drops down below the one clicked, as menus do.
+            #[cfg(target_os = "macos")]
+            {
+                x = (ax - width / 2.0).clamp(left + margin, (right - width - margin).max(left));
             }
         }
         // Not clicked yet, or a Linux tray, which doesn't say where it is: a

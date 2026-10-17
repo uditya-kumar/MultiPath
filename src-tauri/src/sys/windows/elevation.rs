@@ -13,6 +13,12 @@ pub(super) fn wide(s: &str) -> Vec<u16> {
     s.encode_utf16().chain(std::iter::once(0)).collect()
 }
 
+/// Turning on relaunches MultiPath with the rights it needs
+/// (`relaunch_elevated`) rather than asking for them as it goes.
+pub fn elevates_in_place() -> bool {
+    false
+}
+
 /// Starts a second, elevated copy of this executable through the UAC prompt,
 /// passing it `args`.
 pub fn relaunch_elevated(args: &str) -> io::Result<()> {

@@ -15,8 +15,10 @@ use crate::sys;
 #[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Status {
-    /// "windows" or "linux", for the wording that differs.
+    /// "windows", "linux" or "macos", for the wording that differs.
     pub platform: &'static str,
+    /// The running version, shown next to "Check for updates".
+    pub version: &'static str,
     pub on: bool,
     pub busy: bool,
     pub elevated: bool,
@@ -51,7 +53,7 @@ pub struct LinkStatus {
     pub health: &'static str,
     /// Connected, with an address and a gateway.
     pub present: bool,
-    /// The network Windows uses on its own.
+    /// The network the system uses on its own.
     pub is_default: bool,
     pub enabled: bool,
     pub weight: u32,
@@ -70,6 +72,7 @@ pub struct SettingsStatus {
     pub capture_ipv6: bool,
     pub dns: Vec<String>,
     pub start_on_login: bool,
+    pub check_updates: bool,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -182,6 +185,7 @@ pub fn build(state: &AppState) -> Status {
     let flows = state.flows.read().unwrap().clone();
     Status {
         platform: std::env::consts::OS,
+        version: env!("CARGO_PKG_VERSION"),
         on: flows.is_some(),
         busy: state.busy.load(Ordering::Relaxed),
         elevated: sys::is_elevated(),
@@ -199,6 +203,7 @@ pub fn build(state: &AppState) -> Status {
             capture_ipv6: settings.capture_ipv6,
             dns: settings.dns.iter().map(|d| d.to_string()).collect(),
             start_on_login: state.start_on_login.load(Ordering::Relaxed),
+            check_updates: settings.check_updates,
         },
     }
 }

@@ -1,7 +1,12 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "What the tray popup may do.",
+  "description": "What the tray popup may do. Updates: check, then download and install in one step (the plugin verifies the signature before installing), and restart into the new version. Not download or install on their own, and not exit.",
   "windows": ["popup"],
-  "permissions": ["core:default"]
+  "permissions": [
+    "core:default",
+    "updater:allow-check",
+    "updater:allow-download-and-install",
+    "process:allow-restart"
+  ]
 }

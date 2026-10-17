@@ -20,13 +20,14 @@ pub const ELEVATED_ARG: &str = "--elevated";
 pub const TURN_ON_ARG: &str = "--turn-on";
 
 /// Turns MultiPath on or off. Turning on without administrator rights
-/// restarts MultiPath elevated, through the UAC prompt, and this copy exits.
+/// restarts MultiPath elevated, through the UAC (or pkexec) prompt, and this
+/// copy exits. macOS asks for the password as it turns on instead.
 pub async fn switch(app: &AppHandle, on: bool) -> Result<(), String> {
     let state = app.state::<AppState>();
     let result = if !on {
         state.turn_off(true).await;
         Ok(())
-    } else if sys::is_elevated() {
+    } else if sys::is_elevated() || sys::elevates_in_place() {
         state.turn_on().await
     } else {
         sys::relaunch_elevated(&format!("{ELEVATED_ARG} {TURN_ON_ARG}"))
@@ -95,6 +96,7 @@ pub struct OptionChange {
     pub capture_ipv6: Option<bool>,
     pub dns: Option<Vec<String>>,
     pub start_on_login: Option<bool>,
+    pub check_updates: Option<bool>,
 }
 
 /// Parses DNS servers typed by the user; empty entries are skipped.
@@ -115,7 +117,7 @@ pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, 
         tauri::async_runtime::spawn_blocking(move || autostart::set_enabled(enabled))
             .await
             .map_err(|e| e.to_string())?
-            .map_err(|e| format!("Couldn't change Start with Windows: {e}"))?;
+            .map_err(|e| format!("Couldn't change starting at sign-in: {e}"))?;
         state.start_on_login.store(enabled, Ordering::Relaxed);
     }
 
@@ -132,6 +134,9 @@ pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, 
         }
         if let Some(dns) = dns {
             s.dns = dns;
+        }
+        if let Some(check_updates) = change.check_updates {
+            s.check_updates = check_updates;
         }
     });
     let after = state.settings();
@@ -163,5 +168,7 @@ mod tests {
         let change: OptionChange = serde_json::from_str(r#"{"captureIpv6":false}"#).unwrap();
         assert_eq!(change.capture_ipv6, Some(false));
         assert!(change.adaptive.is_none() && change.dns.is_none());
+        let change: OptionChange = serde_json::from_str(r#"{"checkUpdates":true}"#).unwrap();
+        assert_eq!(change.check_updates, Some(true));
     }
 }

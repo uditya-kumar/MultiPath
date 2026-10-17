@@ -1,0 +1,50 @@
+feature,area,priority,original,clone,notes
+Native arm64 macOS build of the Tauri app,platform,must,no,yes,cargo fmt/clippy/test green on arm64; release .app built
+Menu-bar (tray) icon with Open / Turn on-off / Quit,app,must,yes,yes,accessory app (LSUIElement + ActivationPolicy::Accessory); not clicked live yet
+360 px popup placed under the menu-bar icon,app,must,yes,yes,"centred under the clicked icon, clamped to the work area"
+Enumerate physical Wi-Fi / Ethernet / USB-tether links,net,must,yes,yes,verified live: en0 Wi-Fi found with gateway; tether not plugged in (unverified)
+Exclude loopback / virtual / VPN tunnels / own adapter,net,must,yes,yes,verified live: utun8 (Tailscale) bridge0 en1-3 en4-6 awdl llw ap anpi excluded; own utun by 10.77.0.1
+Classify iPhone / Android USB tethers as phone,net,must,yes,partial,"by SystemConfiguration name (iPhone/iPad USB, Pixel, Galaxy, …); Android names vary"
+Create the virtual adapter,sys,must,yes,partial,utunN via tun crate in the root helper; needs admin to verify live
+Capture routes 0/1 128/1 ::/1 8000::/1 and remove on stop,sys,must,yes,partial,route(8) argv unit-tested with a fake; live run needs admin
+Clean stale capture routes at startup (idempotent),sys,must,yes,yes,routes die with the utun; stale DNS key and live-utun routes removed; idempotent (tested)
+Pin relay sockets to the chosen link,sys,must,yes,yes,IP_BOUND_IF/IPV6_BOUND_IF; verified live: health probe through en0 in 13 ms
+ICMP echo relay so ping works while on,sys,should,yes,yes,"verified live: echo to 1.1.1.1 via en0 with IP_BOUND_IF, unprivileged"
+Per-connection balancing weight x capacity / (busy + 1),engine,must,yes,yes,shared code unchanged; tests pass on macOS
+Sticky destinations option,engine,must,yes,yes,shared code
+Health probes every 5 s; two misses take a link down,net,must,yes,yes,shared code; live probe works on macOS
+Close flows on a lost link so apps reconnect,engine,must,yes,yes,shared code
+IPv6 gate: refuse IPv6 SYNs when no link carries IPv6,engine,must,yes,yes,shared code
+Per-link counters and combined-speed ring,app,must,yes,yes,shared code
+Connections page with owning app,app,should,yes,yes,lsof -F parsing (tested) + proc_name
+DNS servers on the adapter while on,sys,should,yes,partial,scutil supplemental resolver; script unit-tested; effect on live resolver unverified
+Admin privileges prompt and relaunch,sys,must,yes,partial,osascript admin prompt starts a root helper that passes the utun fd; protocol tested; live prompt unverified
+Single instance with show-on-second-launch,sys,must,yes,yes,Linux POSIX implementation reused; tests pass on macOS
+Start on login,app,should,yes,yes,LaunchAgent plist (tested)
+macOS wording in the popup (platform = macos),ui,must,yes,yes,"header, permission note, Open at login (tested)"
+Headless runner (--headless) on macOS,app,should,yes,yes,sudo; in-process setup without the helper
+Dry-run of route and DNS commands (no system change),sys,must,no,yes,MULTIPATH_DRY_RUN=1; also blocks the admin prompt
+Unit tests for macOS filtering / commands / binding / cleanup,test,must,no,yes,
+Package .app (arm64),ship,must,no,yes,ad-hoc signed
+Package .dmg,ship,should,no,yes,CI=true skips the Finder styling AppleScript
+macOS setup and limits docs,docs,must,no,yes,README + BUILD_RESULT.md
+Prefer IPv4 over adapter ULA,sys,could,yes,yes,not needed: macOS RFC 6724 policy table already prefers IPv4 over the ULA
+Popup vibrancy (Mica on Windows),ui,could,yes,partial,transparent window on macOS via macOSPrivateApi; no NSVisualEffect material
+Signed + notarised build with privileged helper (SMAppService),ship,could,no,skip,needs an Apple Developer ID; documented only
+Network Extension packet tunnel,platform,could,no,skip,needs entitlement and signing; documented only
+Live Wi-Fi + tether validation in this session,test,should,no,skip,needs admin approval and hardware; manual checklist
+Hero state (Off / Starting / Active / Limited / Needs attention) in plain words,ui,must,no,yes,UI_REQUIREMENTS.md
+Live view of connections spreading across links,ui,must,no,yes,lanes per link; never implies one connection is split
+Link failure message with what MultiPath did,ui,must,no,yes,shown 20 s
+Technical details behind Advanced,ui,should,no,yes,
+Empty and onboarding states,ui,must,no,yes,one link / permissions / no phone / no internet / all off
+Privacy reassurance (local only),ui,must,no,yes,
+Light and dark mode + Reduce Motion + VoiceOver labels on macOS,ui,should,no,yes,Windows/Linux stay dark as designed
+Check for updates in Settings (signed Tauri updater),ship,must,no,yes,"official updater + process plugins; endpoint timowse/MultiPath latest.json; macOS only"
+Explicit confirmation before installing an update,ship,must,no,yes,"available state shows notes, Install and restart / Not now; nothing downloads before"
+Signature-verified download (never install unsigned),security,must,no,yes,"minisign check by the plugin before install; requireSignedVersion; HTTPS only; tamper test on the release assets"
+Update progress / installing / restarting / error states,ui,must,no,yes,"role=status/alert, progressbar with value text, Try again / Restart now"
+Optional check for updates at start,app,should,no,yes,"off by default; quiet unless an update is found; banner on the main page; never auto-installs"
+Least-privilege updater capability,security,must,no,yes,"updater:allow-check, updater:allow-download-and-install, process:allow-restart"
+Signed arm64 release assets + latest.json,ship,must,no,yes,"scripts/release-macos.sh -> release-assets/; publishing is manual"
+Live update from 1.2.0 to a newer release,test,should,no,skip,"needs a published newer release"
