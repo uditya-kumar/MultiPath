@@ -76,7 +76,7 @@ test("U04 a download that fails the signature check is not installed", async ({ 
   await expect(alert).toContainText("Couldn't install the update");
   await expect(alert).toContainText("didn't pass the security check, so nothing was installed");
   await expect(panel.getByText("MultiPath 1.2.1 is installed")).toHaveCount(0);
-  await expect(panel.getByText("github.com/timowse/MultiPath-macOS/releases")).toBeVisible();
+  await expect(panel.getByText("github.com/timowse/MultiPath/releases")).toBeVisible();
   await axe(page);
   // Try again starts from a fresh check.
   await panel.getByRole("button", { name: "Try again" }).click();

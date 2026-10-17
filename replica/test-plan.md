@@ -66,7 +66,7 @@ requests anything outside `localhost:1420`.
 | U08 | check at start | edge: off (default) | no `launch` | no check, no banner | e2e `U08`, cargo `update_checks_stay_off_unless_chosen` | pass |
 | U09 | update | keyboard only | Tab to Check for updates, Enter, Enter on Install | reaches Restarting | e2e `U09` | pass |
 | U10 | all | accessibility | axe on idle/checking/available/error, dark and light | no serious violations | e2e | pass |
-| U11 | config | security | tauri.conf.json parsed by `tauri_plugin_updater::Config` | HTTPS endpoint = timowse/MultiPath-macOS latest.json, pubkey set, requireSignedVersion, no `dangerous*` | cargo `updates_come_signed_from_the_release_repo` | pass |
+| U11 | config | security | tauri.conf.json parsed by `tauri_plugin_updater::Config` | HTTPS endpoint = timowse/MultiPath latest.json, pubkey set, requireSignedVersion, no `dangerous*` | cargo `updates_come_signed_from_the_release_repo` | pass |
 | U12 | config | least privilege | capability list | exactly check, download-and-install, restart | cargo `the_popup_gets_only_the_update_permissions_it_uses` | pass |
 | U13 | release | signature | `release-assets/` after `scripts/release-macos.sh` | archive verifies against the configured key; trusted comment `version:1.2.0` = feed; a flipped byte fails | cargo `--ignored release_assets_verify` | pass |
 | U14 | release | versions | package.json, Cargo, tauri.conf.json | all 1.2.0 | cargo `versions_agree`; bundle Info.plist 1.2.0 | pass |

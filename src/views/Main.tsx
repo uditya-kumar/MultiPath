@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleArrowUp, Gauge, Lock, ShieldCheck, Smartphone } from "lucide-react";
+import { CircleArrowUp, Gauge, Info, Lock, ShieldCheck, Smartphone } from "lucide-react";
 import { errorText, setEnabled, setLinkEnabled } from "../api/commands";
 import type { Status } from "../api/types";
 import { hidePopup } from "../api/window";
@@ -10,7 +10,15 @@ import { Hero } from "../components/Hero";
 import { NetworkRow } from "../components/NetworkRow";
 import { ShareRing } from "../components/ShareRing";
 import { deviceName, heroState, usable } from "../lib/hero";
-import { elevationNote, footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
+import {
+  elevationNote,
+  footerInfo,
+  headerStatus,
+  inUse,
+  type Pending,
+  SHARED_ROUTER_NOTE,
+  sharesRouter,
+} from "../lib/summary";
 import type { UpdateState } from "../lib/update";
 import { useLinkEvent } from "../lib/useLinkEvent";
 
@@ -137,6 +145,12 @@ export function Main({ status, onStatus, onSettings, onConnections, update }: Pr
               No phone found. To add one, connect it with a USB cable and turn on Personal Hotspot
               (iPhone) or USB tethering (Android).
             </span>
+          </div>
+        )}
+        {sharesRouter(status.links) && (
+          <div className="tip" role="note">
+            <Info size={14} aria-hidden />
+            <span>{SHARED_ROUTER_NOTE}</span>
           </div>
         )}
         {status.on && present.length > 0 && present.every((l) => !l.enabled) && (

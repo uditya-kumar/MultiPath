@@ -183,7 +183,7 @@ scripts/release-macos.sh "notes"        # macOS: signed .dmg + updater archive +
 
 ### Updates (macOS releases)
 - Official `tauri-plugin-updater` + `tauri-plugin-process`. Feed: `latest.json` of the latest **published,
-  non-prerelease** release of `timowse/MultiPath-macOS`. `requireSignedVersion` is on: the signature's trusted comment
+  non-prerelease** release of `timowse/MultiPath`. `requireSignedVersion` is on: the signature's trusted comment
   must name the version the feed announces (`tauri build` writes it).
 - The popup checks, the user confirms, and `downloadAndInstall` verifies the minisign signature before installing.
   Capabilities grant only `updater:allow-check`, `updater:allow-download-and-install` and `process:allow-restart`.

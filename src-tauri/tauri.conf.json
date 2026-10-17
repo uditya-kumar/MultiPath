@@ -42,7 +42,7 @@
   "plugins": {
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMzNERGRjQzNDFFNTlBNjgKUldSb211VkJRLzlOTTdBWVl1T0p5L1RYelk1aFBjQ1VHODZWUEdrYi95TXRNdFpJOWlSNG5zVjgK",
-      "endpoints": ["https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json"],
+      "endpoints": ["https://github.com/timowse/MultiPath/releases/latest/download/latest.json"],
       "requireSignedVersion": true
     }
   }

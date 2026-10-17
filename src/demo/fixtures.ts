@@ -108,10 +108,16 @@ export const attention: Status = {
   ],
 };
 
+/** Two networks behind one router, such as Wi-Fi and a cable to the same modem. */
+export const sameRouter: Status = {
+  ...off,
+  links: [wifi, { ...ethernet, gateway: wifi.gateway }],
+};
+
 export const failedToStart: Status = {
   ...off,
   error: "Couldn't turn on: the administrator prompt was cancelled",
 };
 
-export const fixtures = { off, active, limited, attention, failedToStart } as const;
+export const fixtures = { off, active, limited, attention, failedToStart, sameRouter } as const;
 export type FixtureName = keyof typeof fixtures;

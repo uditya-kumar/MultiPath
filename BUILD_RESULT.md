@@ -9,7 +9,7 @@ Settings → **Updates** → **Check for updates**. On a newer release the popup
 and restart**. The official Tauri updater then downloads the archive over HTTPS, verifies its minisign signature
 against the public key built into the app (and, with `requireSignedVersion`, that it was signed for the version the
 feed announces), replaces the app and restarts it. *Check for updates at start* is off by default and never installs.
-The feed is `https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json`.
+The feed is `https://github.com/timowse/MultiPath/releases/latest/download/latest.json`.
 
 ### Artifacts
 
@@ -19,7 +19,7 @@ The feed is `https://github.com/timowse/MultiPath-macOS/releases/latest/download
 | dmg | `release-assets/MultiPath_1.2.0_aarch64.dmg` | 5.1 MiB, `hdiutil verify` VALID, sha256 `bb72791a…0104` |
 | updater archive | `release-assets/MultiPath_1.2.0_aarch64.app.tar.gz` | 5.2 MiB, sha256 `719f3a91…2ab0`; signed with key `334DFF4341E59A68`, trusted comment `version:1.2.0` |
 | signature | `release-assets/MultiPath_1.2.0_aarch64.app.tar.gz.sig` | also inside `latest.json` |
-| update feed | `release-assets/latest.json` | version 1.2.0, `darwin-aarch64` → `https://github.com/timowse/MultiPath-macOS/releases/download/v1.2.0/MultiPath_1.2.0_aarch64.app.tar.gz` |
+| update feed | `release-assets/latest.json` | version 1.2.0, `darwin-aarch64` → `https://github.com/timowse/MultiPath/releases/download/v1.2.0/MultiPath_1.2.0_aarch64.app.tar.gz` |
 | checksums | `release-assets/SHA256SUMS` | |
 | how to publish | `release-assets/RELEASE_INSTRUCTIONS.md` | manual: tag `v1.2.0`, upload 4 files, publish as a normal (not pre-) release |
 

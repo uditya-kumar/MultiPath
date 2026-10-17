@@ -52,7 +52,7 @@ Popup width stays 360 px; the extra content makes it taller (the window follows 
 ## Signed self-updates (1.2.0)
 
 Official Tauri v2 updater and process plugins. The feed is `latest.json` from the latest release of
-`timowse/MultiPath-macOS`. The Pencil MCP still isn't available in this session, so `design.pen` wasn't updated; the
+`timowse/MultiPath`. The Pencil MCP still isn't available in this session, so `design.pen` wasn't updated; the
 new parts reuse the existing tokens and the setting-row look.
 
 | ID | what | status |

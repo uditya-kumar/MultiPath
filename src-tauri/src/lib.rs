@@ -147,7 +147,7 @@ mod tests {
         assert_eq!(
             updater["endpoints"],
             serde_json::json!([
-                "https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json"
+                "https://github.com/timowse/MultiPath/releases/latest/download/latest.json"
             ])
         );
         // A minisign public key (base64 of its text form), never a secret key.
@@ -222,9 +222,7 @@ mod tests {
         let archive = format!("MultiPath_{version}_aarch64.app.tar.gz");
         assert_eq!(
             platform["url"],
-            format!(
-                "https://github.com/timowse/MultiPath-macOS/releases/download/v{version}/{archive}"
-            )
+            format!("https://github.com/timowse/MultiPath/releases/download/v{version}/{archive}")
         );
 
         let signature =

@@ -160,7 +160,7 @@ logs them instead of running them.
 
 ## Phase 9 — Signed self-updates (macOS, 1.2.0)
 
-Updates come from the latest release of `timowse/MultiPath-macOS` (`latest.json`), are signed with a dedicated
+Updates come from the latest release of `timowse/MultiPath` (`latest.json`), are signed with a dedicated
 updater key and are installed only after the user confirms. Plan and evidence in `replica/` and `BUILD_RESULT.md`.
 
 - [x] Official `tauri-plugin-updater` and `tauri-plugin-process`; endpoint, public key and `requireSignedVersion` in `tauri.conf.json`; `createUpdaterArtifacts` for macOS
@@ -172,5 +172,7 @@ updater key and are installed only after the user confirms. Plan and evidence in
 - [x] Version 1.2.0 in package.json, Cargo.toml and tauri.conf.json, with a test that they agree
 - [x] Tests with a mocked updater: Vitest (flow and every UI state), Playwright (fake update server, no network), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
 - [x] Signed arm64 `.app`, `.dmg` and updater archive; `release-assets/` with `latest.json` and `RELEASE_INSTRUCTIONS.md` (`scripts/release-macos.sh`)
+- [x] Canonical repo is `timowse/MultiPath` (fork): updater endpoint, release script, docs and tests, assets re-signed
+- [x] Main page note (informational, never blocking) when two or more networks in use share a gateway: "These connections use the same router, so your maximum internet speed may not increase." Vitest, view and Playwright tests
 - [ ] Publish the v1.2.0 GitHub release (needs the user: `release-assets/RELEASE_INSTRUCTIONS.md`)
 - [ ] Live update test from 1.2.0 to a later release (needs a published newer release)

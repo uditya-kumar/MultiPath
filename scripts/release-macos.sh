@@ -11,7 +11,7 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-REPO="timowse/MultiPath-macOS"
+REPO="timowse/MultiPath"
 TARGET="aarch64-apple-darwin"
 KEY="${MULTIPATH_UPDATER_KEY:-$HOME/.config/multipath/updater.key}"
 NOTES="${1:-}"

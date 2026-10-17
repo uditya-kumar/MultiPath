@@ -2,7 +2,7 @@ import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type DownloadEvent } from "@tauri-apps/plugin-updater";
 
 /** Where people can always get MultiPath by hand. */
-export const RELEASES_PAGE = "github.com/timowse/MultiPath-macOS/releases";
+export const RELEASES_PAGE = "github.com/timowse/MultiPath/releases";
 
 /** How far a download has got. `total` is null when the server doesn't say. */
 export interface Progress {

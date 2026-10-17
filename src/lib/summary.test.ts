@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LinkStatus, Status } from "../api/types";
-import { elevationNote, footerInfo, headerStatus, startAtLoginLabel } from "./summary";
+import { elevationNote, footerInfo, headerStatus, sharesRouter, startAtLoginLabel } from "./summary";
 
 const wifi: LinkStatus = {
   id: "1",
@@ -73,5 +73,25 @@ describe("summary", () => {
     expect(startAtLoginLabel({ ...off, platform: "macos" })).toBe("Open at login");
     expect(startAtLoginLabel({ ...off, platform: "linux" })).toBe("Start on login");
     expect(startAtLoginLabel(off)).toBe("Start with Windows");
+  });
+
+  it("notices networks that share a router", () => {
+    const sameGateway = { ...phone };
+    expect(sharesRouter([wifi, sameGateway])).toBe(true);
+    expect(sharesRouter([wifi, { ...phone, gateway: " 192.168.1.1 " }])).toBe(true);
+    expect(sharesRouter([wifi, { ...phone, gateway: "172.20.10.1" }])).toBe(false);
+    expect(sharesRouter([wifi])).toBe(false);
+    expect(sharesRouter([])).toBe(false);
+  });
+
+  it("ignores networks that are absent, switched off or without a gateway", () => {
+    expect(sharesRouter([wifi, { ...phone, present: false }])).toBe(false);
+    expect(sharesRouter([wifi, { ...phone, enabled: false }])).toBe(false);
+    expect(sharesRouter([{ ...wifi, gateway: null }, { ...phone, gateway: null }])).toBe(false);
+    expect(sharesRouter([{ ...wifi, gateway: "" }, { ...phone, gateway: "  " }])).toBe(false);
+  });
+
+  it("needs only two of three networks to share", () => {
+    expect(sharesRouter([wifi, { ...phone, gateway: "172.20.10.1" }, { ...cable, present: true }])).toBe(true);
   });
 });

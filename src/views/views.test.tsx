@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { Status } from "../api/types";
-import { active, attention, failedToStart, limited, off } from "../demo/fixtures";
+import { active, attention, failedToStart, limited, off, sameRouter } from "../demo/fixtures";
 import { UpdatePanel } from "../components/UpdatePanel";
 import type { UpdateState } from "../lib/update";
 import type { UpdateControls } from "../lib/useUpdater";
@@ -84,6 +84,29 @@ describe("Main", () => {
   it("warns when every network is switched off", () => {
     const allOff = { ...active, links: active.links.map((l) => ({ ...l, enabled: false })) };
     expect(text(main(allOff))).toContain("Every network is switched off.");
+  });
+
+  const SAME_ROUTER = "These connections use the same router, so your maximum internet speed may not increase.";
+
+  it("says so, without blocking, when networks share a router", () => {
+    for (const status of [sameRouter, { ...sameRouter, on: true }]) {
+      const html = main(status);
+      expect(text(html)).toContain(SAME_ROUTER);
+      expect(html).toContain('role="note"');
+      // Informational: not styled as a warning, and every switch stays usable.
+      expect(html).not.toContain('class="tip warn"');
+      expect(html).not.toMatch(/<button[^>]*disabled/);
+    }
+  });
+
+  it("stays quiet when every network has its own router", () => {
+    expect(text(main(off))).not.toContain(SAME_ROUTER);
+    expect(text(main(active))).not.toContain(SAME_ROUTER);
+    const oneSwitchedOff = {
+      ...sameRouter,
+      links: sameRouter.links.map((l, i) => ({ ...l, enabled: i === 0 })),
+    };
+    expect(text(main(oneSwitchedOff))).not.toContain(SAME_ROUTER);
   });
 });
 
@@ -180,7 +203,7 @@ describe("Updates", () => {
     const html = panel({ step: "error", during: "check", message: "Couldn't reach the update server." });
     expect(html).toMatch(/role="alert"[^>]*>.*Couldn&#x27;t check for updates/);
     expect(html).toMatch(/<button[^>]*>Try again<\/button>/);
-    expect(text(html)).toContain("github.com/timowse/MultiPath-macOS/releases");
+    expect(text(html)).toContain("github.com/timowse/MultiPath/releases");
     const restart = panel({ step: "error", during: "restart", message: "Quit and open it again." });
     expect(restart).toMatch(/<button[^>]*>Restart now<\/button>/);
     expect(text(restart)).not.toContain("download MultiPath yourself");

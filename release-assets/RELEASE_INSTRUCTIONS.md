@@ -1,8 +1,8 @@
 # Releasing MultiPath for macOS (Apple silicon)
 
-Releases go to **https://github.com/timowse/MultiPath-macOS/releases**. The app looks for updates at
+Releases go to **https://github.com/timowse/MultiPath/releases**. The app looks for updates at
 
-    https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json
+    https://github.com/timowse/MultiPath/releases/latest/download/latest.json
 
 That URL always points at the **latest published, non-prerelease** release. A draft or a prerelease is invisible to
 the updater, so publish it as a normal release once everything is uploaded.
@@ -31,14 +31,14 @@ announces another version with this archive is refused. The signing key's ID is 
 1. Check the files: `cd release-assets && shasum -a 256 -c SHA256SUMS`, then
    `cd ../src-tauri && cargo test -- --ignored release_assets` (verifies the archive against the public key and
    `latest.json`, the same way the app will, and that a changed byte fails).
-2. Commit and push the source to `timowse/MultiPath-macOS` and create the tag `v1.2.0` on that commit.
+2. Commit and push the source to `timowse/MultiPath` and create the tag `v1.2.0` on that commit.
 3. On GitHub: **Releases → Draft a new release**, tag `v1.2.0`, title `MultiPath 1.2.0`, upload the four files above.
 4. Leave "Set as a pre-release" **unticked** and publish.
-5. Check the feed: `curl -sL https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json` shows
+5. Check the feed: `curl -sL https://github.com/timowse/MultiPath/releases/latest/download/latest.json` shows
    version `1.2.0`, and the `url` inside it downloads (HTTP 200 after redirects).
 
 With the GitHub CLI, steps 3–4 are
-`gh release create v1.2.0 --repo timowse/MultiPath-macOS --title "MultiPath 1.2.0" --notes-file <notes>
+`gh release create v1.2.0 --repo timowse/MultiPath --title "MultiPath 1.2.0" --notes-file <notes>
 release-assets/MultiPath_1.2.0_aarch64.dmg release-assets/MultiPath_1.2.0_aarch64.app.tar.gz
 release-assets/MultiPath_1.2.0_aarch64.app.tar.gz.sig release-assets/latest.json`.
 

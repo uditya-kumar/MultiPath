@@ -105,7 +105,7 @@ accessory app (menu bar only, no Dock icon); the popup is placed under the menu-
 ## Self-updates (1.2.0)
 
 ```
-popup (React)                          Rust (tauri-plugin-updater / -process)            GitHub (timowse/MultiPath-macOS)
+popup (React)                          Rust (tauri-plugin-updater / -process)            GitHub (timowse/MultiPath)
 lib/useUpdater → lib/update.ts         check: GET latest.json over HTTPS  ─────────────▶ releases/latest/download/latest.json
   UpdateFlow (state machine)           pick darwin-aarch64, compare semver
   api/updater.ts (only Tauri caller)   downloadAndInstall: GET archive  ───────────────▶ releases/download/vX.Y.Z/…app.tar.gz

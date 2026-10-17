@@ -143,7 +143,7 @@ sudo ./MultiPath_<version>_amd64.AppImage
    turn it on: a small helper runs as root just long enough to add the adapter, routes and DNS, then hands the adapter
    to the app and waits to remove them again. The app itself never runs as root.
 
-The macOS release lives at [timowse/MultiPath-macOS](https://github.com/timowse/MultiPath-macOS/releases/latest).
+The macOS release lives at [timowse/MultiPath](https://github.com/timowse/MultiPath/releases/latest).
 
 **Updates (1.2.0 and later):** Settings → **Updates** → **Check for updates**. If there's a newer version, MultiPath
 shows what's new and waits for you to click **Install and restart**. It then downloads the update, checks its

@@ -111,3 +111,22 @@ for (const scheme of ["dark", "light"] as const) {
     });
   }
 }
+
+test("networks behind one router get an informational note, nothing is blocked", async ({ page }) => {
+  const errors = await open(page, "state=sameRouter");
+  const note = page.getByRole("note").filter({ hasText: "These connections use the same router" });
+  await expect(note).toHaveText(
+    "These connections use the same router, so your maximum internet speed may not increase.",
+  );
+  await expect(page.getByRole("button", { name: "Turn on" })).toBeEnabled();
+  for (const name of ["Wi-Fi", "USB 10/100/1000 LAN"]) {
+    await expect(page.getByRole("switch", { name: `Use ${name}` })).toBeEnabled();
+  }
+  await axe(page);
+  expect(errors).toEqual([]);
+});
+
+test("no router note when each network has its own", async ({ page }) => {
+  await open(page, "state=active");
+  await expect(page.getByText("use the same router")).toHaveCount(0);
+});

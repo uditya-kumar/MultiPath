@@ -87,7 +87,7 @@ describe("UpdateFlow", () => {
   it("offline: an error with what to do", async () => {
     const { flow, seen } = flowWith({
       check: async () => {
-        throw "error sending request for url (https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json)";
+        throw "error sending request for url (https://github.com/timowse/MultiPath/releases/latest/download/latest.json)";
       },
     });
     await flow.check();
