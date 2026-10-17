@@ -14,7 +14,6 @@ import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
 import { UpdatePanel } from "../components/UpdatePanel";
 import { networkColor } from "../lib/format";
-import { deviceName } from "../lib/hero";
 import { startAtLoginLabel } from "../lib/summary";
 import type { UpdateControls } from "../lib/useUpdater";
 
@@ -52,19 +51,19 @@ export function Settings({ status, onStatus, onBack, update }: Props) {
       <Section title="Balancing">
         <SwitchRow
           label="Adaptive weighting"
-          desc="Faster networks get more new connections, based on the speed each one really delivers."
+          desc="Faster networks get more new connections, based on what they actually deliver."
           on={settings.adaptive}
           onChange={(adaptive) => change({ adaptive })}
         />
         <SwitchRow
           label="Keep sites on one network"
-          desc="Sends every connection to one website through the same network. Fixes sites that sign you out (like some banks), but that site no longer gets the combined speed."
+          desc="Fixes sign-outs on banking sites, but one site no longer gets the combined speed."
           on={settings.sticky}
           onChange={(sticky) => change({ sticky })}
         />
         <SwitchRow
           label="Include IPv6"
-          desc="Also spread the newer kind of internet address (IPv6), on networks where it works."
+          desc="Balance IPv6 traffic on networks that have it."
           on={settings.captureIpv6}
           onChange={(captureIpv6) => change({ captureIpv6 })}
         />
@@ -101,33 +100,15 @@ export function Settings({ status, onStatus, onBack, update }: Props) {
         <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
       </Section>
 
-      {/* Releases are published for Apple silicon Macs only. */}
-      {status.platform === "macos" && (
-        <>
-          <div className="divider" />
-          <Section title="Updates">
-            <UpdatePanel current={status.version} update={update} />
-            <SwitchRow
-              label="Check for updates at start"
-              desc="Asks GitHub whether there's a newer version each time MultiPath opens. It never installs anything without asking you."
-              on={settings.checkUpdates}
-              onChange={(checkUpdates) => change({ checkUpdates })}
-            />
-          </Section>
-        </>
-      )}
-
       <div className="divider" />
-      <Section title="Privacy">
-        <div className="setting-row">
-          <div className="setting-text">
-            <span className="setting-label">Everything stays on {deviceName(status)}</span>
-            <span className="setting-desc">
-              MultiPath has no server, no relay and no account. Your traffic goes straight out
-              through your own networks.
-            </span>
-          </div>
-        </div>
+      <Section title="Updates">
+        <UpdatePanel status={status} update={update} />
+        <SwitchRow
+          label="Check for updates at start"
+          desc="Asks GitHub for a newer version when MultiPath opens. Never installs without asking."
+          on={settings.checkUpdates}
+          onChange={(checkUpdates) => change({ checkUpdates })}
+        />
       </Section>
       <div className="bottom-spacer" />
     </>
@@ -250,9 +231,7 @@ function DnsRow({ dns, onSave }: DnsRowProps) {
       <button type="button" className="setting-row" onClick={open}>
         <div className="setting-text">
           <span className="setting-label">DNS servers</span>
-          <span className="setting-desc">
-            Look up website names while MultiPath is on: {dns.join(", ")}
-          </span>
+          <span className="setting-desc">{dns.join(", ")}</span>
         </div>
         <ChevronRight size={16} />
       </button>

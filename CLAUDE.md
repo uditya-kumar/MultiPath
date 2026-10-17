@@ -69,10 +69,9 @@ MultiPath/
 │   ├── views/             one file per popup page: Main (on and off), Settings, Connections
 │   ├── lib/               pure helpers (formatting, status text) and small hooks
 │   └── styles/            tokens.css (from design.pen variables) and global styles
-├── replica/               the macOS port's recon map, feature matrix, architecture, build log, test plan, bug report
 ├── scripts/               linux-lab.sh: namespaces with two shaped 10 Mbit/s ISPs, for the lab tests;
-│                          release-macos.sh: the signed macOS release and its GitHub assets
-├── release-assets/        built release files and latest.json (ignored); RELEASE_INSTRUCTIONS.md (tracked)
+│                          release.sh: this system's signed release, added to the GitHub assets and latest.json
+├── release-assets/        built release files and latest.json (ignored)
 └── src-tauri/
     ├── Info.plist         merged into the macOS bundle: LSUIElement (menu bar only)
     ├── linux/             postinst.sh: the .deb's setcap step
@@ -106,7 +105,7 @@ npm run tauri build    # Windows: NSIS installer · Linux: .deb and AppImage
 cd src-tauri && cargo check && cargo test
 sudo ./scripts/linux-lab.sh up     # two shaped ISPs in namespaces; `down` removes them
 ./multipath --headless --config <dir>   # no Tauri: one JSON status line a second, for tests
-scripts/release-macos.sh "notes"        # macOS: signed .dmg + updater archive + latest.json in release-assets/
+scripts/release.sh "notes"              # this system's signed bundles + .sig, merged into release-assets/latest.json
 ```
 
 ## Conventions
@@ -181,17 +180,26 @@ scripts/release-macos.sh "notes"        # macOS: signed .dmg + updater archive +
   `src-tauri/Info.plist` and `ActivationPolicy::Accessory` keep MultiPath out of the Dock.
 - Socket owners come from `lsof -F pPn` (libc has no `socket_fdinfo`); without root, only the user's own processes.
 
-### Updates (macOS releases)
+### Updates (all systems)
 - Official `tauri-plugin-updater` + `tauri-plugin-process`. Feed: `latest.json` of the latest **published,
-  non-prerelease** release of `timowse/MultiPath`. `requireSignedVersion` is on: the signature's trusted comment
+  non-prerelease** release of `uditya-kumar/MultiPath`. `requireSignedVersion` is on: the signature's trusted comment
   must name the version the feed announces (`tauri build` writes it).
-- The popup checks, the user confirms, and `downloadAndInstall` verifies the minisign signature before installing.
-  Capabilities grant only `updater:allow-check`, `updater:allow-download-and-install` and `process:allow-restart`.
-  The check at start is opt-in (`Settings.check_updates`) and never installs. The Updates section is macOS-only
-  because the feed only has `darwin-aarch64`.
-- The private key is `~/.config/multipath/updater.key` (0600). Never print, copy or commit it. `tauri build` reads it
-  from `TAURI_SIGNING_PRIVATE_KEY` (text **or path**) and ignores `TAURI_SIGNING_PRIVATE_KEY_PATH`. With
-  `createUpdaterArtifacts` in `tauri.macos.conf.json`, a macOS build without the key fails.
+- The feed has one entry per installer: the plugin looks up `{os}-{arch}-{installer}` first (`windows-x86_64-nsis`,
+  `linux-x86_64-deb`, `linux-x86_64-appimage`, `darwin-aarch64-app`), then `{os}-{arch}`. A `.deb` install updates
+  through `pkexec dpkg -i` (so the postinst `setcap` runs again), an AppImage rewrites itself, NSIS runs the installer
+  with `/UPDATE`.
+- The popup checks, the user confirms, then `download()` verifies the minisign signature, `prepare_update_install`
+  runs, and `install()` (which verifies again) installs. Capabilities grant only `updater:allow-check`,
+  `updater:allow-download`, `updater:allow-install` and `process:allow-restart`. The check at start is opt-in
+  (`Settings.check_updates`) and never installs.
+- On Windows the plugin starts the NSIS installer and calls `std::process::exit(0)`: no `RunEvent::Exit`, and the JS
+  path always replaces any custom `on_before_exit`. So `prepare_update_install` turns the engine off first (routes
+  and `PreferIpv4` would otherwise outlive the process). The installer relaunches MultiPath as the signed-in user,
+  not elevated. The NSIS uninstall hook keeps the Start with Windows task under `/UPDATE`.
+- The private key is `~/.config/multipath/updater.key` (no password). Never print, copy or commit it. `tauri build`
+  reads it from `TAURI_SIGNING_PRIVATE_KEY` (text **or path**) and ignores `TAURI_SIGNING_PRIVATE_KEY_PATH`.
+  `createUpdaterArtifacts` is only turned on by `scripts/release.sh` (`--config`), so a plain `npm run tauri build`
+  doesn't need the key.
 - A restart (`request_restart`) starts the new copy before the old one exits. The `RunEvent::Exit` handler releases
-  the single-instance socket first, or the new copy would hand over to the dying one and quit.
+  the single-instance lock first, or the new copy would hand over to the dying one and quit.
 - Version lives in `package.json`, `Cargo.toml` and `tauri.conf.json`; `cargo test` (`versions_agree`) catches drift.

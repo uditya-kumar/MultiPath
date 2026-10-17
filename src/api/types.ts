@@ -35,8 +35,10 @@ export interface SettingsStatus {
   checkUpdates: boolean;
 }
 
+export type Platform = "windows" | "linux" | "macos";
+
 export interface Status {
-  platform: "windows" | "linux" | "macos";
+  platform: Platform;
   /** The running version, such as "1.2.0". */
   version: string;
   on: boolean;

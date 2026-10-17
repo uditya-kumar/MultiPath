@@ -152,6 +152,20 @@ pub fn list_connections(state: State<AppState>) -> Vec<Connection> {
     status::connections(&state)
 }
 
+/// Called between a verified download and its install. On Windows the
+/// updater starts the installer and exits the process at once, without
+/// `RunEvent::Exit`, so the routes must be given back here; the saved "on"
+/// stays, so the new version turns on again. Elsewhere the restart that
+/// follows the install does this through `RunEvent::Exit`.
+#[tauri::command]
+pub async fn prepare_update_install(app: AppHandle) {
+    if cfg!(windows) {
+        let state = app.state::<AppState>();
+        state.turn_off(false).await;
+        state.save_usage();
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

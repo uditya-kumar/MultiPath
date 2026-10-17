@@ -1,8 +1,9 @@
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type DownloadEvent } from "@tauri-apps/plugin-updater";
+import { prepareUpdateInstall } from "./commands";
 
 /** Where people can always get MultiPath by hand. */
-export const RELEASES_PAGE = "github.com/timowse/MultiPath/releases";
+export const RELEASES_PAGE = "github.com/uditya-kumar/MultiPath/releases";
 
 /** How far a download has got. `total` is null when the server doesn't say. */
 export interface Progress {
@@ -26,7 +27,7 @@ export interface FoundUpdate {
   dismiss(): Promise<void>;
 }
 
-/** What the popup needs from the updater; the demo page and tests pass fakes. */
+/** What the popup needs from the updater; tests pass fakes. */
 export interface Updater {
   /** The newer release, or null when this is the latest. */
   check(): Promise<FoundUpdate | null>;
@@ -47,10 +48,11 @@ export const appUpdater: Updater = {
       version: update.version,
       notes: update.body?.trim() || null,
       date: update.date ?? null,
-      install(onProgress) {
+      async install(onProgress) {
         let downloaded = 0;
         let total: number | null = null;
-        return update.downloadAndInstall(
+        // download() verifies the signature; nothing unverified reaches install().
+        await update.download(
           (event: DownloadEvent) => {
             if (event.event === "Started") total = event.data.contentLength ?? null;
             if (event.event === "Progress") downloaded += event.data.chunkLength;
@@ -58,6 +60,9 @@ export const appUpdater: Updater = {
           },
           { timeout: DOWNLOAD_TIMEOUT_MS },
         );
+        // The Windows installer replaces MultiPath without a normal exit, so the engine stops first.
+        await prepareUpdateInstall();
+        await update.install();
       },
       dismiss: () => update.close(),
     };

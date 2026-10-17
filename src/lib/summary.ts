@@ -9,22 +9,6 @@ export function inUse(links: LinkStatus[]): LinkStatus[] {
   return links.filter((l) => l.present && l.enabled);
 }
 
-/** What the popup says when networks share a router: more connections there won't add speed. */
-export const SHARED_ROUTER_NOTE =
-  "These connections use the same router, so your maximum internet speed may not increase.";
-
-/** True when two or more networks in use reach the internet through the same, non-empty gateway. */
-export function sharesRouter(links: LinkStatus[]): boolean {
-  const seen = new Set<string>();
-  for (const link of inUse(links)) {
-    const gateway = link.gateway?.trim().toLowerCase();
-    if (!gateway) continue;
-    if (seen.has(gateway)) return true;
-    seen.add(gateway);
-  }
-  return false;
-}
-
 /** The header's status line and dot color. */
 export function headerStatus(status: Status, pending: Pending): { text: string; dot: string } {
   const switching = pending ?? (status.busy ? (status.on ? "off" : "on") : null);
@@ -32,9 +16,7 @@ export function headerStatus(status: Status, pending: Pending): { text: string; 
     return { text: switching === "on" ? "Turning on…" : "Turning off…", dot: "var(--text-3)" };
   }
   if (status.on) {
-    // Networks that can take new connections right now, as the hero counts them.
-    const n = inUse(status.links).filter((l) => l.health !== "down").length;
-    if (n === 0) return { text: "On · no network is working", dot: "var(--warn)" };
+    const n = inUse(status.links).length;
     return {
       text: n === 1 ? "On · using 1 network" : `Combining ${n} networks`,
       dot: status.error ? "var(--warn)" : "var(--ok)",

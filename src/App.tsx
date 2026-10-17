@@ -13,9 +13,7 @@ export default function App() {
   const ref = useFitWindow<HTMLDivElement>();
   const [status, setStatus] = useStatus();
   const [view, setView] = useState<View>("main");
-  // Update releases exist for macOS only, so only macOS looks for them at start.
-  const checkAtStart = status ? status.platform === "macos" && status.settings.checkUpdates : null;
-  const update = useUpdater(appUpdater, checkAtStart);
+  const update = useUpdater(appUpdater, status ? status.settings.checkUpdates : null);
 
   // Esc goes back a page, and from the first page hides the popup.
   useEffect(() => {
@@ -27,12 +25,6 @@ export default function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [view]);
-
-  // Lets the styles follow each system's conventions (light mode on macOS).
-  const platform = status?.platform;
-  useEffect(() => {
-    if (platform) document.documentElement.dataset.platform = platform;
-  }, [platform]);
 
   const back = () => setView("main");
 

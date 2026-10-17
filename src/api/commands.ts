@@ -19,6 +19,9 @@ export const setOption = (change: OptionChange) => invoke<Status>("set_option", 
 
 export const listConnections = () => invoke<Connection[]>("list_connections");
 
+/** Stops the engine before an update installs where the installer won't let MultiPath exit normally. */
+export const prepareUpdateInstall = () => invoke<void>("prepare_update_install");
+
 /** Commands reject with the message string the Rust side returned. */
 /** Rust errors start in lower case; the popup shows them as sentences. */
 export function errorText(err: unknown): string {

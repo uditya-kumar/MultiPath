@@ -50,7 +50,8 @@ pub fn run() {
 
     tauri::Builder::default()
         // Signed self-updates: the popup checks, the user confirms, the
-        // plugin verifies the signature before installing, then restarts.
+        // plugin verifies the download's signature, then it's installed and
+        // MultiPath restarts.
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .manage(popup::PopupState::default())
@@ -63,6 +64,7 @@ pub fn run() {
             commands::set_link_weight,
             commands::set_option,
             commands::list_connections,
+            commands::prepare_update_install,
         ])
         .setup(move |app| {
             // A menu bar app: no Dock icon, no app menu.
@@ -147,7 +149,7 @@ mod tests {
         assert_eq!(
             updater["endpoints"],
             serde_json::json!([
-                "https://github.com/timowse/MultiPath/releases/latest/download/latest.json"
+                "https://github.com/uditya-kumar/MultiPath/releases/latest/download/latest.json"
             ])
         );
         // A minisign public key (base64 of its text form), never a secret key.
@@ -171,11 +173,9 @@ mod tests {
         assert!(
             !parsed.dangerous_accept_invalid_certs && !parsed.dangerous_accept_invalid_hostnames
         );
-        let macos = json(include_str!("../tauri.macos.conf.json"));
-        assert_eq!(macos["bundle"]["createUpdaterArtifacts"], true);
     }
 
-    /// The popup may check, download-and-install (verified) and restart;
+    /// The popup may check, download (verified), install and restart;
     /// nothing broader such as `updater:default` or `process:allow-exit`.
     #[test]
     fn the_popup_gets_only_the_update_permissions_it_uses() {
@@ -193,15 +193,16 @@ mod tests {
             [
                 "process:allow-restart",
                 "updater:allow-check",
-                "updater:allow-download-and-install"
+                "updater:allow-download",
+                "updater:allow-install"
             ]
         );
     }
 
-    /// Checks `release-assets/` the way the updater will: the archive's
+    /// Checks `release-assets/` the way the updater will: each bundle's
     /// signature against the public key in tauri.conf.json, and the version
     /// it was signed for against the one latest.json announces. A changed
-    /// byte must fail. Run after `scripts/release-macos.sh`:
+    /// byte must fail. Run after `scripts/release.sh`:
     /// `cargo test -- --ignored release_assets`.
     #[test]
     #[ignore]
@@ -218,24 +219,29 @@ mod tests {
         let feed = json(&std::fs::read_to_string(assets.join("latest.json")).unwrap());
         let version = env!("CARGO_PKG_VERSION");
         assert_eq!(feed["version"], version);
-        let platform = &feed["platforms"]["darwin-aarch64"];
-        let archive = format!("MultiPath_{version}_aarch64.app.tar.gz");
-        assert_eq!(
-            platform["url"],
-            format!("https://github.com/timowse/MultiPath/releases/download/v{version}/{archive}")
-        );
+        let base =
+            format!("https://github.com/uditya-kumar/MultiPath/releases/download/v{version}/");
+        let platforms = feed["platforms"].as_object().unwrap();
+        assert!(!platforms.is_empty());
 
-        let signature =
-            Signature::decode(&decode(platform["signature"].as_str().unwrap())).unwrap();
-        let mut bytes = std::fs::read(assets.join(&archive)).unwrap();
-        key.verify(&bytes, &signature, true).unwrap();
-        assert!(signature
-            .trusted_comment()
-            .split('\t')
-            .any(|field| field == format!("version:{version}")));
+        for (platform, entry) in platforms {
+            let url = entry["url"].as_str().unwrap();
+            let name = url
+                .strip_prefix(&base)
+                .unwrap_or_else(|| panic!("{platform}: {url}"));
+            let signature =
+                Signature::decode(&decode(entry["signature"].as_str().unwrap())).unwrap();
+            let mut bytes = std::fs::read(assets.join(name)).unwrap();
+            key.verify(&bytes, &signature, true)
+                .unwrap_or_else(|e| panic!("{platform}: {e}"));
+            assert!(signature
+                .trusted_comment()
+                .split('\t')
+                .any(|field| field == format!("version:{version}")));
 
-        let last = bytes.len() - 1;
-        bytes[last] ^= 1;
-        assert!(key.verify(&bytes, &signature, true).is_err());
+            let last = bytes.len() - 1;
+            bytes[last] ^= 1;
+            assert!(key.verify(&bytes, &signature, true).is_err(), "{platform}");
+        }
     }
 }

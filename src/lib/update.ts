@@ -1,3 +1,4 @@
+import type { Platform } from "../api/types";
 import type { FoundUpdate, Updater } from "../api/updater";
 
 /** Where the "Check for updates" flow is. Nothing is installed before the user confirms. */
@@ -11,7 +12,7 @@ export type UpdateState =
   /** Downloaded; the signature check and the install are running. */
   | { step: "installing"; version: string }
   | { step: "restarting"; version: string }
-  | { step: "error"; during: "check" | "install" | "restart"; message: string };
+  | { step: "error"; during: "check" | "install" | "restart"; failure: UpdateFailure; detail: string };
 
 export const IDLE: UpdateState = { step: "idle" };
 
@@ -26,28 +27,64 @@ export function percent(downloaded: number, total: number | null): number | null
   return Math.min(100, Math.floor((downloaded / total) * 100));
 }
 
-/** Turns the updater's technical errors into a sentence and what to do about it. */
-export function updateErrorText(err: unknown, during: "check" | "install" | "restart"): string {
-  const raw = typeof err === "string" ? err : err instanceof Error ? err.message : String(err);
-  if (during === "restart") {
-    return "The update is installed. Quit MultiPath from the menu bar and open it again to finish.";
+/** Why an update step failed, sorted so the popup can say what to do in each system's words. */
+export type UpdateFailure = "signature" | "noRelease" | "permission" | "network" | "other";
+
+/** Sorts the updater's technical errors; `detail` keeps the original text for the "other" case. */
+export function failureOf(err: unknown): { failure: UpdateFailure; detail: string } {
+  const detail = typeof err === "string" ? err : err instanceof Error ? err.message : String(err);
+  if (/signature|minisign|signed for version|base64/i.test(detail)) return { failure: "signature", detail };
+  if (/platform .* was not found|fallback platforms/i.test(detail)) return { failure: "noRelease", detail };
+  if (/permission denied|operation not permitted|access is denied|read-only|authentication failed|cancel/i.test(detail)) {
+    return { failure: "permission", detail };
   }
-  if (/signature|minisign|signed for version|base64/i.test(raw)) {
-    return "The download didn't pass the security check, so nothing was installed. Try again later.";
+  if (/request|connect|dns|timed? ?out|network|offline|fetch|status code|tls|certificate/i.test(detail)) {
+    return { failure: "network", detail };
   }
-  if (/platform .* was not found|fallback platforms/i.test(raw)) {
-    return "There's no update for this Mac yet. Try again later.";
+  return { failure: "other", detail };
+}
+
+/** An update error as a sentence and what to do about it, in the running system's words. */
+export function updateErrorText(error: Extract<UpdateState, { step: "error" }>, platform: Platform): string {
+  if (error.during === "restart") {
+    const where = platform === "macos" ? "the menu bar" : "its tray icon";
+    return `The update is installed. Quit MultiPath from ${where} and open it again to finish.`;
   }
-  if (/permission denied|operation not permitted|read-only|authentication failed|cancel/i.test(raw)) {
-    return "MultiPath couldn't replace itself. Move it to the Applications folder, then try again.";
+  switch (error.failure) {
+    case "signature":
+      return "The download didn't pass the security check, so nothing was installed. Try again later.";
+    case "noRelease":
+      return `There's no update for this ${platform === "macos" ? "Mac" : "PC"} yet. Try again later.`;
+    case "permission":
+      switch (platform) {
+        case "macos":
+          return "MultiPath couldn't replace itself. Move it to the Applications folder, then try again.";
+        case "linux":
+          return "MultiPath couldn't replace itself. Enter your password when Linux asks, or move the AppImage to a folder you can write to, then try again.";
+        default:
+          return "MultiPath couldn't replace itself. Allow the administrator prompt, then try again.";
+      }
+    case "network":
+      return error.during === "check"
+        ? "Couldn't reach the update server. Check that you're online, then try again."
+        : "The download stopped before it finished, so nothing was installed. Try again.";
+    case "other": {
+      const text = error.detail.charAt(0).toUpperCase() + error.detail.slice(1);
+      return `Something went wrong: ${text.replace(/\.?$/, ".")}`;
+    }
   }
-  if (/request|connect|dns|timed? ?out|network|offline|fetch|status code|tls|certificate/i.test(raw)) {
-    return during === "check"
-      ? "Couldn't reach the update server. Check that you're online, then try again."
-      : "The download stopped before it finished, so nothing was installed. Try again.";
+}
+
+/** What installing will ask for, added to the "available" line. */
+export function installNote(platform: Platform): string {
+  switch (platform) {
+    case "macos":
+      return "If MultiPath is on, macOS asks for your password again.";
+    case "linux":
+      return "Linux may ask for your password.";
+    default:
+      return "Windows may ask for administrator permission.";
   }
-  const text = raw.charAt(0).toUpperCase() + raw.slice(1);
-  return `Something went wrong: ${text.replace(/\.?$/, ".")}`;
 }
 
 /**
@@ -77,7 +114,7 @@ export class UpdateFlow {
     try {
       found = await this.updater.check();
     } catch (err) {
-      this.set(quiet ? IDLE : { step: "error", during: "check", message: updateErrorText(err, "check") });
+      this.set(quiet ? IDLE : { step: "error", during: "check", ...failureOf(err) });
       return;
     }
     await this.release();
@@ -104,7 +141,7 @@ export class UpdateFlow {
     } catch (err) {
       // Start over from a fresh check rather than retrying a half-used update.
       await this.release();
-      this.set({ step: "error", during: "install", message: updateErrorText(err, "install") });
+      this.set({ step: "error", during: "install", ...failureOf(err) });
       return;
     }
     this.found = null;
@@ -119,7 +156,7 @@ export class UpdateFlow {
     try {
       await this.updater.restart();
     } catch (err) {
-      this.set({ step: "error", during: "restart", message: updateErrorText(err, "restart") });
+      this.set({ step: "error", during: "restart", ...failureOf(err) });
     }
   }
 

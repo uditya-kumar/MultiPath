@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { FoundUpdate, Progress, Updater } from "../api/updater";
-import { isBusy, percent, UpdateFlow, type UpdateState, updateErrorText } from "./update";
+import { failureOf, installNote, isBusy, percent, UpdateFlow, type UpdateState, updateErrorText } from "./update";
 
 /** A found update whose install reports the given progress, then succeeds or throws. */
 function found(steps: Progress[] = [], error?: Error): FoundUpdate {
@@ -75,7 +75,8 @@ describe("UpdateFlow", () => {
     expect(seen.at(-1)).toEqual({
       step: "error",
       during: "install",
-      message: "The download didn't pass the security check, so nothing was installed. Try again later.",
+      failure: "signature",
+      detail: "minisign: signature verification failed",
     });
     expect(restart).not.toHaveBeenCalled();
     // A second click can't install the rejected download.
@@ -87,12 +88,13 @@ describe("UpdateFlow", () => {
   it("offline: an error with what to do", async () => {
     const { flow, seen } = flowWith({
       check: async () => {
-        throw "error sending request for url (https://github.com/timowse/MultiPath/releases/latest/download/latest.json)";
+        throw "error sending request for url (https://github.com/uditya-kumar/MultiPath/releases/latest/download/latest.json)";
       },
     });
     await flow.check();
-    expect(seen.at(-1)).toMatchObject({ step: "error", during: "check" });
-    expect((seen.at(-1) as { message: string }).message).toContain("Check that you're online");
+    const last = seen.at(-1) as Extract<UpdateState, { step: "error" }>;
+    expect(last).toMatchObject({ step: "error", during: "check", failure: "network" });
+    expect(updateErrorText(last, "windows")).toContain("Check that you're online");
   });
 
   it("the check at start stays quiet unless it finds something", async () => {
@@ -154,24 +156,36 @@ describe("update helpers", () => {
     expect(isBusy({ step: "checking", quiet: false })).toBe(true);
     expect(isBusy({ step: "installing", version: "1.2.1" })).toBe(true);
     expect(isBusy({ step: "available", version: "1.2.1", notes: null, date: null })).toBe(false);
-    expect(isBusy({ step: "error", during: "check", message: "" })).toBe(false);
+    expect(isBusy({ step: "error", during: "check", failure: "other", detail: "" })).toBe(false);
   });
 
   it("errors in plain words", () => {
-    expect(updateErrorText("Could not fetch a valid release JSON from the remote", "check")).toContain(
+    type During = "check" | "install" | "restart";
+    const text = (err: unknown, during: During, platform: "windows" | "linux" | "macos" = "windows") =>
+      updateErrorText({ step: "error", during, ...failureOf(err) }, platform);
+    expect(text("Could not fetch a valid release JSON from the remote", "check")).toContain(
       "Couldn't reach the update server",
     );
-    expect(updateErrorText(new Error("operation timed out"), "install")).toContain("nothing was installed");
+    expect(text(new Error("operation timed out"), "install")).toContain("nothing was installed");
     expect(
-      updateErrorText(
-        "The update was signed for version 1.2.0 but the update endpoint announced version 1.3.0.",
-        "install",
-      ),
+      text("The update was signed for version 1.2.0 but the update endpoint announced version 1.3.0.", "install"),
     ).toContain("security check");
-    expect(updateErrorText("Permission denied (os error 13)", "install")).toContain("Applications folder");
-    expect(updateErrorText("the platform `darwin-x86_64` was not found in the response", "check")).toContain(
-      "no update for this Mac",
-    );
-    expect(updateErrorText("disk full", "install")).toBe("Something went wrong: Disk full.");
+    expect(text("disk full", "install")).toBe("Something went wrong: Disk full.");
+  });
+
+  it("says what to do in each system's words", () => {
+    const denied = { step: "error" as const, during: "install" as const, ...failureOf("Permission denied (os error 13)") };
+    expect(updateErrorText(denied, "macos")).toContain("Applications folder");
+    expect(updateErrorText(denied, "windows")).toContain("administrator prompt");
+    expect(updateErrorText(denied, "linux")).toContain("AppImage");
+    const missing = { step: "error" as const, during: "check" as const, ...failureOf("the platform `darwin-x86_64` was not found in the response") };
+    expect(updateErrorText(missing, "macos")).toContain("no update for this Mac");
+    expect(updateErrorText(missing, "linux")).toContain("no update for this PC");
+    const restart = { step: "error" as const, during: "restart" as const, ...failureOf("failed to restart app") };
+    expect(updateErrorText(restart, "macos")).toContain("menu bar");
+    expect(updateErrorText(restart, "windows")).toContain("tray icon");
+    expect(installNote("windows")).toContain("administrator permission");
+    expect(installNote("linux")).toContain("password");
+    expect(installNote("macos")).toContain("macOS");
   });
 });

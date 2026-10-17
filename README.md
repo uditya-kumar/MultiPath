@@ -143,15 +143,6 @@ sudo ./MultiPath_<version>_amd64.AppImage
    turn it on: a small helper runs as root just long enough to add the adapter, routes and DNS, then hands the adapter
    to the app and waits to remove them again. The app itself never runs as root.
 
-The macOS release lives at [timowse/MultiPath](https://github.com/timowse/MultiPath/releases/latest).
-
-**Updates (1.2.0 and later):** Settings → **Updates** → **Check for updates**. If there's a newer version, MultiPath
-shows what's new and waits for you to click **Install and restart**. It then downloads the update, checks its
-signature against the key built into the app, replaces itself and restarts. A download whose signature doesn't check
-out is never installed. *Check for updates at start* (off by default) only looks and tells you; it never installs on
-its own. Checking asks GitHub for `latest.json`, the only thing MultiPath ever contacts by itself. Coming from 1.1.0,
-install the 1.2.0 DMG by hand once.
-
 USB tethering: an iPhone shows up as *iPhone USB* once you trust the Mac and turn on Personal Hotspot. Android phones
 need USB tethering over NCM (most phones since Android 11); RNDIS-only phones don't work on Apple silicon.
 
@@ -166,6 +157,19 @@ On Windows and Linux there's no permission prompt; on macOS the password is aske
 
 **On Linux,** the tray icon needs a panel that shows app indicators — GNOME needs the *AppIndicator* extension. Only
 `systemd-resolved` systems get MultiPath's own DNS settings; elsewhere the system resolver is used, which works too.
+
+## Updates
+
+Settings → **Updates** → **Check**. If there's a newer version, MultiPath shows what's new and waits for you to click
+**Install and restart**. It then downloads the update, checks its signature against the key built into the app,
+installs it and restarts. A download whose signature doesn't check out is never installed. *Check for updates at
+start* (off by default) only looks and tells you; it never installs on its own. Checking asks GitHub for
+`latest.json`, the only thing MultiPath ever contacts by itself. Coming from 1.1.0 or older, install 1.2.0 by hand
+once.
+
+- **Windows:** the installer runs; MultiPath turns off first and comes back from the tray. Turn it on again (UAC).
+- **Linux:** the `.deb` asks for your password to install; an AppImage replaces itself if its folder is writable.
+- **macOS:** MultiPath in Applications replaces itself. If it was on, macOS asks for your password again.
 
 ## Getting started (developers)
 
@@ -193,17 +197,17 @@ npm run tauri build     # Windows: bundle/nsis/ · Linux: bundle/deb/ and bundle
 ```
 
 On macOS, a build without access to Finder (SSH, an agent) needs `CI=true npm run tauri build`: that skips the
-AppleScript that only arranges the `.dmg` window. The macOS build also signs an updater archive
-(`createUpdaterArtifacts`), so it needs the updater key. Without it, build with
-`--config '{"bundle":{"createUpdaterArtifacts":false}}'`. Releases are built with `scripts/release-macos.sh`, which
-signs, lays out the GitHub assets and `latest.json` in `release-assets/`, and uploads nothing. See
-`release-assets/RELEASE_INSTRUCTIONS.md`.
+AppleScript that only arranges the `.dmg` window.
+
+**Release:** `scripts/release.sh "what's new"` builds this system's bundles, signs them for the updater with the key at
+`~/.config/multipath/updater.key`, and adds them to `release-assets/latest.json`. Run it on Windows (Git Bash), Linux
+and the Mac in turn, carrying `release-assets/` along, then attach every file in it to the GitHub release
+`v<version>`. It uploads nothing itself.
 
 **Check before committing:**
 
 ```sh
 npm run lint && npm test && npm run build
-npm run e2e             # the popup's states and the update flow in Chrome (fake update server), with an accessibility scan
 cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 
@@ -223,7 +227,7 @@ cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings &
 - A full-tunnel VPN takes over the routes while it's connected.
 - On macOS, Tailscale and other split-tunnel VPNs keep their own routes and DNS; MultiPath only spreads what's left.
 - The macOS build is ad-hoc signed (not notarised) and asks for the administrator password at every turn-on. In-app
-  updates rely on their own signature, not Apple's, and exist for Apple silicon only. A signed, notarised
+  updates rely on their own signature, not Apple's. A signed, notarised
   release would use a privileged helper (`SMAppService`) or a Network Extension instead.
 - Some sites sign you out if your requests come from different addresses. Turn on *Keep sites on one network* for those.
 

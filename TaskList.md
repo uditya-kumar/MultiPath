@@ -125,8 +125,7 @@ The same script runs in GitHub Actions (`ubuntu-latest`, with sudo). Packages ar
 
 ## Phase 8 — macOS support (Apple silicon)
 
-Port to macOS arm64 as a third `sys/` backend, without changing what Windows and Linux do. Plan and evidence in
-`replica/` (recon, architecture, build log, test plan, bug report); results in `BUILD_RESULT.md`. Nothing here adds
+Port to macOS arm64 as a third `sys/` backend, without changing what Windows and Linux do. Nothing here adds
 system-wide routes during development: route/DNS commands are unit-tested through a fake, and `MULTIPATH_DRY_RUN=1`
 logs them instead of running them.
 
@@ -145,44 +144,33 @@ logs them instead of running them.
 - [x] Menu bar app: `LSUIElement` + `ActivationPolicy::Accessory`; popup centred below the menu bar icon
 - [x] Open at login: a LaunchAgent in `~/Library/LaunchAgents`
 - [x] macOS wording from `Status.platform` ("macOS will ask for an administrator password each time…", "Open at login")
-- [x] Plain-language popup (`UI_REQUIREMENTS.md`): state hero, "Where connections go", link-change messages, Advanced details, empty states, privacy line; light/dark, Reduce Motion and VoiceOver labels on macOS
 
 ### Testing
 - [x] Unit tests for macOS discovery, route/address/DNS commands (fake), cleanup idempotency, `IP_BOUND_IF`, helper hand-off, prompt quoting, lsof parsing, LaunchAgent
-- [x] Playwright e2e (`npm run e2e`) over every popup state in dark and light, with axe and console checks
 - [x] Linux fmt/clippy/test in Docker and Windows clippy (cross, check only) after the shared changes
 
 ### Ship
 - [x] Bundle an arm64 `.app` and `.dmg` (`npm run tauri build`), ad-hoc signed
-- [x] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits), `BUILD_RESULT.md`
-- [ ] Live test with Wi-Fi + an iPhone/Android USB tether and the admin password (needs the user: checklist in `BUILD_RESULT.md`)
+- [x] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits)
+- [ ] Live test with Wi-Fi + an iPhone/Android USB tether and the admin password (needs the user)
 - [ ] Signed, notarised release with an `SMAppService` privileged helper or a Network Extension (needs an Apple Developer ID)
 
-## Phase 9 — Signed self-updates (macOS, 1.2.0)
+## Phase 9 — Signed self-updates (all systems, 1.2.0)
 
-Updates come from the latest release of `timowse/MultiPath` (`latest.json`), are signed with a dedicated
-updater key and are installed only after the user confirms. Plan and evidence in `replica/` and `BUILD_RESULT.md`.
+Updates come from the latest release of `uditya-kumar/MultiPath` (`latest.json`), are signed with a dedicated
+updater key and are installed only after the user confirms. The popup stays as designed in `design.pen`.
 
-- [x] Official `tauri-plugin-updater` and `tauri-plugin-process`; endpoint, public key and `requireSignedVersion` in `tauri.conf.json`; `createUpdaterArtifacts` for macOS
-- [x] Least-privilege capability: `updater:allow-check`, `updater:allow-download-and-install`, `process:allow-restart` only
+- [x] Official `tauri-plugin-updater` and `tauri-plugin-process`; endpoint, public key and `requireSignedVersion` in `tauri.conf.json`
+- [x] Least-privilege capability: `updater:allow-check`, `updater:allow-download`, `updater:allow-install`, `process:allow-restart` only
 - [x] Updater key at `~/.config/multipath/updater.key` (0600, never committed); `.gitignore` covers keys and built assets
-- [x] Settings → Updates: Check for updates with idle, checking, up to date, available (notes + explicit Install and restart / Not now), downloading progress, installing, restarting, and actionable errors; accessible (status/alert roles, progress bar, keyboard)
-- [x] Optional check at start (off by default): points out a new version on the main page, never installs on its own
+- [x] Design first: Settings → Updates section, the update states and the main-page banner in `design.pen`
+- [x] Settings → Updates: check, up to date, available (notes + Install and restart / Not now), download progress, installing, restarting, and errors in each system's words
+- [x] Optional check at start (off by default): a banner on the main page, never installs on its own
+- [x] Download (verified) → `prepare_update_install` (Windows: the engine turns off, since the installer exits the process without `RunEvent::Exit`) → install; the NSIS uninstall hook keeps the Start with Windows task under `/UPDATE`
 - [x] Restart after an update: the single-instance socket is released before the new copy starts
+- [x] `scripts/release.sh`: per-system signed bundles (NSIS, `.deb` + AppImage, `.app`) merged into one `latest.json`; `createUpdaterArtifacts` only there, so plain builds need no key
 - [x] Version 1.2.0 in package.json, Cargo.toml and tauri.conf.json, with a test that they agree
-- [x] Tests with a mocked updater: Vitest (flow and every UI state), Playwright (fake update server, no network), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
-- [x] Signed arm64 `.app`, `.dmg` and updater archive; `release-assets/` with `latest.json` and `RELEASE_INSTRUCTIONS.md` (`scripts/release-macos.sh`)
-- [x] Canonical repo is `timowse/MultiPath` (fork): updater endpoint, release script, docs and tests, assets re-signed
-- [x] Main page note (informational, never blocking) when two or more networks in use share a gateway: "These connections use the same router, so your maximum internet speed may not increase." Vitest, view and Playwright tests
-- [ ] Publish the v1.2.0 GitHub release (needs the user: `release-assets/RELEASE_INSTRUCTIONS.md`)
-- [ ] Live update test from 1.2.0 to a later release (needs a published newer release: 1.2.1 below)
-
-## Phase 10 — Updater validation release (macOS, 1.2.1)
-
-A no-op maintenance release so the installed 1.2.0 has a real newer release to update to. No functional change.
-
-- [x] Version 1.2.1 in package.json (and lock), Cargo.toml (and lock) and tauri.conf.json; no product code changed
-- [x] Signed arm64 `.app` archive, signature, `.dmg`, `SHA256SUMS` and `latest.json` (notes say "updater validation and maintenance release, no behavior changes", URL under `…/releases/download/v1.2.1/`) with the existing key; the 1.2.0 set kept in `release-assets/v1.2.0/`
-- [x] Release docs: `release-assets/RELEASE_INSTRUCTIONS.md`, `BUILD_RESULT.md`
-- [x] Lint, Vitest, build, Playwright, `cargo fmt`/`clippy`/`test`, release signature test, DMG verify; no route activation, installed 1.2.0 untouched
-- [ ] Publish the v1.2.1 GitHub release, then run the live update from the installed 1.2.0 (needs the user)
+- [x] Tests: Vitest (flow, per-system wording), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
+- [x] PR #5 merged without the off-design UI (hero, connection spread, light mode, router note), the replica/e2e/demo files and the fork endpoint
+- [ ] Publish the v1.2.0 GitHub release with the assets from all three systems (needs the user)
+- [ ] Live update test from 1.2.0 to a later release on each system (needs a published newer release)
