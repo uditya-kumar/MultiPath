@@ -101,3 +101,30 @@ accessory app (menu bar only, no Dock icon); the popup is placed under the menu-
    tray/popup on macOS, packaging `.app`/`.dmg`.
 3. Should-haves: ICMP echo, connections page owners via lsof, LaunchAgent autostart, headless on macOS, docs.
 4. Fixes: whatever `replica-test` finds.
+
+## Self-updates (1.2.0)
+
+```
+popup (React)                          Rust (tauri-plugin-updater / -process)            GitHub (timowse/MultiPath-macOS)
+lib/useUpdater → lib/update.ts         check: GET latest.json over HTTPS  ─────────────▶ releases/latest/download/latest.json
+  UpdateFlow (state machine)           pick darwin-aarch64, compare semver
+  api/updater.ts (only Tauri caller)   downloadAndInstall: GET archive  ───────────────▶ releases/download/vX.Y.Z/…app.tar.gz
+components/UpdatePanel (Settings)      verify minisign signature (pubkey in tauri.conf.json,
+Main: "is available" banner              requireSignedVersion), then replace the .app
+                                       process: request_restart → RunEvent::Exit (turn off, release
+                                         the single-instance socket) → `open -n` the new bundle
+```
+
+- **Trust:** the only trust anchor is the minisign public key compiled into the app. TLS protects the feed in
+  transit; the signature protects the archive; `requireSignedVersion` binds the archive to the version the feed
+  names, so a tampered feed can't pair an old, validly signed build with a newer version number (downgrade).
+- **Consent:** the plugin is only called from the popup. `check` never downloads. Downloading and installing happen
+  in one verified step, only from the *Install and restart* button. The check at start is opt-in and only shows a
+  banner.
+- **Least privilege:** the popup's capability allows `updater:allow-check`, `updater:allow-download-and-install` and
+  `process:allow-restart`; not `download`/`install` separately (no installing bytes fetched earlier), and not `exit`.
+- **Settings:** `Settings.check_updates` (default false) via `set_option { checkUpdates }`; `Status.version` comes
+  from `CARGO_PKG_VERSION`.
+- **Platforms:** the plugins are registered everywhere (harmless), but the Updates UI only shows on macOS, since the
+  feed only carries `darwin-aarch64`. `createUpdaterArtifacts` is set in `tauri.macos.conf.json` only, so Windows and
+  Linux builds don't need the key.

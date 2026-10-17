@@ -965,6 +965,141 @@ button.setting-row:hover {
   gap: 6px;
 }
 
+/* Updates */
+.update-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.update-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.update-icon {
+  display: flex;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--accent);
+}
+
+.update-panel.upToDate .update-icon,
+.update-panel.restarting .update-icon {
+  color: var(--ok);
+}
+
+.update-panel.error .update-icon {
+  color: var(--danger);
+}
+
+.update-notes {
+  max-height: 96px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--text-2);
+  font-size: 11px;
+  line-height: 15px;
+  white-space: pre-wrap;
+  user-select: text;
+}
+
+.update-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.update-actions .primary-button {
+  padding: 0 14px;
+}
+
+.secondary-button {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-hover);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.secondary-button:disabled {
+  opacity: 0.6;
+}
+
+.update-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progress {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--track);
+  overflow: hidden;
+}
+
+.progress-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 0.2s ease;
+}
+
+.progress.indeterminate .progress-fill {
+  width: 35%;
+  animation: indeterminate 1.4s ease-in-out infinite;
+}
+
+@keyframes indeterminate {
+  from {
+    left: -35%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+.spin {
+  animation: spin 1.2s linear infinite;
+}
+
+.update-banner {
+  padding: 0 16px 12px;
+}
+
+.update-banner .tip {
+  align-items: center;
+}
+
+.link-button {
+  margin-left: auto;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
 /* System setting: Reduce Motion */
 @media (prefers-reduced-motion: reduce) {
   *,

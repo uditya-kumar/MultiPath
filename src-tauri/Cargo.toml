@@ -1,6 +1,6 @@
 [package]
 name = "multipath"
-version = "1.1.0"
+version = "1.2.0"
 edition = "2021"
 license = "MIT"
 
@@ -22,6 +22,8 @@ netdev = "0.46"
 socket2 = { version = "0.6", features = ["all"] }
 etherparse = "0.20"
 log = "0.4"
+tauri-plugin-updater = "2.14.0"
+tauri-plugin-process = "2.4.0"
 
 [target.'cfg(windows)'.dependencies]
 windows-sys = { version = "0.61", features = [
@@ -40,3 +42,8 @@ windows-sys = { version = "0.61", features = [
 
 [target.'cfg(any(target_os = "linux", target_os = "macos"))'.dependencies]
 libc = "0.2"
+
+[dev-dependencies]
+# What the updater plugin verifies downloads with, to check release assets the same way.
+base64 = "0.22"
+minisign-verify = "0.3"

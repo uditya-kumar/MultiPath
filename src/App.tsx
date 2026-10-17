@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { appUpdater } from "./api/updater";
 import { useStatus } from "./api/useStatus";
 import { hidePopup, useFitWindow } from "./api/window";
+import { useUpdater } from "./lib/useUpdater";
 import { Connections } from "./views/Connections";
 import { Main } from "./views/Main";
 import { Settings } from "./views/Settings";
@@ -11,6 +13,9 @@ export default function App() {
   const ref = useFitWindow<HTMLDivElement>();
   const [status, setStatus] = useStatus();
   const [view, setView] = useState<View>("main");
+  // Update releases exist for macOS only, so only macOS looks for them at start.
+  const checkAtStart = status ? status.platform === "macos" && status.settings.checkUpdates : null;
+  const update = useUpdater(appUpdater, checkAtStart);
 
   // Esc goes back a page, and from the first page hides the popup.
   useEffect(() => {
@@ -36,7 +41,7 @@ export default function App() {
       {!status ? (
         <div className="empty">Loading…</div>
       ) : view === "settings" ? (
-        <Settings status={status} onStatus={setStatus} onBack={back} />
+        <Settings status={status} onStatus={setStatus} onBack={back} update={update} />
       ) : view === "connections" ? (
         <Connections status={status} onBack={back} />
       ) : (
@@ -45,6 +50,7 @@ export default function App() {
           onStatus={setStatus}
           onSettings={() => setView("settings")}
           onConnections={() => setView("connections")}
+          update={update.state}
         />
       )}
     </div>

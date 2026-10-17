@@ -157,3 +157,20 @@ logs them instead of running them.
 - [x] Docs: CLAUDE.md (macOS gotchas, privileges), README (install, limits), `BUILD_RESULT.md`
 - [ ] Live test with Wi-Fi + an iPhone/Android USB tether and the admin password (needs the user: checklist in `BUILD_RESULT.md`)
 - [ ] Signed, notarised release with an `SMAppService` privileged helper or a Network Extension (needs an Apple Developer ID)
+
+## Phase 9 — Signed self-updates (macOS, 1.2.0)
+
+Updates come from the latest release of `timowse/MultiPath-macOS` (`latest.json`), are signed with a dedicated
+updater key and are installed only after the user confirms. Plan and evidence in `replica/` and `BUILD_RESULT.md`.
+
+- [x] Official `tauri-plugin-updater` and `tauri-plugin-process`; endpoint, public key and `requireSignedVersion` in `tauri.conf.json`; `createUpdaterArtifacts` for macOS
+- [x] Least-privilege capability: `updater:allow-check`, `updater:allow-download-and-install`, `process:allow-restart` only
+- [x] Updater key at `~/.config/multipath/updater.key` (0600, never committed); `.gitignore` covers keys and built assets
+- [x] Settings → Updates: Check for updates with idle, checking, up to date, available (notes + explicit Install and restart / Not now), downloading progress, installing, restarting, and actionable errors; accessible (status/alert roles, progress bar, keyboard)
+- [x] Optional check at start (off by default): points out a new version on the main page, never installs on its own
+- [x] Restart after an update: the single-instance socket is released before the new copy starts
+- [x] Version 1.2.0 in package.json, Cargo.toml and tauri.conf.json, with a test that they agree
+- [x] Tests with a mocked updater: Vitest (flow and every UI state), Playwright (fake update server, no network), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
+- [x] Signed arm64 `.app`, `.dmg` and updater archive; `release-assets/` with `latest.json` and `RELEASE_INSTRUCTIONS.md` (`scripts/release-macos.sh`)
+- [ ] Publish the v1.2.0 GitHub release (needs the user: `release-assets/RELEASE_INSTRUCTIONS.md`)
+- [ ] Live update test from 1.2.0 to a later release (needs a published newer release)

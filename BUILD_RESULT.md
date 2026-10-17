@@ -1,19 +1,81 @@
-# BUILD_RESULT — MultiPath 1.1.0 on macOS (Apple silicon)
+# BUILD_RESULT — MultiPath 1.2.0 on macOS (Apple silicon)
 
-Branch `macos-port`, local commits only (nothing pushed). Machine: MacBook Pro M4, macOS 26.6.2 (arm64).
-Toolchain: rustc/cargo 1.99.1 (installed with rustup for this user, no sudo), Node 26.8.1, Xcode CLT clang 21.
+Branch `macos-port`, local commits only (nothing pushed, no release created). Machine: MacBook Pro M4, macOS 26.6.2
+(arm64). Toolchain: rustc/cargo 1.99.1 (rustup, per user), Node 26.8.1, Tauri CLI 2.12.3, Xcode CLT clang 21.
 
-## Artifacts
+## 1.2.0: signed self-updates
+
+Settings → **Updates** → **Check for updates**. On a newer release the popup shows its notes and waits for **Install
+and restart**. The official Tauri updater then downloads the archive over HTTPS, verifies its minisign signature
+against the public key built into the app (and, with `requireSignedVersion`, that it was signed for the version the
+feed announces), replaces the app and restarts it. *Check for updates at start* is off by default and never installs.
+The feed is `https://github.com/timowse/MultiPath-macOS/releases/latest/download/latest.json`.
+
+### Artifacts
 
 | what | path | notes |
 | --- | --- | --- |
-| app | `src-tauri/target/aarch64-apple-darwin/release/bundle/macos/MultiPath.app` | 12 MB, Mach-O arm64, ad-hoc signed (`codesign --verify --deep --strict` OK), `LSUIElement`, min macOS 12 |
-| dmg | `src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/MultiPath_1.1.0_aarch64.dmg` | 3.7 MB, `hdiutil verify` VALID, sha256 `835187c0…ed77` (rebuilt after BUG-007, 2026-10-17 08:54) |
-| executable | `…/MultiPath.app/Contents/MacOS/multipath` | sha256 `ef0fe02b…105a`; also the root helper (`--tunnel-helper`) and `--headless` |
+| app | `src-tauri/target/aarch64-apple-darwin/release/bundle/macos/MultiPath.app` | 15.9 MiB, Mach-O arm64, ad-hoc signed (`codesign --verify --deep --strict` OK), `CFBundleShortVersionString` 1.2.0 |
+| dmg | `release-assets/MultiPath_1.2.0_aarch64.dmg` | 5.1 MiB, `hdiutil verify` VALID, sha256 `bb72791a…0104` |
+| updater archive | `release-assets/MultiPath_1.2.0_aarch64.app.tar.gz` | 5.2 MiB, sha256 `719f3a91…2ab0`; signed with key `334DFF4341E59A68`, trusted comment `version:1.2.0` |
+| signature | `release-assets/MultiPath_1.2.0_aarch64.app.tar.gz.sig` | also inside `latest.json` |
+| update feed | `release-assets/latest.json` | version 1.2.0, `darwin-aarch64` → `https://github.com/timowse/MultiPath-macOS/releases/download/v1.2.0/MultiPath_1.2.0_aarch64.app.tar.gz` |
+| checksums | `release-assets/SHA256SUMS` | |
+| how to publish | `release-assets/RELEASE_INSTRUCTIONS.md` | manual: tag `v1.2.0`, upload 4 files, publish as a normal (not pre-) release |
 
-Not notarised (no Developer ID), so Gatekeeper rejects it (`spctl`: rejected): open it once with right-click → Open.
+The same files are in `src-tauri/target/aarch64-apple-darwin/release/bundle/{macos,dmg}/` under Tauri's names;
+`scripts/release-macos.sh` copies and renames them (the signature covers the bytes, not the name). `release-assets/`
+is git-ignored except the instructions.
 
-## Live test 1 (2026-10-17): S1 blocker BUG-007, fixed in code, not yet verified live
+Signing key: `~/.config/multipath/updater.key` (mode 0600, folder 0700), generated once for this app with an empty
+password; the CLI's output went to `/dev/null`, and the build log and assets were checked for key material (none).
+Only the public key is in `src-tauri/tauri.conf.json`. **Back the key up**: without it, installed copies can't take
+another update.
+
+### Commands run and results (1.2.0)
+
+| command | result |
+| --- | --- |
+| `npm run lint` (tsc) | OK |
+| `npm test` (Vitest) | 48/48 pass (26 before; + update flow with a mocked updater, every panel state, Settings section, main-page banner) |
+| `npm run build` | OK |
+| `npm run e2e` (Playwright, Chrome, axe) | 29/29 pass (20 before; + U01–U09 against the demo page's fake update server, each checking that no request leaves `localhost`) |
+| `cargo fmt --check` / `cargo clippy --all-targets -- -D warnings` | OK / OK (arm64 macOS) |
+| `cargo test` | 91 pass, 4 ignored (3 live probes, `release_assets_verify`) |
+| `cargo test -- --ignored release_assets` | pass: archive verifies against the configured public key with `minisign-verify` (the updater's library), version matches the feed, a flipped byte fails |
+| Linux, Docker `rust:1-bookworm` (arm64): fmt / clippy / test | OK / OK / 67 pass (63 before; + settings, config, capabilities, versions). Windows not re-checked: no `sys/` change, the plugins are cross-platform |
+| `scripts/release-macos.sh "…"` | `.app`, `.dmg`, signed updater archive, `release-assets/` + `latest.json` |
+| release binary smoke: isolated `HOME` and runtime dir, `--autostart`, 6 s, SIGTERM | stayed up with both plugins loaded, no helper started, route table unchanged, no settings written |
+
+No updater test contacts GitHub: Vitest uses mocks, Playwright a fake server, and Rust only reads local files.
+Nothing was published or pushed.
+
+### State of this Mac at the end of the run: MultiPath is **on** (turned on at the Mac, not by this run)
+
+`~/Library/Application Support/dev.multipath.app/settings.json` read `"on": false` when this run started (09:05). At
+**09:10:49** the installed **1.1.0** copy in `/Applications` (PID 95183, started 09:02, before this run) was turned on
+through the macOS administrator-password dialog. Its root helper (PID 96518) and `utun9` (10.77.0.1) are up, and
+settings.json now says `"on": true`. That dialog needs someone at the Mac typing the password. This run didn't launch
+MultiPath, show a prompt, or add a route, so it was left alone: stopping or editing a running copy mid-session would
+disrupt it, and the app rewrites settings.json anyway. **To get back to Off: click the toggle in the popup (not
+Quit).** That removes the routes and DNS and saves `"on": false`. The new 1.2.0 build was only started in isolation
+(see the smoke test); it never ran against your settings.
+
+### Limits of the update feature
+
+- **Not published yet.** Until v1.2.0 is a published release with `latest.json`, *Check for updates* says it
+  couldn't reach the update server (GitHub answers 404).
+- 1.1.0 has no updater: install 1.2.0 from the DMG once.
+- A live update (1.2.0 → newer) hasn't been run: it needs a newer published release (`replica/test-plan.md` U16).
+- If MultiPath is on, updating turns it off, restarts it, and macOS asks for the password again (the popup says so).
+  An app the user can't write to (outside `/Applications` and owned by another user) can't replace itself; the popup
+  says to move it to Applications.
+- Ad-hoc signed and not notarised (no Developer ID). The updater's minisign check is independent of Apple's.
+- Apple silicon only; the Updates section is hidden on Windows and Linux (no feed for them).
+
+## History: the 1.1.0 port
+
+### Live test 1 (2026-10-17): S1 blocker BUG-007, fixed in code, not yet verified live
 
 The first real run (Wi-Fi `en0` only, Tailscale up) set everything up correctly (helper as root, `utun9` with
 10.77.0.1 and fd77:6d70::1, 0/1 and 128.0/1 on utun9, the DNS key), but nothing reached the internet: curl to
@@ -41,7 +103,7 @@ Start state: `settings.json` had `"on": false` after the failed run, and the Lau
 which turns on only when `"on"` is true. Turning on at 08:54 saved `"on": true`. **Turn it off with the toggle (not
 by quitting)** if it should stay off at the next start or login.
 
-## How it works on macOS (short)
+### How it works on macOS (short)
 
 Turning on shows the standard administrator password dialog (`osascript … with administrator privileges`). It starts
 the same executable as a short-lived **root helper** that creates a `utunN` (10.77.0.1, fd77:6d70::1/64), adds the
@@ -53,7 +115,7 @@ through the chosen network with `IP_BOUND_IF`/`IPV6_BOUND_IF`. Turning off sends
 removed. If the app dies, its descriptor closes, so the utun and every route on it vanish, and the helper (seeing EOF)
 removes the DNS entry. Every start first removes stale state; all removals are idempotent.
 
-## Commands run and results
+### Commands run and results (1.1.0)
 
 | command | result |
 | --- | --- |
@@ -83,7 +145,8 @@ code was exercised through a command fake and `MULTIPATH_DRY_RUN=1`.
 - `18c3a8b` popup: plain-language states, connection spread, macOS look (from `UI_REQUIREMENTS.md`)
 - `5d84939` Playwright e2e with axe, contrast fixes, test plan and bug list
 - `f1a2958`, `8963f41`, `0c9c51d` BUILD_RESULT, README, UI_REQUIREMENTS
-- macOS capture routes no longer hide the primary network's default route (BUG-007, this file's latest update)
+- `9e5936a` macOS capture routes no longer hide the primary network's default route (BUG-007)
+- 1.2.0: signed self-updates (updater + process plugins, Settings → Updates, release script and assets; this file's latest update)
 
 ## Known limits
 
@@ -111,7 +174,7 @@ Run at the Mac itself (not over SSH), with Wi-Fi connected and an iPhone (Person
 phone (USB tethering) plugged in.
 
 ```sh
-open src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/MultiPath_1.1.0_aarch64.dmg   # drag to Applications
+open release-assets/MultiPath_1.2.0_aarch64.dmg   # drag to Applications
 # or run straight from the build:
 open src-tauri/target/aarch64-apple-darwin/release/bundle/macos/MultiPath.app
 ```
@@ -144,4 +207,5 @@ already gone).
 ## Where the rest is
 
 `replica/` — `recon.md`, `features.csv` (clone column filled), `architecture.md`, `build-log.md`, `test-plan.md`,
-`bugs.md`, `clone-screens/` (Off, Active with 3 links, Limited, Needs attention, failed start, Settings; dark and light).
+`bugs.md`, `clone-screens/` (Off, Active with 3 links, Limited, Needs attention, failed start, Settings; dark and light; `updates-*.png` for the update states).
+`release-assets/` — the 1.2.0 release files, `latest.json` and `RELEASE_INSTRUCTIONS.md`; `scripts/release-macos.sh` rebuilds them.

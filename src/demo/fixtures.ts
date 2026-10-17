@@ -48,6 +48,7 @@ export const ethernet: LinkStatus = {
 
 export const off: Status = {
   platform: "macos",
+  version: "1.2.0",
   on: false,
   busy: false,
   elevated: false,
@@ -65,6 +66,7 @@ export const off: Status = {
     captureIpv6: true,
     dns: ["8.8.8.8", "1.1.1.1"],
     startOnLogin: false,
+    checkUpdates: false,
   },
 };
 

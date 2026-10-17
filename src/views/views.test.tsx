@@ -2,10 +2,21 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import type { Status } from "../api/types";
 import { active, attention, failedToStart, limited, off } from "../demo/fixtures";
+import { UpdatePanel } from "../components/UpdatePanel";
+import type { UpdateState } from "../lib/update";
+import type { UpdateControls } from "../lib/useUpdater";
 import { Main } from "./Main";
 import { Settings } from "./Settings";
 
 const noop = () => {};
+
+function controls(state: UpdateState = { step: "idle" }): UpdateControls {
+  return { state, check: noop, install: noop, dismiss: noop, restart: noop };
+}
+
+function panel(state: UpdateState): string {
+  return renderToStaticMarkup(<UpdatePanel current="1.2.0" update={controls(state)} />);
+}
 
 function main(status: Status): string {
   return renderToStaticMarkup(
@@ -78,10 +89,110 @@ describe("Main", () => {
 
 describe("Settings", () => {
   it("explains sticky sites, DNS and privacy in plain words", () => {
-    const page = text(renderToStaticMarkup(<Settings status={off} onStatus={noop} onBack={noop} />));
+    const page = text(renderToStaticMarkup(<Settings status={off} onStatus={noop} onBack={noop} update={controls()} />));
     expect(page).toContain("Fixes sites that sign you out");
     expect(page).toContain("Look up website names while MultiPath is on: 8.8.8.8, 1.1.1.1");
     expect(page).toContain("Everything stays on this Mac");
     expect(page).toContain("Open at login");
+  });
+});
+
+describe("Updates", () => {
+  const available: UpdateState = {
+    step: "available",
+    version: "1.2.1",
+    notes: "Faster failover.",
+    date: null,
+  };
+
+  it("Settings on macOS: the version, a Check for updates button, and the opt-in check at start", () => {
+    const html = renderToStaticMarkup(
+      <Settings status={off} onStatus={noop} onBack={noop} update={controls()} />,
+    );
+    const page = text(html);
+    expect(page).toContain("MultiPath 1.2.0");
+    expect(page).toContain("Nothing is installed until you say so.");
+    expect(html).toMatch(/<button[^>]*>Check for updates<\/button>/);
+    // Off unless chosen.
+    expect(html).toContain('aria-checked="false" aria-label="Check for updates at start"');
+  });
+
+  it("not on Windows or Linux, where no update is published", () => {
+    for (const platform of ["windows", "linux"] as const) {
+      const page = text(
+        renderToStaticMarkup(
+          <Settings status={{ ...off, platform }} onStatus={noop} onBack={noop} update={controls()} />,
+        ),
+      );
+      expect(page).not.toContain("Check for updates");
+    }
+  });
+
+  it("checking: busy, announced, the button can't be pressed twice", () => {
+    const html = panel({ step: "checking", quiet: false });
+    expect(html).toContain('aria-busy="true"');
+    expect(html).toMatch(/role="status"[^>]*>.*Checking for updates…/);
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Checking…<\/button>/);
+  });
+
+  it("up to date", () => {
+    const page = text(panel({ step: "upToDate" }));
+    expect(page).toContain("You're up to date");
+    expect(page).toContain("MultiPath 1.2.0 is the newest version.");
+    expect(page).toContain("Check again");
+  });
+
+  it("available: what's new, what installing does, and an explicit choice", () => {
+    const html = panel(available);
+    const page = text(html);
+    expect(page).toContain("MultiPath 1.2.1 is available");
+    expect(page).toContain("checks its signature");
+    expect(page).toContain("Faster failover.");
+    expect(html).toMatch(/<button[^>]*class="primary-button"[^>]*>Install and restart<\/button>/);
+    expect(html).toMatch(/<button[^>]*>Not now<\/button>/);
+  });
+
+  it("downloading: a labelled progress bar with the percentage", () => {
+    const html = panel({ step: "downloading", version: "1.2.1", downloaded: 3_200_000, total: 6_400_000 });
+    expect(html).toContain('role="progressbar"');
+    expect(html).toContain('aria-valuenow="50"');
+    expect(html).toContain('aria-valuetext="50%, 3.2 MB of 6.4 MB"');
+    expect(text(html)).toContain("Downloading MultiPath 1.2.1…");
+    expect(html).not.toContain("<button");
+  });
+
+  it("downloading without a known size: an indeterminate bar", () => {
+    const html = panel({ step: "downloading", version: "1.2.1", downloaded: 1_000_000, total: null });
+    expect(html).toContain("progress indeterminate");
+    expect(html).not.toContain("aria-valuenow");
+  });
+
+  it("installing and restarting", () => {
+    expect(text(panel({ step: "installing", version: "1.2.1" }))).toContain(
+      "Checking the signature and installing…",
+    );
+    const done = text(panel({ step: "restarting", version: "1.2.1" }));
+    expect(done).toContain("MultiPath 1.2.1 is installed");
+    expect(done).toContain("Restarting MultiPath…");
+  });
+
+  it("errors: an alert, a way forward, and the manual download", () => {
+    const html = panel({ step: "error", during: "check", message: "Couldn't reach the update server." });
+    expect(html).toMatch(/role="alert"[^>]*>.*Couldn&#x27;t check for updates/);
+    expect(html).toMatch(/<button[^>]*>Try again<\/button>/);
+    expect(text(html)).toContain("github.com/timowse/MultiPath-macOS/releases");
+    const restart = panel({ step: "error", during: "restart", message: "Quit and open it again." });
+    expect(restart).toMatch(/<button[^>]*>Restart now<\/button>/);
+    expect(text(restart)).not.toContain("download MultiPath yourself");
+  });
+
+  it("Main: a found update is pointed out, never installed from there", () => {
+    const html = renderToStaticMarkup(
+      <Main status={off} onStatus={noop} onSettings={noop} onConnections={noop} update={available} />,
+    );
+    expect(text(html)).toContain("MultiPath 1.2.1 is available.");
+    expect(html).toMatch(/<button[^>]*>Review update<\/button>/);
+    expect(html).not.toContain("Install and restart");
+    expect(text(main(off))).not.toContain("is available");
   });
 });

@@ -124,7 +124,50 @@ unit-tested. After the rebuild it was turned on again at the Mac (08:54, helper 
 showed the new routes on utun9 (no 0/1) and `route -n get -ifscope en0 1.1.1.1` → en0 via 192.168.178.1 (IPv6 likewise),
 which is the lookup that failed. **Not yet verified with traffic** (curl/ping/DNS): `BUILD_RESULT.md` checklist step 3.
 
+### BUG-008: after an update, the restarted MultiPath could quit at once
+
+- Severity: S2
+- Flow / case: updates / U02, U16
+- Screen: Settings → Updates
+- Build: the updater work, before the fix
+
+Steps
+1. Install an update and let the popup restart MultiPath (`relaunch()` → `AppHandle::request_restart`).
+
+Expected: the new version starts and stays in the menu bar.
+Actual (from Tauri 2.12.3's `process::restart`): on macOS the new copy is started with `open -n` while the old one
+is still in `RunEvent::Exit`. The old copy still holds the single-instance socket (managed state, dropped only at
+process exit), so the new copy's `Instance::acquire(0)` connects, asks the old one to show its popup, and exits.
+Then the old one exits too: no MultiPath left running.
+Evidence: `tauri-2.12.3/src/app.rs` (`restart_on_exit` → `process::restart` after the Exit callback),
+`process.rs` `restart_macos_app`; `sys::Instance::acquire_at` returns `None` while another copy listens (unit test
+`only_one_copy_runs`). Not run end-to-end, because that needs a real newer release.
+Fix: the instance is managed as `Mutex<Option<Instance>>`, and the `RunEvent::Exit` handler takes and drops it (which
+removes the socket) after turning off and before Tauri restarts.
+Status: fixed in code.
+
+### BUG-009: the signed macOS build failed with "A public key has been found, but no private key"
+
+- Severity: S3 (release tooling)
+- Flow / case: release / U13
+- Build: the updater work
+
+Steps
+1. `CI=true TAURI_SIGNING_PRIVATE_KEY_PATH=~/.config/multipath/updater.key npx tauri build --target aarch64-apple-darwin`
+
+Expected: `.app`, `.dmg` and a signed `MultiPath.app.tar.gz`.
+Actual: the bundles were made, then the build failed before signing the updater archive. `tauri build` (CLI 2.12.3)
+reads only `TAURI_SIGNING_PRIVATE_KEY`; `_PATH` exists only for `tauri signer sign`.
+Fix: `scripts/release-macos.sh` passes the key file's **path** in `TAURI_SIGNING_PRIVATE_KEY` (accepted as text or
+path), so the key's text is never in the environment or a log.
+Status: fixed; the signature verified (U13).
+
 ## To check (not reproduced here)
+
+- A live update from 1.2.0 to a newer release (U16): needs a published newer release. Things to watch: the admin
+  prompt if MultiPath sits in a folder the user can't write, the restart while MultiPath is on (it turns off, restarts,
+  and asks for the password again because `"on"` stays true), and a copy started with `--autostart` restarting
+  without its popup.
 
 - The same `--text-3` contrast shortfall exists in the Windows/Linux dark flyout (design token); change it in Pencil
   (`design.pen`) first, as CLAUDE.md asks, then in `tokens.css`.

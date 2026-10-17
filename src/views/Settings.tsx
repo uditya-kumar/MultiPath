@@ -12,19 +12,22 @@ import type { OptionChange, Status } from "../api/types";
 import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
+import { UpdatePanel } from "../components/UpdatePanel";
 import { networkColor } from "../lib/format";
 import { deviceName } from "../lib/hero";
 import { startAtLoginLabel } from "../lib/summary";
+import type { UpdateControls } from "../lib/useUpdater";
 
 interface Props {
   status: Status;
   onStatus: (status: Status) => void;
   onBack: () => void;
+  update: UpdateControls;
 }
 
 const WEIGHT_DELAY_MS = 250;
 
-export function Settings({ status, onStatus, onBack }: Props) {
+export function Settings({ status, onStatus, onBack, update }: Props) {
   const [error, setError] = useState<string | null>(null);
   const settings = status.settings;
   const present = status.links.filter((l) => l.present);
@@ -97,6 +100,22 @@ export function Settings({ status, onStatus, onBack }: Props) {
         />
         <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
       </Section>
+
+      {/* Releases are published for Apple silicon Macs only. */}
+      {status.platform === "macos" && (
+        <>
+          <div className="divider" />
+          <Section title="Updates">
+            <UpdatePanel current={status.version} update={update} />
+            <SwitchRow
+              label="Check for updates at start"
+              desc="Asks GitHub whether there's a newer version each time MultiPath opens. It never installs anything without asking you."
+              on={settings.checkUpdates}
+              onChange={(checkUpdates) => change({ checkUpdates })}
+            />
+          </Section>
+        </>
+      )}
 
       <div className="divider" />
       <Section title="Privacy">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Gauge, Lock, ShieldCheck, Smartphone } from "lucide-react";
+import { CircleArrowUp, Gauge, Lock, ShieldCheck, Smartphone } from "lucide-react";
 import { errorText, setEnabled, setLinkEnabled } from "../api/commands";
 import type { Status } from "../api/types";
 import { hidePopup } from "../api/window";
@@ -11,6 +11,7 @@ import { NetworkRow } from "../components/NetworkRow";
 import { ShareRing } from "../components/ShareRing";
 import { deviceName, heroState, usable } from "../lib/hero";
 import { elevationNote, footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
+import type { UpdateState } from "../lib/update";
 import { useLinkEvent } from "../lib/useLinkEvent";
 
 interface Props {
@@ -18,10 +19,12 @@ interface Props {
   onStatus: (status: Status) => void;
   onSettings: () => void;
   onConnections: () => void;
+  /** Set when a check (at start, or in Settings) found a newer version. */
+  update?: UpdateState;
 }
 
 /** The popup's first page: the state at a glance, live traffic when on, an explanation when off. */
-export function Main({ status, onStatus, onSettings, onConnections }: Props) {
+export function Main({ status, onStatus, onSettings, onConnections, update }: Props) {
   const [pending, setPending] = useState<Pending>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -64,6 +67,17 @@ export function Main({ status, onStatus, onSettings, onConnections }: Props) {
         onMinimize={hidePopup}
       />
       <Hero hero={hero} event={event} />
+      {update?.step === "available" && (
+        <div className="update-banner">
+          <div className="tip">
+            <CircleArrowUp size={14} aria-hidden />
+            <span>MultiPath {update.version} is available.</span>
+            <button type="button" className="link-button" onClick={onSettings}>
+              Review update
+            </button>
+          </div>
+        </div>
+      )}
 
       {status.on ? (
         <section className="throughput" aria-label="Combined speed">

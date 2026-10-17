@@ -70,7 +70,9 @@ MultiPath/
 │   ├── lib/               pure helpers (formatting, status text) and small hooks
 │   └── styles/            tokens.css (from design.pen variables) and global styles
 ├── replica/               the macOS port's recon map, feature matrix, architecture, build log, test plan, bug report
-├── scripts/               linux-lab.sh: namespaces with two shaped 10 Mbit/s ISPs, for the lab tests
+├── scripts/               linux-lab.sh: namespaces with two shaped 10 Mbit/s ISPs, for the lab tests;
+│                          release-macos.sh: the signed macOS release and its GitHub assets
+├── release-assets/        built release files and latest.json (ignored); RELEASE_INSTRUCTIONS.md (tracked)
 └── src-tauri/
     ├── Info.plist         merged into the macOS bundle: LSUIElement (menu bar only)
     ├── linux/             postinst.sh: the .deb's setcap step
@@ -104,6 +106,7 @@ npm run tauri build    # Windows: NSIS installer · Linux: .deb and AppImage
 cd src-tauri && cargo check && cargo test
 sudo ./scripts/linux-lab.sh up     # two shaped ISPs in namespaces; `down` removes them
 ./multipath --headless --config <dir>   # no Tauri: one JSON status line a second, for tests
+scripts/release-macos.sh "notes"        # macOS: signed .dmg + updater archive + latest.json in release-assets/
 ```
 
 ## Conventions
@@ -177,3 +180,18 @@ sudo ./scripts/linux-lab.sh up     # two shaped ISPs in namespaces; `down` remov
 - The popup's transparency needs `macOSPrivateApi` (and Tauri's `macos-private-api` feature); `LSUIElement` in
   `src-tauri/Info.plist` and `ActivationPolicy::Accessory` keep MultiPath out of the Dock.
 - Socket owners come from `lsof -F pPn` (libc has no `socket_fdinfo`); without root, only the user's own processes.
+
+### Updates (macOS releases)
+- Official `tauri-plugin-updater` + `tauri-plugin-process`. Feed: `latest.json` of the latest **published,
+  non-prerelease** release of `timowse/MultiPath-macOS`. `requireSignedVersion` is on: the signature's trusted comment
+  must name the version the feed announces (`tauri build` writes it).
+- The popup checks, the user confirms, and `downloadAndInstall` verifies the minisign signature before installing.
+  Capabilities grant only `updater:allow-check`, `updater:allow-download-and-install` and `process:allow-restart`.
+  The check at start is opt-in (`Settings.check_updates`) and never installs. The Updates section is macOS-only
+  because the feed only has `darwin-aarch64`.
+- The private key is `~/.config/multipath/updater.key` (0600). Never print, copy or commit it. `tauri build` reads it
+  from `TAURI_SIGNING_PRIVATE_KEY` (text **or path**) and ignores `TAURI_SIGNING_PRIVATE_KEY_PATH`. With
+  `createUpdaterArtifacts` in `tauri.macos.conf.json`, a macOS build without the key fails.
+- A restart (`request_restart`) starts the new copy before the old one exits. The `RunEvent::Exit` handler releases
+  the single-instance socket first, or the new copy would hand over to the dying one and quit.
+- Version lives in `package.json`, `Cargo.toml` and `tauri.conf.json`; `cargo test` (`versions_agree`) catches drift.

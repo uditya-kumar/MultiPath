@@ -15,6 +15,7 @@ One line per milestone/screen: ID, date, status, what's missing, what was harder
 | helper flake | 2026-10-17 | fixed | — | the helper's private folder was named pid + sub-second nanos; macOS clocks tick in microseconds, so two listeners could collide (caught by repeating `cargo test`): now a counter, and retry on AlreadyExists |
 | UI (UI_REQUIREMENTS.md) | 2026-10-17 | done | real-window check in the menu bar; VoiceOver pass by hand | see the UI section below |
 | packaging | 2026-10-17 | see BUILD_RESULT.md | notarisation (no Developer ID) | `icon.icns` generated from the MIT `icon.png` (512 px, so no 1024 px slot) |
+| updates (1.2.0) | 2026-10-17 | done | publishing the GitHub release; a live update from 1.2.0 to a newer release | `tauri build` ignores `TAURI_SIGNING_PRIVATE_KEY_PATH` and failed with "public key found, but no private key": the key's path goes in `TAURI_SIGNING_PRIVATE_KEY`. A restart after an update would have found the old copy still holding the single-instance socket and quit (BUG-008) |
 
 ## Live checks done on this Mac (read-only, no root)
 
@@ -47,3 +48,21 @@ parts reuse the existing tokens and components, and the Windows/Linux look stays
 | screenshots | `replica/clone-screens/`: off (dark, light), active with 3 links (dark, light), limited, needs attention (no internet; failed start), settings | done (rendered from `demo.html` fixtures in headless Chrome, not the real window) |
 
 Popup width stays 360 px; the extra content makes it taller (the window follows its content).
+
+## Signed self-updates (1.2.0)
+
+Official Tauri v2 updater and process plugins. The feed is `latest.json` from the latest release of
+`timowse/MultiPath-macOS`. The Pencil MCP still isn't available in this session, so `design.pen` wasn't updated; the
+new parts reuse the existing tokens and the setting-row look.
+
+| ID | what | status |
+| --- | --- | --- |
+| U-config | endpoint (HTTPS), public key, `requireSignedVersion` in `tauri.conf.json`; `createUpdaterArtifacts` in `tauri.macos.conf.json`; parsed with the plugin's own `Config` in a test | done, tested |
+| U-caps | capability: `updater:allow-check`, `updater:allow-download-and-install`, `process:allow-restart` (no `download`/`install` alone, no `exit`) | done, tested |
+| U-key | `~/.config/multipath/updater.key` generated once (0600, folder 0700, empty password); CLI output discarded so nothing secret reached a terminal or log; build log grepped for key material: none | done |
+| U-flow | `lib/update.ts` `UpdateFlow`: check → available → (user confirms) downloading → installing → restarting; errors per step in plain words; the check at start is quiet unless it finds an update | done, tested (Vitest with a mocked updater) |
+| U-ui | Settings → Updates (macOS only): version, Check for updates, release notes, Install and restart / Not now, progress bar (determinate or not), Try again / Restart now, manual download hint; opt-in "Check for updates at start"; banner on the main page | done, tested (Vitest + Playwright + axe) |
+| U-restart | single-instance socket released in `RunEvent::Exit` before the restart starts the new copy (BUG-008) | done (code; not observable without a real update) |
+| U-version | 1.2.0 in package.json, package-lock.json, Cargo.toml/Cargo.lock, tauri.conf.json; `versions_agree` test | done |
+| U-release | `scripts/release-macos.sh`: checks key mode, key/public key match and versions, builds, signs, lays out `release-assets/` and writes `latest.json` | done; assets verified with minisign (`release_assets_verify`) |
+| screenshots | `replica/clone-screens/updates-*.png`: idle, available, downloading, restarting (dark); up to date, signature error (light); main-page banner | done (demo page, fake update server) |

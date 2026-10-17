@@ -96,6 +96,7 @@ pub struct OptionChange {
     pub capture_ipv6: Option<bool>,
     pub dns: Option<Vec<String>>,
     pub start_on_login: Option<bool>,
+    pub check_updates: Option<bool>,
 }
 
 /// Parses DNS servers typed by the user; empty entries are skipped.
@@ -134,6 +135,9 @@ pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, 
         if let Some(dns) = dns {
             s.dns = dns;
         }
+        if let Some(check_updates) = change.check_updates {
+            s.check_updates = check_updates;
+        }
     });
     let after = state.settings();
     // The adapter's DNS servers are set when it's created.
@@ -164,5 +168,7 @@ mod tests {
         let change: OptionChange = serde_json::from_str(r#"{"captureIpv6":false}"#).unwrap();
         assert_eq!(change.capture_ipv6, Some(false));
         assert!(change.adaptive.is_none() && change.dns.is_none());
+        let change: OptionChange = serde_json::from_str(r#"{"checkUpdates":true}"#).unwrap();
+        assert_eq!(change.check_updates, Some(true));
     }
 }

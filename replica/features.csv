@@ -40,3 +40,11 @@ Technical details behind Advanced,ui,should,no,yes,
 Empty and onboarding states,ui,must,no,yes,one link / permissions / no phone / no internet / all off
 Privacy reassurance (local only),ui,must,no,yes,
 Light and dark mode + Reduce Motion + VoiceOver labels on macOS,ui,should,no,yes,Windows/Linux stay dark as designed
+Check for updates in Settings (signed Tauri updater),ship,must,no,yes,"official updater + process plugins; endpoint timowse/MultiPath-macOS latest.json; macOS only"
+Explicit confirmation before installing an update,ship,must,no,yes,"available state shows notes, Install and restart / Not now; nothing downloads before"
+Signature-verified download (never install unsigned),security,must,no,yes,"minisign check by the plugin before install; requireSignedVersion; HTTPS only; tamper test on the release assets"
+Update progress / installing / restarting / error states,ui,must,no,yes,"role=status/alert, progressbar with value text, Try again / Restart now"
+Optional check for updates at start,app,should,no,yes,"off by default; quiet unless an update is found; banner on the main page; never auto-installs"
+Least-privilege updater capability,security,must,no,yes,"updater:allow-check, updater:allow-download-and-install, process:allow-restart"
+Signed arm64 release assets + latest.json,ship,must,no,yes,"scripts/release-macos.sh -> release-assets/; publishing is manual"
+Live update from 1.2.0 to a newer release,test,should,no,skip,"needs a published newer release"

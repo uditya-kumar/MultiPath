@@ -143,6 +143,15 @@ sudo ./MultiPath_<version>_amd64.AppImage
    turn it on: a small helper runs as root just long enough to add the adapter, routes and DNS, then hands the adapter
    to the app and waits to remove them again. The app itself never runs as root.
 
+The macOS release lives at [timowse/MultiPath-macOS](https://github.com/timowse/MultiPath-macOS/releases/latest).
+
+**Updates (1.2.0 and later):** Settings → **Updates** → **Check for updates**. If there's a newer version, MultiPath
+shows what's new and waits for you to click **Install and restart**. It then downloads the update, checks its
+signature against the key built into the app, replaces itself and restarts. A download whose signature doesn't check
+out is never installed. *Check for updates at start* (off by default) only looks and tells you; it never installs on
+its own. Checking asks GitHub for `latest.json`, the only thing MultiPath ever contacts by itself. Coming from 1.1.0,
+install the 1.2.0 DMG by hand once.
+
 USB tethering: an iPhone shows up as *iPhone USB* once you trust the Mac and turn on Personal Hotspot. Android phones
 need USB tethering over NCM (most phones since Android 11); RNDIS-only phones don't work on Apple silicon.
 
@@ -184,13 +193,17 @@ npm run tauri build     # Windows: bundle/nsis/ · Linux: bundle/deb/ and bundle
 ```
 
 On macOS, a build without access to Finder (SSH, an agent) needs `CI=true npm run tauri build`: that skips the
-AppleScript that only arranges the `.dmg` window.
+AppleScript that only arranges the `.dmg` window. The macOS build also signs an updater archive
+(`createUpdaterArtifacts`), so it needs the updater key. Without it, build with
+`--config '{"bundle":{"createUpdaterArtifacts":false}}'`. Releases are built with `scripts/release-macos.sh`, which
+signs, lays out the GitHub assets and `latest.json` in `release-assets/`, and uploads nothing. See
+`release-assets/RELEASE_INSTRUCTIONS.md`.
 
 **Check before committing:**
 
 ```sh
 npm run lint && npm test && npm run build
-npm run e2e             # the popup's states in Chrome, with an accessibility scan
+npm run e2e             # the popup's states and the update flow in Chrome (fake update server), with an accessibility scan
 cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test
 ```
 
@@ -209,7 +222,8 @@ cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings &
 - One connection always uses one network.
 - A full-tunnel VPN takes over the routes while it's connected.
 - On macOS, Tailscale and other split-tunnel VPNs keep their own routes and DNS; MultiPath only spreads what's left.
-- The macOS build is ad-hoc signed and asks for the administrator password at every turn-on. A signed, notarised
+- The macOS build is ad-hoc signed (not notarised) and asks for the administrator password at every turn-on. In-app
+  updates rely on their own signature, not Apple's, and exist for Apple silicon only. A signed, notarised
   release would use a privileged helper (`SMAppService`) or a Network Extension instead.
 - Some sites sign you out if your requests come from different addresses. Turn on *Keep sites on one network* for those.
 

@@ -47,3 +47,28 @@ the release binary. Cases marked **manual** need the admin password and/or a tet
 | X-6 | all | app starts in the menu bar | release binary `--autostart` | stays up, no routes added, clean log, stops on SIGTERM | smoke | pass |
 | X-7 | all | single instance | second launch | first copy shows its popup | cargo `only_one_copy_runs`, `shows_on_request_only` | pass |
 | X-8 | build | other OSes | Linux fmt/clippy/test (Docker), Windows clippy (cross, check only) | green | CI-like | pass |
+
+## Signed self-updates (1.2.0)
+
+Build: the updater commit  Date: 2026-10-17. Every automated case uses a mocked updater (Vitest) or the demo page's
+fake update server (`src/demo/fakeUpdater.ts`, Playwright). No test contacts GitHub; the e2e cases fail if the page
+requests anything outside `localhost:1420`.
+
+| case | flow | type | steps | expected | auto | result |
+| --- | --- | --- | --- | --- | --- | --- |
+| U01 | check | happy: up to date | Settings → Check for updates | "Checking…" (disabled, aria-busy), then "You're up to date", Check again | e2e `U01`, vitest | pass |
+| U02 | update | happy | check → available → Install and restart | notes shown; nothing downloads before the click; progress bar with value; "Checking the signature and installing…"; "is installed · Restarting…" | e2e `U02`, vitest `confirmed: …` | pass |
+| U03 | update | edge: Not now | dismiss | back to Check for updates; update freed | e2e `U03`, vitest | pass |
+| U04 | update | negative: bad signature | install rejects | alert "didn't pass the security check, so nothing was installed"; no restart; Try again starts a fresh check | e2e `U04`, vitest `a bad signature…` | pass |
+| U05 | check | negative: offline | check rejects | alert "Check that you're online, then try again." + Try again | e2e `U05`, vitest | pass |
+| U06 | update | negative: restart fails | restart rejects | alert "Quit MultiPath … open it again"; Restart now retries | e2e `U06`, vitest | pass |
+| U07 | check at start | happy | `launch=1`, update available | banner "MultiPath 1.2.1 is available." → Review update → Settings; nothing installed | e2e `U07`, vitest `quiet…` | pass |
+| U08 | check at start | edge: off (default) | no `launch` | no check, no banner | e2e `U08`, cargo `update_checks_stay_off_unless_chosen` | pass |
+| U09 | update | keyboard only | Tab to Check for updates, Enter, Enter on Install | reaches Restarting | e2e `U09` | pass |
+| U10 | all | accessibility | axe on idle/checking/available/error, dark and light | no serious violations | e2e | pass |
+| U11 | config | security | tauri.conf.json parsed by `tauri_plugin_updater::Config` | HTTPS endpoint = timowse/MultiPath-macOS latest.json, pubkey set, requireSignedVersion, no `dangerous*` | cargo `updates_come_signed_from_the_release_repo` | pass |
+| U12 | config | least privilege | capability list | exactly check, download-and-install, restart | cargo `the_popup_gets_only_the_update_permissions_it_uses` | pass |
+| U13 | release | signature | `release-assets/` after `scripts/release-macos.sh` | archive verifies against the configured key; trusted comment `version:1.2.0` = feed; a flipped byte fails | cargo `--ignored release_assets_verify` | pass |
+| U14 | release | versions | package.json, Cargo, tauri.conf.json | all 1.2.0 | cargo `versions_agree`; bundle Info.plist 1.2.0 | pass |
+| U15 | release | binary starts with the plugins | release binary, isolated HOME + runtime dir, `--autostart`, 6 s | stays up, no helper, route table unchanged, nothing written | smoke | pass |
+| U16 | update | live: 1.2.0 → newer release | real GitHub release | prompt, download, verify, install, relaunch | manual | not run (needs a published newer release) |

@@ -26,6 +26,7 @@ const cable: LinkStatus = { ...wifi, id: "3", name: "Ethernet", kind: "ethernet"
 
 const off: Status = {
   platform: "windows",
+  version: "1.2.0",
   on: false,
   busy: false,
   elevated: false,
@@ -37,7 +38,7 @@ const off: Status = {
   connections: 0,
   todayBytes: 0,
   links: [wifi, phone, cable],
-  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false },
+  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false, checkUpdates: false },
 };
 const on: Status = { ...off, on: true, connections: 142, todayBytes: 3_400_000_000 };
 
