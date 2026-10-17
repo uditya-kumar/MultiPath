@@ -71,4 +71,4 @@ requests anything outside `localhost:1420`.
 | U13 | release | signature | `release-assets/` after `scripts/release-macos.sh` | archive verifies against the configured key; trusted comment `version:1.2.0` = feed; a flipped byte fails | cargo `--ignored release_assets_verify` | pass |
 | U14 | release | versions | package.json, Cargo, tauri.conf.json | all 1.2.0 | cargo `versions_agree`; bundle Info.plist 1.2.0 | pass |
 | U15 | release | binary starts with the plugins | release binary, isolated HOME + runtime dir, `--autostart`, 6 s | stays up, no helper, route table unchanged, nothing written | smoke | pass |
-| U16 | update | live: 1.2.0 → newer release | real GitHub release | prompt, download, verify, install, relaunch | manual | not run (needs a published newer release) |
+| U16 | update | live: 1.2.0 → newer release | real GitHub release | prompt, download, verify, install, relaunch | manual | not run (needs a published newer release; v1.2.1, an updater validation release with no behavior changes, is built and signed in `release-assets/`, not published) |

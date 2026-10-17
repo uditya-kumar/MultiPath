@@ -175,4 +175,14 @@ updater key and are installed only after the user confirms. Plan and evidence in
 - [x] Canonical repo is `timowse/MultiPath` (fork): updater endpoint, release script, docs and tests, assets re-signed
 - [x] Main page note (informational, never blocking) when two or more networks in use share a gateway: "These connections use the same router, so your maximum internet speed may not increase." Vitest, view and Playwright tests
 - [ ] Publish the v1.2.0 GitHub release (needs the user: `release-assets/RELEASE_INSTRUCTIONS.md`)
-- [ ] Live update test from 1.2.0 to a later release (needs a published newer release)
+- [ ] Live update test from 1.2.0 to a later release (needs a published newer release: 1.2.1 below)
+
+## Phase 10 — Updater validation release (macOS, 1.2.1)
+
+A no-op maintenance release so the installed 1.2.0 has a real newer release to update to. No functional change.
+
+- [x] Version 1.2.1 in package.json (and lock), Cargo.toml (and lock) and tauri.conf.json; no product code changed
+- [x] Signed arm64 `.app` archive, signature, `.dmg`, `SHA256SUMS` and `latest.json` (notes say "updater validation and maintenance release, no behavior changes", URL under `…/releases/download/v1.2.1/`) with the existing key; the 1.2.0 set kept in `release-assets/v1.2.0/`
+- [x] Release docs: `release-assets/RELEASE_INSTRUCTIONS.md`, `BUILD_RESULT.md`
+- [x] Lint, Vitest, build, Playwright, `cargo fmt`/`clippy`/`test`, release signature test, DMG verify; no route activation, installed 1.2.0 untouched
+- [ ] Publish the v1.2.1 GitHub release, then run the live update from the installed 1.2.0 (needs the user)

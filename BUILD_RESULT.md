@@ -1,7 +1,44 @@
-# BUILD_RESULT — MultiPath 1.2.0 on macOS (Apple silicon)
+# BUILD_RESULT — MultiPath 1.2.1 on macOS (Apple silicon)
 
 Branch `macos-port`, local commits only (nothing pushed, no release created). Machine: MacBook Pro M4, macOS 26.6.2
 (arm64). Toolchain: rustc/cargo 1.99.1 (rustup, per user), Node 26.8.1, Tauri CLI 2.12.3, Xcode CLT clang 21.
+
+## 1.2.1: updater validation release (no behavior changes)
+
+A maintenance release whose only purpose is to give an installed 1.2.0 a real, newer, signed release to update to
+(U16). **No product code changed**: the diff from 1.2.0 is the version in `package.json`, `package-lock.json`,
+`src-tauri/Cargo.toml`, `src-tauri/Cargo.lock` and `src-tauri/tauri.conf.json`, plus release docs. The release notes
+and `latest.json` say so: *"Updater validation and maintenance release: no behavior changes. It only checks that
+in-app updates from 1.2.0 work end to end."*
+
+| what | path | notes |
+| --- | --- | --- |
+| app | `src-tauri/target/aarch64-apple-darwin/release/bundle/macos/MultiPath.app` | Mach-O arm64, ad-hoc signed (`codesign --verify --deep --strict` OK), `CFBundleShortVersionString` 1.2.1 |
+| dmg | `release-assets/MultiPath_1.2.1_aarch64.dmg` | 5.1 MiB, `hdiutil verify` VALID, sha256 `19c83618…9b89` |
+| updater archive | `release-assets/MultiPath_1.2.1_aarch64.app.tar.gz` | 5.2 MiB, sha256 `6d52b4e9…c6fc`; key `334DFF4341E59A68` (the existing key), trusted comment `version:1.2.1`; the extracted app is 1.2.1 and passes `codesign --verify` |
+| signature | `release-assets/MultiPath_1.2.1_aarch64.app.tar.gz.sig` | also inside `latest.json` |
+| update feed | `release-assets/latest.json` | version 1.2.1, `darwin-aarch64` → `https://github.com/timowse/MultiPath/releases/download/v1.2.1/MultiPath_1.2.1_aarch64.app.tar.gz` |
+| checksums | `release-assets/SHA256SUMS` | `shasum -a 256 -c` OK |
+| 1.2.0 files | `release-assets/v1.2.0/` | copied there before the build (the script clears the previous archive, signature and feed); checksums verified |
+
+| command | result |
+| --- | --- |
+| `npm run lint`, `npm test`, `npm run build` | OK; Vitest 53/53 |
+| `npm run e2e` | 31/31 pass |
+| `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings` | clean |
+| `cargo test` | 91 pass, 4 ignored (includes `versions_agree`) |
+| `scripts/release-macos.sh "<notes>"` | OK, signed with the existing key |
+| `cargo test -- --ignored release_assets` | pass: the archive verifies against the configured public key, trusted comment `version:1.2.1` = feed, a flipped byte fails |
+
+**Not done, on purpose:** 1.2.1 was not installed, launched, pushed or published, and `/Applications/MultiPath.app`
+(1.2.0) was not touched, so it can test the real updater. No route activation: the built 1.2.1 app was never started
+(no helper, no `utun`, no `route`/`scutil` call), and the IPv4 and IPv6 route tables were identical before and after
+the build apart from two neighbor-cache expiry counters ticking down. The running 1.2.0 copy and its helper kept
+running unchanged.
+
+**To run U16:** publish v1.2.1 as a normal (not pre-) release (`release-assets/RELEASE_INSTRUCTIONS.md`), then in the
+installed 1.2.0 open Settings → Updates → Check for updates. It should offer 1.2.1 with the notes above. If MultiPath
+is on, installing turns it off, restarts it, and macOS asks for the password again.
 
 ## 1.2.0: signed self-updates
 
@@ -146,6 +183,7 @@ code was exercised through a command fake and `MULTIPATH_DRY_RUN=1`.
 - `5d84939` Playwright e2e with axe, contrast fixes, test plan and bug list
 - `f1a2958`, `8963f41`, `0c9c51d` BUILD_RESULT, README, UI_REQUIREMENTS
 - `9e5936a` macOS capture routes no longer hide the primary network's default route (BUG-007)
+- 1.2.1: updater validation release, version bump only (no behavior changes)
 - 1.2.0: signed self-updates (updater + process plugins, Settings → Updates, release script and assets; this file's latest update)
 
 ## Known limits
@@ -208,4 +246,4 @@ already gone).
 
 `replica/` — `recon.md`, `features.csv` (clone column filled), `architecture.md`, `build-log.md`, `test-plan.md`,
 `bugs.md`, `clone-screens/` (Off, Active with 3 links, Limited, Needs attention, failed start, Settings; dark and light; `updates-*.png` for the update states).
-`release-assets/` — the 1.2.0 release files, `latest.json` and `RELEASE_INSTRUCTIONS.md`; `scripts/release-macos.sh` rebuilds them.
+`release-assets/` — the 1.2.1 release files, `latest.json` and `RELEASE_INSTRUCTIONS.md` (the 1.2.0 set is in `v1.2.0/`); `scripts/release-macos.sh` rebuilds them.

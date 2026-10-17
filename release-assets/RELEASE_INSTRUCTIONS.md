@@ -7,10 +7,46 @@ Releases go to **https://github.com/timowse/MultiPath/releases**. The app looks 
 That URL always points at the **latest published, non-prerelease** release. A draft or a prerelease is invisible to
 the updater, so publish it as a normal release once everything is uploaded.
 
-## v1.2.0: files in this folder
+## v1.2.1: files in this folder (updater validation release)
+
+A maintenance release with **no behavior changes**: the only differences from 1.2.0 are the version number in
+`package.json`, `src-tauri/Cargo.toml` and `src-tauri/tauri.conf.json` (plus the lock files and these docs). Its purpose
+is to give an installed 1.2.0 a real, newer, signed release to update to, so the updater can be tested end to end
+(`replica/test-plan.md` U16). The release notes and `latest.json` say so.
 
 Built and signed on 2026-10-17 by `scripts/release-macos.sh` (commit on branch `macos-port`). Upload these four files
-to a release with tag **`v1.2.0`**. The names must stay exactly as they are, because `latest.json` points at
+to a release with tag **`v1.2.1`**. The names must stay exactly as they are, because `latest.json` points at
+`https://github.com/timowse/MultiPath/releases/download/v1.2.1/MultiPath_1.2.1_aarch64.app.tar.gz`.
+
+| file | what it is | sha256 |
+| --- | --- | --- |
+| `MultiPath_1.2.1_aarch64.dmg` | the installer people download by hand | `19c83618ffc2d40120179aae2b690c7f09f00f33e88f7e17c414f7c06fc29b89` |
+| `MultiPath_1.2.1_aarch64.app.tar.gz` | what the in-app updater downloads | `6d52b4e98e8bc823838ffa46759837e9ce59d76a22b7b6186bc09a318c26c6fc` |
+| `MultiPath_1.2.1_aarch64.app.tar.gz.sig` | its updater signature (minisign, also inside `latest.json`) | `e3b47740b7ea9b2b2a7a1d55b9455c41c99ae980693b5029177e63c255ac9f2f` |
+| `latest.json` | the update feed: version, notes, date, `darwin-aarch64` URL and signature | `032305f3c02b6ac0e527e2516ba94c886ac6a4566b3cd8ee4acff7b722760749` |
+
+`SHA256SUMS` holds the same checksums (`shasum -a 256 -c SHA256SUMS`). Uploading it is optional.
+
+Release notes (the feed's `notes`, shown in the update prompt):
+
+> Updater validation and maintenance release: no behavior changes. It only checks that in-app updates from 1.2.0 work
+> end to end.
+
+The signature's trusted comment is `version:1.2.1`. The app is configured with `requireSignedVersion`, so a feed that
+announces another version with this archive is refused. The signing key's ID is `334DFF4341E59A68`, the same key as
+`plugins.updater.pubkey` in `src-tauri/tauri.conf.json`.
+
+To publish, follow the steps below with `1.2.1` in place of `1.2.0`. A published 1.2.1 becomes "latest", so an
+installed 1.2.0 is offered it. Publish v1.2.0 first if it should exist as a release at all: "latest" is the most
+recently published non-prerelease, so v1.2.1 must come after it. The updater never installs 1.2.1 by itself: the user
+clicks **Install and restart**.
+
+## v1.2.0: files (kept in `release-assets/v1.2.0/`)
+
+Built and signed on 2026-10-17 by `scripts/release-macos.sh`. The script clears the previous version's archive,
+signature, feed and checksums from `release-assets/` when it builds, so the 1.2.0 set was copied to
+`release-assets/v1.2.0/` first (checksums verified, git-ignored like the rest). Upload these four files to a release
+with tag **`v1.2.0`**. The names must stay exactly as they are, because its `latest.json` points at
 `…/releases/download/v1.2.0/MultiPath_1.2.0_aarch64.app.tar.gz`.
 
 | file | what it is | sha256 |
@@ -20,13 +56,9 @@ to a release with tag **`v1.2.0`**. The names must stay exactly as they are, bec
 | `MultiPath_1.2.0_aarch64.app.tar.gz.sig` | its updater signature (minisign, also inside `latest.json`) | `2b298101843127b6e56c98434e1256b9781af09b99f35656215a85e480cdaf85` |
 | `latest.json` | the update feed: version, notes, date, `darwin-aarch64` URL and signature | `c14dcfba899b98b85daf5f58e561d42b49851a3e07a37e4675d8b7fa36d66110` |
 
-`SHA256SUMS` holds the same checksums (`shasum -a 256 -c SHA256SUMS`). Uploading it is optional.
+The signature's trusted comment is `version:1.2.0`.
 
-The signature's trusted comment is `version:1.2.0`. The app is configured with `requireSignedVersion`, so a feed that
-announces another version with this archive is refused. The signing key's ID is `334DFF4341E59A68`, the same key as
-`plugins.updater.pubkey` in `src-tauri/tauri.conf.json`.
-
-## Publish v1.2.0 (manual, nothing here does it for you)
+## Publish a release (manual, nothing here does it for you; shown for v1.2.0)
 
 1. Check the files: `cd release-assets && shasum -a 256 -c SHA256SUMS`, then
    `cd ../src-tauri && cargo test -- --ignored release_assets` (verifies the archive against the public key and

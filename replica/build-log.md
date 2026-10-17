@@ -17,6 +17,12 @@ One line per milestone/screen: ID, date, status, what's missing, what was harder
 | packaging | 2026-10-17 | see BUILD_RESULT.md | notarisation (no Developer ID) | `icon.icns` generated from the MIT `icon.png` (512 px, so no 1024 px slot) |
 | updates (1.2.0) | 2026-10-17 | done | publishing the GitHub release; a live update from 1.2.0 to a newer release | `tauri build` ignores `TAURI_SIGNING_PRIVATE_KEY_PATH` and failed with "public key found, but no private key": the key's path goes in `TAURI_SIGNING_PRIVATE_KEY`. A restart after an update would have found the old copy still holding the single-instance socket and quit (BUG-008) |
 
+## Updater validation release (1.2.1)
+
+| step | date | status | open | notes |
+| --- | --- | --- | --- | --- |
+| 1.2.1 | 2026-10-17 | built and signed, not published | publishing the GitHub release; the live update 1.2.0 → 1.2.1 (U16) | a no-op release (version bump only, no product code change) so the installed 1.2.0 has a real newer release to update to. `scripts/release-macos.sh` clears the previous version's archive, signature, feed and checksums, so the 1.2.0 set was copied to `release-assets/v1.2.0/` first |
+
 ## Live checks done on this Mac (read-only, no root)
 
 - `cargo test -- --ignored discovery_on_this_machine`: one link, `en0` "Wi-Fi", 192.168.178.157, gateway 192.168.178.1,
