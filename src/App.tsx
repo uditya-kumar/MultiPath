@@ -13,6 +13,8 @@ export default function App() {
   const ref = useFitWindow<HTMLDivElement>();
   const [status, setStatus] = useStatus();
   const [view, setView] = useState<View>("main");
+  // Settings is taller than the main page; it keeps the main page's height and scrolls instead.
+  const [homeHeight, setHomeHeight] = useState<number | null>(null);
   const update = useUpdater(appUpdater, status ? status.settings.checkUpdates : null);
 
   // Esc goes back a page, and from the first page hides the popup.
@@ -27,9 +29,14 @@ export default function App() {
   }, [view]);
 
   const back = () => setView("main");
+  const openSettings = () => {
+    setHomeHeight(ref.current ? Math.ceil(ref.current.getBoundingClientRect().height) : null);
+    setView("settings");
+  };
+  const fixedHeight = view === "settings" && homeHeight ? { height: homeHeight } : undefined;
 
   return (
-    <div ref={ref} className="popup">
+    <div ref={ref} className="popup" style={fixedHeight}>
       {!status ? (
         <div className="empty">Loading…</div>
       ) : view === "settings" ? (
@@ -40,7 +47,7 @@ export default function App() {
         <Main
           status={status}
           onStatus={setStatus}
-          onSettings={() => setView("settings")}
+          onSettings={openSettings}
           onConnections={() => setView("connections")}
           update={update.state}
         />

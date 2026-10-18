@@ -516,6 +516,13 @@ button.chip:hover {
 }
 
 /* Settings */
+/* The popup keeps the main page's height on this page; the sections scroll under the header. */
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .settings-section {
   display: flex;
   flex-direction: column;
@@ -770,11 +777,13 @@ button.setting-row:hover {
   overflow-y: auto;
 }
 
-.connections::-webkit-scrollbar {
+.connections::-webkit-scrollbar,
+.settings-body::-webkit-scrollbar {
   width: 6px;
 }
 
-.connections::-webkit-scrollbar-thumb {
+.connections::-webkit-scrollbar-thumb,
+.settings-body::-webkit-scrollbar-thumb {
   border-radius: 3px;
   background: var(--rail);
 }

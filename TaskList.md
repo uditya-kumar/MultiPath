@@ -186,3 +186,8 @@ updater key and are installed only after the user confirms. The popup stays as d
 - [x] TCP copy buffers start at 4 KB per direction and double while reads fill them, up to 64 KB (was 64 KB each from the start)
 - [x] UDP buffers sized to the adapter's MTU (was 64 KB each way); Windows' oversized-datagram error (`sys::is_oversized_datagram`) skips the datagram instead of ending the flow
 - [x] A TCP flow ends once the app's end closes: the stack has no half-close, so waiting for a quiet site to close too only kept flows (and their buffers) open
+
+## Phase 12 — Settings keeps the main page's height
+
+- [x] Design first: the Settings flyout as tall as the main page, its sections in a scrolling body under a fixed header (`design.pen`)
+- [x] Opening Settings keeps the popup at the main page's height; the sections scroll with the Connections scrollbar

@@ -49,75 +49,77 @@ export function Settings({ status, onStatus, onBack, update }: Props) {
       )}
 
       <div className="divider" />
-      <Section title="Balancing">
-        <SwitchRow
-          label="Adaptive weighting"
-          desc="Faster networks get more new connections, based on what they actually deliver."
-          on={settings.adaptive}
-          onChange={(adaptive) => change({ adaptive })}
-        />
-        <SwitchRow
-          label="Keep sites on one network"
-          desc="Fixes sign-outs on banking sites, but one site no longer gets the combined speed."
-          on={settings.sticky}
-          onChange={(sticky) => change({ sticky })}
-        />
-        <SwitchRow
-          label="Include IPv6"
-          desc="Balance IPv6 traffic on networks that have it."
-          on={settings.captureIpv6}
-          onChange={(captureIpv6) => change({ captureIpv6 })}
-        />
-      </Section>
+      <div className="settings-body">
+        <Section title="Balancing">
+          <SwitchRow
+            label="Adaptive weighting"
+            desc="Faster networks get more new connections, based on what they actually deliver."
+            on={settings.adaptive}
+            onChange={(adaptive) => change({ adaptive })}
+          />
+          <SwitchRow
+            label="Keep sites on one network"
+            desc="Fixes sign-outs on banking sites, but one site no longer gets the combined speed."
+            on={settings.sticky}
+            onChange={(sticky) => change({ sticky })}
+          />
+          <SwitchRow
+            label="Include IPv6"
+            desc="Balance IPv6 traffic on networks that have it."
+            on={settings.captureIpv6}
+            onChange={(captureIpv6) => change({ captureIpv6 })}
+          />
+        </Section>
 
-      {present.length > 0 && (
-        <>
-          <div className="divider" />
-          <Section title="Share of new connections">
-            {present.map((link) => (
-              <WeightRow
-                key={link.id}
-                name={link.name}
-                color={colors.get(link.id) ?? "var(--text-3)"}
-                weight={link.weight}
-                onCommit={(weight) =>
-                  setLinkWeight(link.id, weight)
-                    .then(onStatus)
-                    .catch((e) => setError(errorText(e)))
-                }
-              />
-            ))}
-          </Section>
-        </>
-      )}
+        {present.length > 0 && (
+          <>
+            <div className="divider" />
+            <Section title="Share of new connections">
+              {present.map((link) => (
+                <WeightRow
+                  key={link.id}
+                  name={link.name}
+                  color={colors.get(link.id) ?? "var(--text-3)"}
+                  weight={link.weight}
+                  onCommit={(weight) =>
+                    setLinkWeight(link.id, weight)
+                      .then(onStatus)
+                      .catch((e) => setError(errorText(e)))
+                  }
+                />
+              ))}
+            </Section>
+          </>
+        )}
 
-      <div className="divider" />
-      <Section title="App">
-        <SwitchRow
-          label={startAtLoginLabel(status)}
-          on={settings.startOnLogin}
-          onChange={(startOnLogin) => change({ startOnLogin })}
-        />
-        <SwitchRow
-          label="Hide unavailable networks"
-          desc="Leaves unplugged cables and networks that aren't connected out of the list."
-          on={settings.hideUnavailable}
-          onChange={(hideUnavailable) => change({ hideUnavailable })}
-        />
-        <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
-      </Section>
+        <div className="divider" />
+        <Section title="App">
+          <SwitchRow
+            label={startAtLoginLabel(status)}
+            on={settings.startOnLogin}
+            onChange={(startOnLogin) => change({ startOnLogin })}
+          />
+          <SwitchRow
+            label="Hide unavailable networks"
+            desc="Leaves unplugged cables and networks that aren't connected out of the list."
+            on={settings.hideUnavailable}
+            onChange={(hideUnavailable) => change({ hideUnavailable })}
+          />
+          <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
+        </Section>
 
-      <div className="divider" />
-      <Section title="Updates">
-        <UpdatePanel status={status} update={update} />
-        <SwitchRow
-          label="Check for updates at start"
-          desc="Asks GitHub for a newer version when MultiPath opens. Never installs without asking."
-          on={settings.checkUpdates}
-          onChange={(checkUpdates) => change({ checkUpdates })}
-        />
-      </Section>
-      <div className="bottom-spacer" />
+        <div className="divider" />
+        <Section title="Updates">
+          <UpdatePanel status={status} update={update} />
+          <SwitchRow
+            label="Check for updates at start"
+            desc="Asks GitHub for a newer version when MultiPath opens. Never installs without asking."
+            on={settings.checkUpdates}
+            onChange={(checkUpdates) => change({ checkUpdates })}
+          />
+        </Section>
+        <div className="bottom-spacer" />
+      </div>
     </>
   );
 }
