@@ -137,8 +137,8 @@ sudo ./MultiPath_<version>_amd64.AppImage
 ### macOS (Apple silicon)
 
 1. Open `MultiPath_<version>_aarch64.dmg` and drag MultiPath to Applications.
-2. The build isn't notarised, so the first time, right-click MultiPath → **Open** (or allow it under System Settings →
-   Privacy & Security).
+2. The build isn't notarised, so macOS blocks it the first time. Open it once, then go to System Settings → Privacy &
+   Security and click **Open Anyway** (on macOS 14 and older, right-click MultiPath → **Open** also works).
 3. Click the MultiPath icon in the menu bar and turn it on. macOS asks for an administrator password **each time** you
    turn it on: a small helper runs as root just long enough to add the adapter, routes and DNS, then hands the adapter
    to the app and waits to remove them again. The app itself never runs as root.

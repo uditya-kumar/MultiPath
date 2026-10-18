@@ -2,12 +2,20 @@
 # Builds this system's signed release and adds it to the GitHub release assets:
 #
 #   scripts/release.sh ["release notes shown in the update prompt"]
+#   scripts/release.sh --macos-from <dir> ["notes"]
 #
 # Run it on Windows (Git Bash), Linux and an Apple silicon Mac in turn, carrying release-assets/
 # from one machine to the next: each run adds its bundles, their .sig files and its entries in
 # latest.json (the feed the app reads from the latest release), and rewrites SHA256SUMS. A run
 # for a new version starts the feed over. Uploads nothing: attach every file in release-assets/
 # to the release tagged v<version> on uditya-kumar/MultiPath.
+#
+# Without a Mac, the macOS workflow (.github/workflows/macos.yml) builds the .app and .dmg, unsigned
+# for the updater. --macos-from takes its downloaded artifact instead of building, on any system:
+#
+#   gh workflow run macos.yml && gh run watch
+#   gh run download --name macos-bundle --dir macos-bundle
+#   scripts/release.sh --macos-from macos-bundle
 #
 # The updater key is read from MULTIPATH_UPDATER_KEY (default ~/.config/multipath/updater.key) by
 # path; it is never printed, copied or put in the environment as text.
@@ -16,6 +24,11 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO="uditya-kumar/MultiPath"
 KEY="${MULTIPATH_UPDATER_KEY:-$HOME/.config/multipath/updater.key}"
+MACOS_FROM=""
+if [[ "${1:-}" == "--macos-from" ]]; then
+  MACOS_FROM="${2:?--macos-from needs the artifact directory}"
+  shift 2
+fi
 NOTES="${1:-}"
 OUT="release-assets"
 
@@ -33,6 +46,7 @@ grep -q "^version = \"$VERSION\"" src-tauri/Cargo.toml || die "Cargo.toml versio
 
 # Each system: its build target, and "feed key=bundle file" for every updater bundle it makes.
 # The updater looks for {os}-{arch}-{installer} first, then {os}-{arch}.
+NATIVE_PATHS=""
 case "$(uname -s)" in
   Darwin)
     [[ "$(stat -f %Lp "$KEY")" == "600" ]] || die "$KEY must be mode 0600 (chmod 600 '$KEY')"
@@ -60,17 +74,31 @@ case "$(uname -s)" in
       "windows-x86_64-nsis=nsis/MultiPath_${VERSION}_x64-setup.exe"
       "windows-x86_64=nsis/MultiPath_${VERSION}_x64-setup.exe"
     )
-    # tauri is a Windows program: give it a Windows path.
+    # tauri is a Windows program: give it Windows paths.
+    NATIVE_PATHS=1
     KEY="$(cygpath -w "$KEY")"
     ;;
   *) die "unsupported system $(uname -s)" ;;
 esac
 
-# CI=true skips the DMG's Finder styling AppleScript, which needs Automation access.
-# `tauri build` takes a key file's path in TAURI_SIGNING_PRIVATE_KEY (it ignores _PATH). The .sig
-# files are only made here, so a plain `npm run tauri build` works without the key.
-CI=true TAURI_SIGNING_PRIVATE_KEY="$KEY" TAURI_SIGNING_PRIVATE_KEY_PASSWORD="" \
-  npx tauri build --target "$TARGET" --config '{"bundle":{"createUpdaterArtifacts":true}}'
+if [[ -n "$MACOS_FROM" ]]; then
+  # The workflow's artifact: the .dmg and MultiPath.app.tar.gz side by side.
+  BUNDLE="$MACOS_FROM"
+  EXTRA=("MultiPath_${VERSION}_aarch64.dmg")
+  FEED=("darwin-aarch64-app=MultiPath.app.tar.gz" "darwin-aarch64=MultiPath.app.tar.gz")
+  archive="$BUNDLE/MultiPath.app.tar.gz"
+  [[ -f "$archive" ]] || die "missing $archive"
+  [[ -n "$NATIVE_PATHS" ]] && archive="$(cygpath -w "$archive")"
+  # Signed here, so the key stays on this machine. --app-version puts the version in the trusted
+  # comment, as `tauri build` does, which requireSignedVersion checks.
+  npx tauri signer sign -f "$KEY" -p "" --app-version "$VERSION" "$archive"
+else
+  # CI=true skips the DMG's Finder styling AppleScript, which needs Automation access.
+  # `tauri build` takes a key file's path in TAURI_SIGNING_PRIVATE_KEY (it ignores _PATH). The
+  # .sig files are only made here, so a plain `npm run tauri build` works without the key.
+  CI=true TAURI_SIGNING_PRIVATE_KEY="$KEY" TAURI_SIGNING_PRIVATE_KEY_PASSWORD="" \
+    npx tauri build --target "$TARGET" --config '{"bundle":{"createUpdaterArtifacts":true}}'
+fi
 
 mkdir -p "$OUT"
 # A feed for an older version starts over; one for this version keeps the other systems' entries.

@@ -69,6 +69,7 @@ MultiPath/
 │   ├── views/             one file per popup page: Main (on and off), Settings, Connections
 │   ├── lib/               pure helpers (formatting, status text) and small hooks
 │   └── styles/            tokens.css (from design.pen variables) and global styles
+├── .github/workflows/     macos.yml: the Apple silicon .app and .dmg, built by hand-started CI for releases without a Mac
 ├── scripts/               linux-lab.sh: namespaces with two shaped 10 Mbit/s ISPs, for the lab tests;
 │                          release.sh: this system's signed release, added to the GitHub assets and latest.json
 ├── release-assets/        built release files and latest.json (ignored)
@@ -106,6 +107,7 @@ cd src-tauri && cargo check && cargo test
 sudo ./scripts/linux-lab.sh up     # two shaped ISPs in namespaces; `down` removes them
 ./multipath --headless --config <dir>   # no Tauri: one JSON status line a second, for tests
 scripts/release.sh "notes"              # this system's signed bundles + .sig, merged into release-assets/latest.json
+scripts/release.sh --macos-from <dir>   # sign the macOS workflow's artifact here (no Mac needed), same merge
 ```
 
 ## Conventions
@@ -200,6 +202,10 @@ scripts/release.sh "notes"              # this system's signed bundles + .sig, m
   reads it from `TAURI_SIGNING_PRIVATE_KEY` (text **or path**) and ignores `TAURI_SIGNING_PRIVATE_KEY_PATH`.
   `createUpdaterArtifacts` is only turned on by `scripts/release.sh` (`--config`), so a plain `npm run tauri build`
   doesn't need the key.
+- Without a Mac: `gh workflow run macos.yml`, then `gh run download --name macos-bundle --dir <dir>` and
+  `scripts/release.sh --macos-from <dir>`. CI never sees the key: it tars `MultiPath.app` itself (the updater skips
+  the first path component), and `tauri signer sign --app-version` signs it locally with the version in the trusted
+  comment. Since macOS 15 an ad-hoc app opens only through System Settings → Privacy & Security → Open Anyway.
 - A restart (`request_restart`) starts the new copy before the old one exits. The `RunEvent::Exit` handler releases
   the single-instance lock first, or the new copy would hand over to the dying one and quit.
 - Version lives in `package.json`, `Cargo.toml` and `tauri.conf.json`; `cargo test` (`versions_agree`) catches drift.

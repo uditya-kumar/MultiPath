@@ -172,6 +172,7 @@ updater key and are installed only after the user confirms. The popup stays as d
 - [x] Version 1.2.0 in package.json, Cargo.toml and tauri.conf.json, with a test that they agree
 - [x] Tests: Vitest (flow, per-system wording), Rust (config parsed by the plugin, capabilities, versions, release assets verified with minisign)
 - [x] PR #5 merged without the off-design UI (hero, connection spread, light mode, router note), the replica/e2e/demo files and the fork endpoint
+- [x] macOS release without a Mac: `.github/workflows/macos.yml` builds and checks on GitHub's Apple silicon runner without the key; `scripts/release.sh --macos-from` signs its artifact locally and merges it into `latest.json`
 - [ ] Publish the v1.2.0 GitHub release with the assets from all three systems (needs the user)
 - [ ] Live update test from 1.2.0 to a later release on each system (needs a published newer release)
 

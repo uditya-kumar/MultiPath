@@ -1,0 +1,70 @@
+# Builds the Apple silicon .app and .dmg on GitHub's macOS runner, for releases made without a Mac.
+# Runs only when started by hand (gh workflow run macos.yml). The bundles are unsigned for the
+# updater: the key never leaves the release machine, where `scripts/release.sh --macos-from <dir>`
+# signs the downloaded artifact and adds it to latest.json.
+name: macOS build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-14
+    defaults:
+      run:
+        working-directory: src-tauri
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      # tauri's build script embeds the frontend, so dist/ has to exist for clippy and the tests.
+      - run: mkdir -p ../dist
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
+
+  bundle:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      # CI=true skips the DMG's Finder styling AppleScript. No createUpdaterArtifacts: that would
+      # need the key, so the updater archive is made below and signed on the release machine.
+      - run: npx tauri build --target aarch64-apple-darwin
+        env:
+          CI: "true"
+      - name: Collect the bundles
+        run: |
+          VERSION="$(node -p 'require("./src-tauri/tauri.conf.json").version')"
+          BUNDLE="src-tauri/target/aarch64-apple-darwin/release/bundle"
+          mkdir -p out
+          cp "$BUNDLE/dmg/MultiPath_${VERSION}_aarch64.dmg" out/
+          # The updater drops the first path component, so the archive holds MultiPath.app/…
+          # COPYFILE_DISABLE and --no-mac-metadata keep AppleDouble ._ files and xattrs out.
+          COPYFILE_DISABLE=1 tar --no-mac-metadata -czf out/MultiPath.app.tar.gz \
+            -C "$BUNDLE/macos" MultiPath.app
+          ls -l out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-bundle
+          path: out/
+          if-no-files-found: error
