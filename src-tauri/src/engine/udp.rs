@@ -8,10 +8,15 @@ use ipstack::IpStackUdpStream;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
 use super::flows::Flow;
+use super::MTU;
 use crate::net::router::Router;
+use crate::sys;
 
 const DNS_PORT: u16 = 53;
-const MAX_DATAGRAM: usize = 64 * 1024;
+/// The adapter never hands over a bigger datagram, and the stack cuts replies
+/// to what fits in one packet, so a bigger buffer is only memory held by every
+/// flow (thousands at once with peer-to-peer apps).
+const DATAGRAM_BUFFER: usize = MTU as usize;
 
 pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Flow>) {
     let dst = flow.dst;
@@ -31,8 +36,8 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
     let _ = flow.link.set(lease.link.id.clone());
 
     let (mut in_r, mut in_w) = tokio::io::split(inbound);
-    let mut up = vec![0u8; MAX_DATAGRAM];
-    let mut down = vec![0u8; MAX_DATAGRAM];
+    let mut up = vec![0u8; DATAGRAM_BUFFER];
+    let mut down = vec![0u8; DATAGRAM_BUFFER];
     let mut unanswered: u32 = 0;
     loop {
         tokio::select! {
@@ -65,6 +70,8 @@ pub async fn handle(inbound: IpStackUdpStream, router: Arc<Router>, flow: Arc<Fl
                 // An ICMP "port unreachable" for an earlier datagram; the
                 // flow itself may carry on.
                 Err(err) if err.kind() == io::ErrorKind::ConnectionReset => {}
+                // A reply too big for one packet; it couldn't reach the app.
+                Err(err) if sys::is_oversized_datagram(&err) => {}
                 Err(_) => break,
             },
         }

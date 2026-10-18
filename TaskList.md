@@ -180,3 +180,9 @@ updater key and are installed only after the user confirms. The popup stays as d
 - [x] Design first: per-network colours (`net-alt-1…4`), a two-Ethernet flyout and the Settings switch in `design.pen`
 - [x] Every network its own colour in the ring, legend, rows, weights and connections: the first of each kind keeps the kind's colour, further ones take the alternatives, in name order over all known networks so colours stay put
 - [x] Settings › App › Hide unavailable networks (off by default): unplugged and unconnected networks leave the main list
+
+## Phase 11 — Memory per flow (issue #7)
+
+- [x] TCP copy buffers start at 4 KB per direction and double while reads fill them, up to 64 KB (was 64 KB each from the start)
+- [x] UDP buffers sized to the adapter's MTU (was 64 KB each way); Windows' oversized-datagram error (`sys::is_oversized_datagram`) skips the datagram instead of ending the flow
+- [x] A TCP flow ends once the app's end closes: the stack has no half-close, so waiting for a quiet site to close too only kept flows (and their buffers) open

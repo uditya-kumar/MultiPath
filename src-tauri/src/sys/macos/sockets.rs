@@ -7,6 +7,12 @@ use socket2::Socket;
 use super::command::{self, Cmd, LSOF};
 use crate::sys::SocketOwners;
 
+/// Whether a receive failed only because the datagram didn't fit the buffer.
+/// Never here: the kernel truncates the datagram instead.
+pub fn is_oversized_datagram(_err: &io::Error) -> bool {
+    false
+}
+
 /// Forces a socket's traffic out of one interface, whatever the routing table
 /// says. This is what keeps MultiPath's own connections from looping back into
 /// the virtual adapter that captures everything else.

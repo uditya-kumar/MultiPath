@@ -6,13 +6,20 @@ use socket2::Socket;
 use windows_sys::Win32::Foundation::{CloseHandle, NO_ERROR};
 use windows_sys::Win32::NetworkManagement::IpHelper::*;
 use windows_sys::Win32::Networking::WinSock::{
-    setsockopt, AF_INET, AF_INET6, IPPROTO_IP, IPPROTO_IPV6, IPV6_UNICAST_IF, IP_UNICAST_IF, SOCKET,
+    setsockopt, AF_INET, AF_INET6, IPPROTO_IP, IPPROTO_IPV6, IPV6_UNICAST_IF, IP_UNICAST_IF,
+    SOCKET, WSAEMSGSIZE,
 };
 use windows_sys::Win32::System::Threading::{
     OpenProcess, QueryFullProcessImageNameW, PROCESS_NAME_WIN32, PROCESS_QUERY_LIMITED_INFORMATION,
 };
 
 use crate::sys::SocketOwners;
+
+/// Whether a receive failed only because the datagram didn't fit the buffer.
+/// Windows drops such a datagram with WSAEMSGSIZE; the socket itself is fine.
+pub fn is_oversized_datagram(err: &io::Error) -> bool {
+    err.raw_os_error() == Some(WSAEMSGSIZE)
+}
 
 /// Forces a socket's traffic out of one interface, whatever the routing table
 /// says. This is what keeps MultiPath's own connections from looping back into

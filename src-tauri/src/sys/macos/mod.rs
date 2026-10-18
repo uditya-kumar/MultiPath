@@ -27,4 +27,4 @@ pub use helper::{HelperClient, HelperLink, HelperListener};
 pub use icmp::icmp_echo;
 pub use instance::Instance;
 pub use routes::{add_unicast_address, Route};
-pub use sockets::{pin_socket_to_interface, process_name, socket_owners};
+pub use sockets::{is_oversized_datagram, pin_socket_to_interface, process_name, socket_owners};
