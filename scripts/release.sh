@@ -3,7 +3,6 @@
 #
 #   scripts/release.sh ["release notes shown in the update prompt"]
 #   scripts/release.sh --macos-from <dir> ["notes"]
-#   scripts/release.sh --windows-from <dir> ["notes"]
 #
 # Run it on Windows (Git Bash), Linux and an Apple silicon Mac in turn, carrying release-assets/
 # from one machine to the next: each run adds its bundles, their .sig files and its entries in
@@ -18,9 +17,6 @@
 #   gh run download --name macos-bundle --dir macos-bundle
 #   scripts/release.sh --macos-from macos-bundle
 #
-# The Windows workflow (.github/workflows/windows.yml) builds the installer and has SignPath sign it
-# with Authenticode; --windows-from adds its windows-bundle artifact the same way.
-#
 # The updater key is read from MULTIPATH_UPDATER_KEY (default ~/.config/multipath/updater.key) by
 # path; it is never printed, copied or put in the environment as text.
 set -euo pipefail
@@ -28,13 +24,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 REPO="uditya-kumar/MultiPath"
 KEY="${MULTIPATH_UPDATER_KEY:-$HOME/.config/multipath/updater.key}"
-# --macos-from / --windows-from: the system a CI artifact is for, and its directory.
-FROM=""
-FROM_DIR=""
-if [[ "${1:-}" == --macos-from || "${1:-}" == --windows-from ]]; then
-  FROM="${1#--}"
-  FROM="${FROM%-from}"
-  FROM_DIR="${2:?$1 needs the artifact directory}"
+MACOS_FROM=""
+if [[ "${1:-}" == "--macos-from" ]]; then
+  MACOS_FROM="${2:?--macos-from needs the artifact directory}"
   shift 2
 fi
 NOTES="${1:-}"
@@ -89,26 +81,16 @@ case "$(uname -s)" in
   *) die "unsupported system $(uname -s)" ;;
 esac
 
-if [[ -n "$FROM" ]]; then
-  # A workflow's artifact, with its bundles side by side.
-  BUNDLE="$FROM_DIR"
-  if [[ "$FROM" == macos ]]; then
-    EXTRA=("MultiPath_${VERSION}_aarch64.dmg")
-    FEED=("darwin-aarch64-app=MultiPath.app.tar.gz" "darwin-aarch64=MultiPath.app.tar.gz")
-    archive="$BUNDLE/MultiPath.app.tar.gz"
-  else
-    EXTRA=()
-    FEED=(
-      "windows-x86_64-nsis=MultiPath_${VERSION}_x64-setup.exe"
-      "windows-x86_64=MultiPath_${VERSION}_x64-setup.exe"
-    )
-    archive="$BUNDLE/MultiPath_${VERSION}_x64-setup.exe"
-  fi
+if [[ -n "$MACOS_FROM" ]]; then
+  # The workflow's artifact: the .dmg and MultiPath.app.tar.gz side by side.
+  BUNDLE="$MACOS_FROM"
+  EXTRA=("MultiPath_${VERSION}_aarch64.dmg")
+  FEED=("darwin-aarch64-app=MultiPath.app.tar.gz" "darwin-aarch64=MultiPath.app.tar.gz")
+  archive="$BUNDLE/MultiPath.app.tar.gz"
   [[ -f "$archive" ]] || die "missing $archive"
   [[ -n "$NATIVE_PATHS" ]] && archive="$(cygpath -w "$archive")"
-  # Signed here, so the key stays on this machine (and after Authenticode, which changes the bytes).
-  # --app-version puts the version in the trusted comment, as `tauri build` does, which
-  # requireSignedVersion checks.
+  # Signed here, so the key stays on this machine. --app-version puts the version in the trusted
+  # comment, as `tauri build` does, which requireSignedVersion checks.
   npx tauri signer sign -f "$KEY" -p "" --app-version "$VERSION" "$archive"
 else
   # CI=true skips the DMG's Finder styling AppleScript, which needs Automation access.

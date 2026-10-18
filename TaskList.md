@@ -192,12 +192,3 @@ updater key and are installed only after the user confirms. The popup stays as d
 
 - [x] Design first: the Settings flyout as tall as the main page, its sections in a scrolling body under a fixed header (`design.pen`)
 - [x] Opening Settings keeps the popup at the main page's height; the sections scroll with the Connections scrollbar
-
-## Phase 13 — Signed Windows builds (SignPath Foundation)
-
-- [x] `.github/workflows/windows.yml`: checks, then `multipath.exe` and the NSIS installer built on GitHub's runner and each signed through SignPath (skipped, with a warning, until it's set up); both signatures verified before the artifact is kept
-- [x] SignPath artifact configurations in `.github/signpath/` with the required metadata restrictions (ProductName, ProductVersion, FileVersion)
-- [x] `scripts/release.sh --windows-from`: the updater signature and feed entries for the CI installer, made locally
-- [x] README: "Code signing policy" with SignPath's wording, team roles and a privacy policy listing every host MultiPath contacts
-- [ ] Apply at signpath.org, turn on 2FA for GitHub and SignPath, create the project with the two artifact configurations, add `SIGNPATH_ORGANIZATION_ID` and `SIGNPATH_API_TOKEN` to the repository (needs the user)
-- [ ] First signed run: approve both requests, then `release.sh --windows-from` and upload (needs the user's approval in SignPath)
