@@ -1,0 +1,133 @@
+# Builds the Windows installer on GitHub's runner and has SignPath sign it (Authenticode, certificate by
+# SignPath Foundation). Runs only when started by hand (gh workflow run windows.yml).
+#
+# Two signing requests, each approved by hand in SignPath: first multipath.exe, which the installer then
+# packages, and then the installer itself (NSIS installers can't be deep-signed). Until the repository
+# variable SIGNPATH_ORGANIZATION_ID is set, both are skipped and the artifact is unsigned. The secret
+# SIGNPATH_API_TOKEN goes with it; SIGNPATH_PROJECT_SLUG and SIGNPATH_POLICY_SLUG are optional
+# variables. The artifact configurations "app" and "installer" are .github/signpath/*.xml.
+#
+# The updater signature isn't made here: the key never leaves the release machine, where
+# `scripts/release.sh --windows-from <dir>` signs the downloaded artifact and adds it to latest.json.
+name: Windows build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  TARGET: x86_64-pc-windows-msvc
+  RELEASE: src-tauri/target/x86_64-pc-windows-msvc/release
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  bundle:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      # Also makes dist/, which tauri's build script embeds.
+      - run: npm run build
+      - run: cargo fmt --check
+        working-directory: src-tauri
+      - run: cargo clippy --all-targets -- -D warnings
+        working-directory: src-tauri
+      - run: cargo test
+        working-directory: src-tauri
+      - id: version
+        run: echo "version=$(node -p 'require("./src-tauri/tauri.conf.json").version')" >> "$GITHUB_OUTPUT"
+
+      - run: npx tauri build --no-bundle --target "$TARGET"
+      - id: unsigned-app
+        uses: actions/upload-artifact@v7
+        with:
+          name: unsigned-app
+          path: ${{ env.RELEASE }}/multipath.exe
+          if-no-files-found: error
+      - if: vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'MultiPath' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          artifact-configuration-slug: app
+          github-artifact-id: ${{ steps.unsigned-app.outputs.artifact-id }}
+          parameters: |
+            version: ${{ toJSON(steps.version.outputs.version) }}
+          wait-for-completion: true
+          # Each request waits for an approver in SignPath.
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signed-app
+      - if: vars.SIGNPATH_ORGANIZATION_ID != ''
+        run: cp signed-app/multipath.exe "$RELEASE/multipath.exe"
+
+      # Packages the exe that's there now, the signed one, without building it again.
+      - run: npx tauri bundle --bundles nsis --target "$TARGET"
+      - id: unsigned-installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: unsigned-installer
+          path: ${{ env.RELEASE }}/bundle/nsis/MultiPath_${{ steps.version.outputs.version }}_x64-setup.exe
+          if-no-files-found: error
+      - if: vars.SIGNPATH_ORGANIZATION_ID != ''
+        uses: signpath/github-action-submit-signing-request@v3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'MultiPath' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG || 'release-signing' }}
+          artifact-configuration-slug: installer
+          github-artifact-id: ${{ steps.unsigned-installer.outputs.artifact-id }}
+          parameters: |
+            version: ${{ toJSON(steps.version.outputs.version) }}
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: signed-installer
+
+      - name: Collect the installer
+        env:
+          SIGNED: ${{ vars.SIGNPATH_ORGANIZATION_ID != '' }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          mkdir -p out
+          name="MultiPath_${VERSION}_x64-setup.exe"
+          if [[ "$SIGNED" == true ]]; then
+            cp "signed-installer/$name" out/
+            # Both the installer and the app it installs must carry a valid SignPath Foundation signature.
+            powershell -NoProfile -Command '
+              $ErrorActionPreference = "Stop"
+              foreach ($f in $args) {
+                $s = Get-AuthenticodeSignature $f
+                "{0}: {1}, {2}" -f $f, $s.Status, $s.SignerCertificate.Subject
+                if ($s.Status -ne "Valid" -or $s.SignerCertificate.Subject -notmatch "SignPath Foundation") { exit 1 }
+              }' "out/$name" "$RELEASE/multipath.exe"
+          else
+            cp "$RELEASE/bundle/nsis/$name" out/
+            echo "::warning::Not Authenticode-signed: SIGNPATH_ORGANIZATION_ID isn't set"
+          fi
+          ls -l out
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows-bundle
+          path: out/
+          if-no-files-found: error

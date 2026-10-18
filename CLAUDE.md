@@ -69,7 +69,9 @@ MultiPath/
 │   ├── views/             one file per popup page: Main (on and off), Settings, Connections
 │   ├── lib/               pure helpers (formatting, status text) and small hooks
 │   └── styles/            tokens.css (from design.pen variables) and global styles
-├── .github/workflows/     macos.yml: the Apple silicon .app and .dmg, built by hand-started CI for releases without a Mac
+├── .github/               hand-started release builds: workflows/macos.yml (the Apple silicon .app and .dmg, for
+│                          releases without a Mac), workflows/windows.yml (the installer, Authenticode-signed by
+│                          SignPath) and signpath/ (its artifact configurations, pasted into SignPath)
 ├── scripts/               linux-lab.sh: namespaces with two shaped 10 Mbit/s ISPs, for the lab tests;
 │                          release.sh: this system's signed release, added to the GitHub assets and latest.json
 ├── release-assets/        built release files and latest.json (ignored)
@@ -108,6 +110,7 @@ sudo ./scripts/linux-lab.sh up     # two shaped ISPs in namespaces; `down` remov
 ./multipath --headless --config <dir>   # no Tauri: one JSON status line a second, for tests
 scripts/release.sh "notes"              # this system's signed bundles + .sig, merged into release-assets/latest.json
 scripts/release.sh --macos-from <dir>   # sign the macOS workflow's artifact here (no Mac needed), same merge
+scripts/release.sh --windows-from <dir> # the same for the Windows workflow's SignPath-signed installer
 ```
 
 ## Conventions
@@ -206,6 +209,14 @@ scripts/release.sh --macos-from <dir>   # sign the macOS workflow's artifact her
   `scripts/release.sh --macos-from <dir>`. CI never sees the key: it tars `MultiPath.app` itself (the updater skips
   the first path component), and `tauri signer sign --app-version` signs it locally with the version in the trusted
   comment. Since macOS 15 an ad-hoc app opens only through System Settings → Privacy & Security → Open Anyway.
+- Windows Authenticode comes from SignPath Foundation (free for open source; the certificate names *SignPath
+  Foundation* as publisher). `windows.yml` builds `multipath.exe` (`tauri build --no-bundle`), has SignPath sign it,
+  packages the signed exe with `tauri bundle` (which doesn't rebuild), then has the installer signed: two signing
+  requests, each approved by hand. The updater `.sig` is made afterwards with `--windows-from`, since Authenticode
+  changes the bytes. Signing steps are skipped until the repository variable `SIGNPATH_ORGANIZATION_ID` is set (with
+  the secret `SIGNPATH_API_TOKEN`). SignPath's conditions bind the README: keep the "Code signing policy" section,
+  its roles and the privacy policy true (every host MultiPath contacts), and the PE metadata (ProductName
+  `MultiPath`, ProductVersion = FileVersion = the version) that `.github/signpath/*.xml` enforces.
 - A restart (`request_restart`) starts the new copy before the old one exits. The `RunEvent::Exit` handler releases
   the single-instance lock first, or the new copy would hand over to the dying one and quit.
 - Version lives in `package.json`, `Cargo.toml` and `tauri.conf.json`; `cargo test` (`versions_agree`) catches drift.

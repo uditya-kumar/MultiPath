@@ -164,8 +164,8 @@ Settings → **Updates** → **Check**. If there's a newer version, MultiPath sh
 **Install and restart**. It then downloads the update, checks its signature against the key built into the app,
 installs it and restarts. A download whose signature doesn't check out is never installed. *Check for updates at
 start* (off by default) only looks and tells you; it never installs on its own. Checking asks GitHub for
-`latest.json`, the only thing MultiPath ever contacts by itself. Coming from 1.1.0 or older, install 1.2.0 by hand
-once.
+`latest.json` (everything MultiPath connects to is under [Privacy policy](#privacy-policy)). Coming from 1.1.0 or
+older, install 1.2.0 by hand once.
 
 - **Windows:** the installer runs; MultiPath turns off first and comes back from the tray. Turn it on again (UAC).
 - **Linux:** the `.deb` asks for your password to install; an AppImage replaces itself if its folder is writable.
@@ -230,6 +230,36 @@ cd src-tauri && cargo fmt --check && cargo clippy --all-targets -- -D warnings &
   updates rely on their own signature, not Apple's. A signed, notarised
   release would use a privileged helper (`SMAppService`) or a Network Extension instead.
 - Some sites sign you out if your requests come from different addresses. Turn on *Keep sites on one network* for those.
+
+## Code signing policy
+
+Free code signing provided by [SignPath.io](https://signpath.io), certificate by
+[SignPath Foundation](https://signpath.org).
+
+The Windows installer and `multipath.exe` are built from this repository by GitHub Actions
+([`windows.yml`](.github/workflows/windows.yml)), and each release is signed only after an approver confirms it in
+SignPath.
+
+- Committers and reviewers: [uditya-kumar](https://github.com/uditya-kumar)
+- Approvers: [uditya-kumar](https://github.com/uditya-kumar)
+
+### Privacy policy
+
+This program will not transfer any information to other networked systems unless specifically requested by the user
+or the person installing or operating it. There's no telemetry and no account; settings and the data counter stay on
+your PC. What it connects to:
+
+- **While MultiPath runs, on or off, to check each network works:** every 5 seconds, through each network, it opens a
+  TCP connection to 1.1.1.1 or 8.8.8.8 (Cloudflare's and Google's DNS), and to 2606:4700:4700::1111 or
+  2001:4860:4860::8888 where the network has IPv6, and closes it again without sending anything.
+- **While it's on, your DNS lookups** go to the DNS servers in Settings (8.8.8.8 and 1.1.1.1 unless you change them),
+  under [Google Public DNS's](https://developers.google.com/speed/public-dns/privacy) and
+  [Cloudflare's](https://developers.cloudflare.com/1.1.1.1/privacy/public-dns-resolver/) privacy policies.
+- **Update checks** ask GitHub for `latest.json`, and an update you confirm is downloaded from GitHub, under
+  [GitHub's privacy statement](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement).
+  It only checks when you click **Check**, or at start if you turn on *Check for updates at start*.
+
+Everything else is your own traffic, which goes where your apps send it.
 
 ## License
 
