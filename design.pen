@@ -1556,811 +1556,877 @@
         },
         {
           "type": "frame",
-          "id": "z7Bnaw",
-          "name": "Balancing",
+          "id": "pkxa1",
+          "name": "Scroll Body",
+          "clip": true,
           "width": "fill_container",
+          "height": 523,
           "layout": "vertical",
-          "gap": 2,
-          "padding": [
-            12,
-            16,
-            8,
-            16
-          ],
           "children": [
             {
-              "type": "text",
-              "id": "cBVML",
-              "name": "Section Title",
-              "fill": "$text-2",
-              "content": "Balancing",
-              "fontFamily": "$font",
-              "fontSize": 12,
-              "fontWeight": "600"
-            },
-            {
               "type": "frame",
-              "id": "iHRXc",
-              "name": "Group",
+              "id": "z7Bnaw",
+              "name": "Balancing",
               "width": "fill_container",
               "layout": "vertical",
               "gap": 2,
               "padding": [
-                6,
-                0,
-                0,
-                0
+                12,
+                16,
+                8,
+                16
               ],
               "children": [
                 {
-                  "type": "frame",
-                  "id": "Y2nN8I",
-                  "name": "Row · Adaptive weighting",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "Z2V6f",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "QnJbH",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "Adaptive weighting",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "rJz5q",
-                          "name": "Desc",
-                          "fill": "$text-3",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Faster networks get more new connections, based on what they actually deliver.",
-                          "lineHeight": 1.35,
-                          "fontFamily": "$font",
-                          "fontSize": 11,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "KcNtR",
-                      "type": "ref",
-                      "ref": "Fjf0c",
-                      "name": "Toggle"
-                    }
-                  ]
+                  "type": "text",
+                  "id": "cBVML",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "Balancing",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
                 },
                 {
                   "type": "frame",
-                  "id": "Dv24d",
-                  "name": "Row · Keep sites on one network",
+                  "id": "iHRXc",
+                  "name": "Group",
                   "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "rSBmX",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "avtqU",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "Keep sites on one network",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "IPjuX",
-                          "name": "Desc",
-                          "fill": "$text-3",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Fixes sign-outs on banking sites, but one site no longer gets the combined speed.",
-                          "lineHeight": 1.35,
-                          "fontFamily": "$font",
-                          "fontSize": 11,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "LW6qt",
-                      "type": "ref",
-                      "ref": "O0lszP",
-                      "name": "Toggle"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "GwUpq",
-                  "name": "Row · Include IPv6",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "wtCgd",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "GnkH7",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "Include IPv6",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "P6uabs",
-                          "name": "Desc",
-                          "fill": "$text-3",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Balance IPv6 traffic on networks that have it.",
-                          "lineHeight": 1.35,
-                          "fontFamily": "$font",
-                          "fontSize": 11,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "LphSJ",
-                      "type": "ref",
-                      "ref": "Fjf0c",
-                      "name": "Toggle"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "gg8is",
-          "name": "Share of new connections",
-          "width": "fill_container",
-          "layout": "vertical",
-          "gap": 2,
-          "padding": [
-            12,
-            16,
-            8,
-            16
-          ],
-          "children": [
-            {
-              "type": "text",
-              "id": "nbBOl",
-              "name": "Section Title",
-              "fill": "$text-2",
-              "content": "Share of new connections",
-              "fontFamily": "$font",
-              "fontSize": 12,
-              "fontWeight": "600"
-            },
-            {
-              "type": "frame",
-              "id": "k8yiv",
-              "name": "Group",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 2,
-              "padding": [
-                6,
-                0,
-                0,
-                0
-              ],
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "TNZ1d",
-                  "name": "Weight · Wi-Fi",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
                   "layout": "vertical",
-                  "gap": 10,
+                  "gap": 2,
                   "padding": [
-                    10,
-                    12,
-                    12,
-                    12
+                    6,
+                    0,
+                    0,
+                    0
                   ],
                   "children": [
                     {
                       "type": "frame",
-                      "id": "nf3cZ",
-                      "name": "Top",
+                      "id": "Y2nN8I",
+                      "name": "Row · Adaptive weighting",
                       "width": "fill_container",
-                      "justifyContent": "space_between",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "Ma1HQ",
-                          "name": "Label Group",
-                          "gap": 8,
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "ellipse",
-                              "id": "P9FKe",
-                              "name": "Swatch",
-                              "fill": "$net-wifi",
-                              "width": 8,
-                              "height": 8
-                            },
-                            {
-                              "type": "text",
-                              "id": "i2sxu",
-                              "name": "Name",
-                              "fill": "$text",
-                              "content": "Wi-Fi",
-                              "fontFamily": "$font",
-                              "fontSize": 13,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "P9anK",
-                          "name": "Value",
-                          "fill": "$text-2",
-                          "content": "7 / 10",
-                          "fontFamily": "$font",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "v83lB",
-                      "name": "Slider",
-                      "width": "fill_container",
-                      "height": 20,
-                      "layout": "none",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 2,
-                          "id": "Glx5T",
-                          "x": 0,
-                          "y": 8,
-                          "name": "Rail",
-                          "fill": "#FFFFFF2E",
-                          "width": 304,
-                          "height": 4
-                        },
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 2,
-                          "id": "z4YUKH",
-                          "x": 0,
-                          "y": 8,
-                          "name": "Rail Fill",
-                          "fill": "$accent",
-                          "width": 203,
-                          "height": 4
-                        },
-                        {
-                          "type": "ellipse",
-                          "id": "JAxeN",
-                          "x": 193,
-                          "y": 0,
-                          "name": "Thumb Ring",
-                          "fill": "#454545",
-                          "width": 20,
-                          "height": 20,
-                          "stroke": "#FFFFFF1F",
-                          "strokeWidth": 1
-                        },
-                        {
-                          "type": "ellipse",
-                          "id": "kLMWb",
-                          "x": 197,
-                          "y": 4,
-                          "name": "Thumb",
-                          "fill": "$accent",
-                          "width": 12,
-                          "height": 12
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "ExIZF",
-                  "name": "Weight · Pixel 8 (USB)",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "layout": "vertical",
-                  "gap": 10,
-                  "padding": [
-                    10,
-                    12,
-                    12,
-                    12
-                  ],
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "b7RT4",
-                      "name": "Top",
-                      "width": "fill_container",
-                      "justifyContent": "space_between",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "BFzab",
-                          "name": "Label Group",
-                          "gap": 8,
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "ellipse",
-                              "id": "fUcQH",
-                              "name": "Swatch",
-                              "fill": "$net-phone",
-                              "width": 8,
-                              "height": 8
-                            },
-                            {
-                              "type": "text",
-                              "id": "BkPeb",
-                              "name": "Name",
-                              "fill": "$text",
-                              "content": "Pixel 8 (USB)",
-                              "fontFamily": "$font",
-                              "fontSize": 13,
-                              "fontWeight": "normal"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "text",
-                          "id": "hOOKf",
-                          "name": "Value",
-                          "fill": "$text-2",
-                          "content": "5 / 10",
-                          "fontFamily": "$font",
-                          "fontSize": 12,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "RDcch",
-                      "name": "Slider",
-                      "width": "fill_container",
-                      "height": 20,
-                      "layout": "none",
-                      "children": [
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 2,
-                          "id": "YtAQn",
-                          "x": 0,
-                          "y": 8,
-                          "name": "Rail",
-                          "fill": "#FFFFFF2E",
-                          "width": 304,
-                          "height": 4
-                        },
-                        {
-                          "type": "rectangle",
-                          "cornerRadius": 2,
-                          "id": "SRPzG",
-                          "x": 0,
-                          "y": 8,
-                          "name": "Rail Fill",
-                          "fill": "$accent",
-                          "width": 135,
-                          "height": 4
-                        },
-                        {
-                          "type": "ellipse",
-                          "id": "zw9tx",
-                          "x": 125,
-                          "y": 0,
-                          "name": "Thumb Ring",
-                          "fill": "#454545",
-                          "width": 20,
-                          "height": 20,
-                          "stroke": "#FFFFFF1F",
-                          "strokeWidth": 1
-                        },
-                        {
-                          "type": "ellipse",
-                          "id": "a6JP5C",
-                          "x": 129,
-                          "y": 4,
-                          "name": "Thumb",
-                          "fill": "$accent",
-                          "width": 12,
-                          "height": 12
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "bB3Ot",
-          "name": "App",
-          "width": "fill_container",
-          "layout": "vertical",
-          "gap": 2,
-          "padding": [
-            12,
-            16,
-            8,
-            16
-          ],
-          "children": [
-            {
-              "type": "text",
-              "id": "gw3V7",
-              "name": "Section Title",
-              "fill": "$text-2",
-              "content": "App",
-              "fontFamily": "$font",
-              "fontSize": 12,
-              "fontWeight": "600"
-            },
-            {
-              "type": "frame",
-              "id": "eLrWO",
-              "name": "Group",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 2,
-              "padding": [
-                6,
-                0,
-                0,
-                0
-              ],
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "ml6L8",
-                  "name": "Row · Start with Windows",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "vlqH3",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "dQJu6",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "Start with Windows",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "id": "WU7cH",
-                      "type": "ref",
-                      "ref": "Fjf0c",
-                      "name": "Toggle"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "PTNxs",
-                  "name": "Row · DNS",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "T3Qzsf",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "rfREZ",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "DNS servers",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "wFLtB",
-                          "name": "Desc",
-                          "fill": "$text-3",
-                          "content": "8.8.8.8, 1.1.1.1",
-                          "fontFamily": "$font",
-                          "fontSize": 11,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "icon",
-                      "id": "Tp76o",
-                      "name": "Chevron",
-                      "width": 16,
-                      "height": 16,
-                      "icon": "chevron-right",
-                      "library": "lucide",
-                      "fill": "$text-3"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "frame",
-          "id": "Q40WeA",
-          "name": "Updates",
-          "width": "fill_container",
-          "layout": "vertical",
-          "gap": 2,
-          "padding": [
-            12,
-            16,
-            8,
-            16
-          ],
-          "children": [
-            {
-              "type": "text",
-              "id": "sWEEB",
-              "name": "Section Title",
-              "fill": "$text-2",
-              "content": "Updates",
-              "fontFamily": "$font",
-              "fontSize": 12,
-              "fontWeight": "600"
-            },
-            {
-              "type": "frame",
-              "id": "i7ZoCe",
-              "name": "Group",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 2,
-              "padding": [
-                6,
-                0,
-                0,
-                0
-              ],
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "sjjmR",
-                  "name": "Row · Version",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "i8hGYD",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "o2P3Hg",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "MultiPath 1.2.0",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "H3vE6V",
-                          "name": "Desc",
-                          "fill": "$text-3",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Look for a newer version. Nothing is installed until you say so.",
-                          "lineHeight": 1.4,
-                          "fontFamily": "$font",
-                          "fontSize": 11,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "mjqFj",
-                      "name": "Secondary Button",
-                      "height": 26,
-                      "fill": "$surface-hover",
+                      "fill": "$surface",
                       "cornerRadius": 4,
-                      "stroke": "$border",
-                      "strokeWidth": 1,
+                      "gap": 12,
                       "padding": [
-                        0,
-                        10
+                        10,
+                        12
                       ],
-                      "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "text",
-                          "id": "x4cWIm",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "Check",
-                          "fontFamily": "$font",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "btQO9",
-                  "name": "Row · Check at start",
-                  "width": "fill_container",
-                  "fill": "$surface",
-                  "cornerRadius": 4,
-                  "gap": 12,
-                  "padding": [
-                    10,
-                    12
-                  ],
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "O5aDD",
-                      "name": "Text",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "mTCOn",
-                          "name": "Label",
-                          "fill": "$text",
-                          "content": "Check for updates at start",
-                          "fontFamily": "$font",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
+                          "type": "frame",
+                          "id": "Z2V6f",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "QnJbH",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Adaptive weighting",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "rJz5q",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Faster networks get more new connections, based on what they actually deliver.",
+                              "lineHeight": 1.35,
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
                         },
                         {
-                          "type": "text",
-                          "id": "PK353",
-                          "name": "Desc",
-                          "fill": "$text-3",
-                          "textGrowth": "fixed-width",
-                          "width": "fill_container",
-                          "content": "Asks GitHub for a newer version when MultiPath opens. Never installs without asking.",
-                          "lineHeight": 1.4,
-                          "fontFamily": "$font",
-                          "fontSize": 11,
-                          "fontWeight": "normal"
+                          "id": "KcNtR",
+                          "type": "ref",
+                          "ref": "Fjf0c",
+                          "name": "Toggle"
                         }
                       ]
                     },
                     {
-                      "id": "dEseW",
-                      "type": "ref",
-                      "ref": "O0lszP",
-                      "name": "Toggle"
+                      "type": "frame",
+                      "id": "Dv24d",
+                      "name": "Row · Keep sites on one network",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "rSBmX",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "avtqU",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Keep sites on one network",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "IPjuX",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Fixes sign-outs on banking sites, but one site no longer gets the combined speed.",
+                              "lineHeight": 1.35,
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "LW6qt",
+                          "type": "ref",
+                          "ref": "O0lszP",
+                          "name": "Toggle"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "GwUpq",
+                      "name": "Row · Include IPv6",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "wtCgd",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "GnkH7",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Include IPv6",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "P6uabs",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Balance IPv6 traffic on networks that have it.",
+                              "lineHeight": 1.35,
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "LphSJ",
+                          "type": "ref",
+                          "ref": "Fjf0c",
+                          "name": "Toggle"
+                        }
+                      ]
                     }
                   ]
                 }
               ]
+            },
+            {
+              "type": "frame",
+              "id": "gg8is",
+              "name": "Share of new connections",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                12,
+                16,
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "nbBOl",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "Share of new connections",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "k8yiv",
+                  "name": "Group",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "TNZ1d",
+                      "name": "Weight · Wi-Fi",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": [
+                        10,
+                        12,
+                        12,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "nf3cZ",
+                          "name": "Top",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "Ma1HQ",
+                              "name": "Label Group",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "P9FKe",
+                                  "name": "Swatch",
+                                  "fill": "$net-wifi",
+                                  "width": 8,
+                                  "height": 8
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "i2sxu",
+                                  "name": "Name",
+                                  "fill": "$text",
+                                  "content": "Wi-Fi",
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "P9anK",
+                              "name": "Value",
+                              "fill": "$text-2",
+                              "content": "7 / 10",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "v83lB",
+                          "name": "Slider",
+                          "width": "fill_container",
+                          "height": 20,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "Glx5T",
+                              "x": 0,
+                              "y": 8,
+                              "name": "Rail",
+                              "fill": "#FFFFFF2E",
+                              "width": 304,
+                              "height": 4
+                            },
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "z4YUKH",
+                              "x": 0,
+                              "y": 8,
+                              "name": "Rail Fill",
+                              "fill": "$accent",
+                              "width": 203,
+                              "height": 4
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "JAxeN",
+                              "x": 193,
+                              "y": 0,
+                              "name": "Thumb Ring",
+                              "fill": "#454545",
+                              "width": 20,
+                              "height": 20,
+                              "stroke": "#FFFFFF1F",
+                              "strokeWidth": 1
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "kLMWb",
+                              "x": 197,
+                              "y": 4,
+                              "name": "Thumb",
+                              "fill": "$accent",
+                              "width": 12,
+                              "height": 12
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ExIZF",
+                      "name": "Weight · Pixel 8 (USB)",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "layout": "vertical",
+                      "gap": 10,
+                      "padding": [
+                        10,
+                        12,
+                        12,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "b7RT4",
+                          "name": "Top",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "BFzab",
+                              "name": "Label Group",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "ellipse",
+                                  "id": "fUcQH",
+                                  "name": "Swatch",
+                                  "fill": "$net-phone",
+                                  "width": 8,
+                                  "height": 8
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "BkPeb",
+                                  "name": "Name",
+                                  "fill": "$text",
+                                  "content": "Pixel 8 (USB)",
+                                  "fontFamily": "$font",
+                                  "fontSize": 13,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "hOOKf",
+                              "name": "Value",
+                              "fill": "$text-2",
+                              "content": "5 / 10",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "RDcch",
+                          "name": "Slider",
+                          "width": "fill_container",
+                          "height": 20,
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "YtAQn",
+                              "x": 0,
+                              "y": 8,
+                              "name": "Rail",
+                              "fill": "#FFFFFF2E",
+                              "width": 304,
+                              "height": 4
+                            },
+                            {
+                              "type": "rectangle",
+                              "cornerRadius": 2,
+                              "id": "SRPzG",
+                              "x": 0,
+                              "y": 8,
+                              "name": "Rail Fill",
+                              "fill": "$accent",
+                              "width": 135,
+                              "height": 4
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "zw9tx",
+                              "x": 125,
+                              "y": 0,
+                              "name": "Thumb Ring",
+                              "fill": "#454545",
+                              "width": 20,
+                              "height": 20,
+                              "stroke": "#FFFFFF1F",
+                              "strokeWidth": 1
+                            },
+                            {
+                              "type": "ellipse",
+                              "id": "a6JP5C",
+                              "x": 129,
+                              "y": 4,
+                              "name": "Thumb",
+                              "fill": "$accent",
+                              "width": 12,
+                              "height": 12
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bB3Ot",
+              "name": "App",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                12,
+                16,
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gw3V7",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "App",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "eLrWO",
+                  "name": "Group",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ml6L8",
+                      "name": "Row · Start with Windows",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "vlqH3",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dQJu6",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Start with Windows",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "WU7cH",
+                          "type": "ref",
+                          "ref": "Fjf0c",
+                          "name": "Toggle"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "otTRw",
+                      "name": "Row · Hide unavailable networks",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "K3b2ih",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "d0zz3E",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Hide unavailable networks",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "gSyd5",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Leaves unplugged cables and networks that aren't connected out of the list.",
+                              "lineHeight": 1.35,
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "ilIja",
+                          "type": "ref",
+                          "ref": "O0lszP",
+                          "name": "Toggle"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PTNxs",
+                      "name": "Row · DNS",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "T3Qzsf",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "rfREZ",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "DNS servers",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "wFLtB",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "content": "8.8.8.8, 1.1.1.1",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Tp76o",
+                          "name": "Chevron",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$text-3"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Q40WeA",
+              "name": "Updates",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                12,
+                16,
+                8,
+                16
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "sWEEB",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "Updates",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "i7ZoCe",
+                  "name": "Group",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "padding": [
+                    6,
+                    0,
+                    0,
+                    0
+                  ],
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sjjmR",
+                      "name": "Row · Version",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "i8hGYD",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "o2P3Hg",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "MultiPath 1.2.0",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "H3vE6V",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Look for a newer version. Nothing is installed until you say so.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "mjqFj",
+                          "name": "Secondary Button",
+                          "height": 26,
+                          "fill": "$surface-hover",
+                          "cornerRadius": 4,
+                          "stroke": "$border",
+                          "strokeWidth": 1,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "x4cWIm",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Check",
+                              "fontFamily": "$font",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "btQO9",
+                      "name": "Row · Check at start",
+                      "width": "fill_container",
+                      "fill": "$surface",
+                      "cornerRadius": 4,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "O5aDD",
+                          "name": "Text",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "mTCOn",
+                              "name": "Label",
+                              "fill": "$text",
+                              "content": "Check for updates at start",
+                              "fontFamily": "$font",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "PK353",
+                              "name": "Desc",
+                              "fill": "$text-3",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Asks GitHub for a newer version when MultiPath opens. Never installs without asking.",
+                              "lineHeight": 1.4,
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "dEseW",
+                          "type": "ref",
+                          "ref": "O0lszP",
+                          "name": "Toggle"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FpFt0",
+              "name": "Bottom Spacer",
+              "width": "fill_container",
+              "height": 8
             }
           ]
-        },
-        {
-          "type": "frame",
-          "id": "FpFt0",
-          "name": "Bottom Spacer",
-          "width": "fill_container",
-          "height": 8
         }
       ]
     },
@@ -4650,6 +4716,897 @@
           "fontWeight": "normal"
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "wsJl1",
+      "x": 2400,
+      "y": 200,
+      "name": "Tray Flyout — Two Ethernets",
+      "clip": true,
+      "width": 360,
+      "fill": "$bg",
+      "cornerRadius": 8,
+      "stroke": "$border",
+      "strokeWidth": 1,
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#00000066",
+        "offset": {
+          "x": 0,
+          "y": 8
+        },
+        "blur": 32
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "h8vtiy",
+          "name": "Header",
+          "width": "fill_container",
+          "gap": 12,
+          "padding": [
+            16,
+            8,
+            12,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "m68Lc8",
+              "name": "App Mark",
+              "width": 32,
+              "height": 32,
+              "fill": "$accent",
+              "cornerRadius": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "bBxD8",
+                  "name": "Mark Icon",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "waypoints",
+                  "library": "lucide",
+                  "fill": "$on-accent"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "z5RosA",
+              "name": "Title Block",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 3,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "TS3H8",
+                  "name": "App Name",
+                  "fill": "$text",
+                  "content": "MultiPath",
+                  "fontFamily": "$font",
+                  "fontSize": 14,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "b4Lj3",
+                  "name": "Status",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "nHPD9",
+                      "name": "Status Dot",
+                      "fill": "$ok",
+                      "width": 6,
+                      "height": 6
+                    },
+                    {
+                      "type": "text",
+                      "id": "oUktb",
+                      "name": "Status Text",
+                      "fill": "$text-2",
+                      "content": "Combining 3 networks",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "N1ChQN",
+              "type": "ref",
+              "ref": "Fjf0c",
+              "name": "Master Toggle"
+            },
+            {
+              "type": "frame",
+              "id": "J7Jt7v",
+              "name": "Btn · minimize",
+              "width": 32,
+              "height": 32,
+              "cornerRadius": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "zcenN",
+                  "name": "Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "minus",
+                  "library": "lucide",
+                  "fill": "$text-2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "ObBhx",
+          "name": "Throughput",
+          "width": "fill_container",
+          "layout": "vertical",
+          "padding": [
+            8,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "Q7XU0Z",
+              "name": "Share Ring",
+              "width": "fill_container",
+              "gap": 20,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zwAzG",
+                  "name": "Ring",
+                  "width": 120,
+                  "height": 120,
+                  "layout": "vertical",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "rvMmY",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Track",
+                      "innerRadius": 0.82,
+                      "fill": "#FFFFFF10",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "IgK8l",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Ethernet 3 Arc",
+                      "innerRadius": 0.82,
+                      "startAngle": 88,
+                      "sweepAngle": -204.8,
+                      "fill": "$net-eth",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "P8QnR9",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Wi-Fi Arc",
+                      "innerRadius": 0.82,
+                      "startAngle": -120.8,
+                      "sweepAngle": -93.2,
+                      "fill": "$net-wifi",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "j4lA1N",
+                      "layoutPosition": "absolute",
+                      "x": 0,
+                      "y": 0,
+                      "name": "Ethernet 4 Arc",
+                      "innerRadius": 0.82,
+                      "startAngle": -218,
+                      "sweepAngle": -50,
+                      "fill": "$net-alt-1",
+                      "width": 120,
+                      "height": 120
+                    },
+                    {
+                      "type": "text",
+                      "id": "BGAEl",
+                      "name": "Total",
+                      "fill": "$text",
+                      "content": "51.6",
+                      "lineHeight": 1.1,
+                      "fontFamily": "$font",
+                      "fontSize": 26,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "l7GYxm",
+                      "name": "Unit",
+                      "fill": "$text-2",
+                      "content": "MB/s",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "B6Kruh",
+                  "name": "Legend",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 14,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "uD2Pe",
+                      "name": "Legend · Ethernet 3",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "nRDmq",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "j9WSw",
+                              "name": "Dot",
+                              "fill": "$net-eth",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "SFrA3",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Ethernet 3",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "FUYrB",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "srclx",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "29.9 MB/s",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "q3UJI",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "58%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qhjPt",
+                      "name": "Legend · Wi-Fi",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "MAW83",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "DIyyG",
+                              "name": "Dot",
+                              "fill": "$net-wifi",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "uoKK2",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Wi-Fi",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Q2dLH9",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "b5DFR",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "13.9 MB/s",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "S61SjO",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "27%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZGRXj",
+                      "name": "Legend · Ethernet 4",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "M6WFL3",
+                          "name": "Label Row",
+                          "gap": 6,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "ellipse",
+                              "id": "YShey",
+                              "name": "Dot",
+                              "fill": "$net-alt-1",
+                              "width": 6,
+                              "height": 6
+                            },
+                            {
+                              "type": "text",
+                              "id": "J5Axn",
+                              "name": "Name",
+                              "fill": "$text-2",
+                              "content": "Ethernet 4",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "E3OUex",
+                          "name": "Value Row",
+                          "gap": 6,
+                          "alignItems": "end",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bc1Tz",
+                              "name": "Rate",
+                              "fill": "$text",
+                              "content": "7.8 MB/s",
+                              "fontFamily": "$font",
+                              "fontSize": 15,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "gTmpq",
+                              "name": "Pct",
+                              "fill": "$text-3",
+                              "content": "15%",
+                              "fontFamily": "$font",
+                              "fontSize": 11,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LxYnL",
+                      "name": "Upload",
+                      "gap": 4,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Sg1Fa",
+                          "name": "Up Icon",
+                          "width": 12,
+                          "height": 12,
+                          "icon": "arrow-up",
+                          "library": "lucide",
+                          "fill": "$text-3"
+                        },
+                        {
+                          "type": "text",
+                          "id": "RpwZl",
+                          "name": "Up Value",
+                          "fill": "$text-3",
+                          "content": "4.2 MB/s upload",
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "T6TcE9",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "GXAtb",
+          "name": "Networks",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 6,
+          "padding": [
+            12,
+            16,
+            16,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "yPoTB",
+              "name": "Section Head",
+              "width": "fill_container",
+              "padding": [
+                0,
+                2,
+                4,
+                2
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "p9sVV",
+                  "name": "Section Title",
+                  "fill": "$text-2",
+                  "content": "Networks",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "D5h4ID",
+                  "name": "Mode Chip",
+                  "fill": "$surface",
+                  "cornerRadius": 10,
+                  "gap": 4,
+                  "padding": [
+                    3,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "smSP5",
+                      "name": "Chip Icon",
+                      "width": 12,
+                      "height": 12,
+                      "icon": "gauge",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    },
+                    {
+                      "type": "text",
+                      "id": "G8Fgr",
+                      "name": "Chip Text",
+                      "fill": "$text-2",
+                      "content": "Adaptive",
+                      "fontFamily": "$font",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "zIBSd",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Ethernet 3",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#B98CFF26"
+                },
+                "coXjH": {
+                  "icon": "ethernet-port",
+                  "fill": "$net-eth"
+                },
+                "k2dOm": {
+                  "content": "Ethernet 3"
+                },
+                "dnBMv": {
+                  "content": "172.18.52.5 · 9 ms"
+                },
+                "EegR1": {
+                  "content": "29.9 MB/s"
+                },
+                "r0thU": {
+                  "content": "58% · 74 conn"
+                },
+                "g9QCW": {
+                  "width": 176,
+                  "fill": "$net-eth"
+                }
+              }
+            },
+            {
+              "id": "T9bGA",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Wi-Fi",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#4CC2FF26"
+                },
+                "coXjH": {
+                  "icon": "wifi",
+                  "fill": "$net-wifi"
+                },
+                "k2dOm": {
+                  "content": "Wi-Fi"
+                },
+                "dnBMv": {
+                  "content": "172.20.90.239 · 11 ms"
+                },
+                "EegR1": {
+                  "content": "13.9 MB/s"
+                },
+                "r0thU": {
+                  "content": "27% · 41 conn"
+                },
+                "g9QCW": {
+                  "width": 82,
+                  "fill": "$net-wifi"
+                }
+              }
+            },
+            {
+              "id": "PHxwc",
+              "type": "ref",
+              "ref": "sHmR9",
+              "name": "Row · Ethernet 4",
+              "width": "fill_container",
+              "descendants": {
+                "r4oNC": {
+                  "fill": "#5EE6A826"
+                },
+                "coXjH": {
+                  "icon": "ethernet-port",
+                  "fill": "$net-alt-1"
+                },
+                "k2dOm": {
+                  "content": "Ethernet 4"
+                },
+                "dnBMv": {
+                  "content": "172.22.128.64 · 10 ms"
+                },
+                "EegR1": {
+                  "content": "7.8 MB/s"
+                },
+                "r0thU": {
+                  "content": "15% · 27 conn"
+                },
+                "g9QCW": {
+                  "width": 46,
+                  "fill": "$net-alt-1"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "yIJfp",
+          "name": "Footer Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "frame",
+          "id": "QG5Kz",
+          "name": "Footer",
+          "width": "fill_container",
+          "fill": "$bg-footer",
+          "padding": [
+            10,
+            12,
+            10,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "jgzUz",
+              "name": "Footer Info",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "DR0DD",
+                  "name": "Conn Icon",
+                  "width": 14,
+                  "height": 14,
+                  "icon": "activity",
+                  "library": "lucide",
+                  "fill": "$text-3"
+                },
+                {
+                  "type": "text",
+                  "id": "v1vr7",
+                  "name": "Conn Text",
+                  "fill": "$text-2",
+                  "content": "142 connections · 3.4 GB today",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "d6i8w4",
+              "name": "Footer Actions",
+              "gap": 2,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "URUXy",
+                  "name": "Btn · list",
+                  "width": 32,
+                  "height": 32,
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "pSYZ6",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "list",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "zHRCy",
+                  "name": "Btn · settings",
+                  "width": 32,
+                  "height": 32,
+                  "cornerRadius": 4,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "yx7kF",
+                      "name": "Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "settings",
+                      "library": "lucide",
+                      "fill": "$text-2"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "bZLbq",
+      "x": 2400,
+      "y": 805,
+      "name": "Note — Network colours",
+      "width": 360,
+      "fill": "#202020",
+      "cornerRadius": 8,
+      "layout": "vertical",
+      "gap": 8,
+      "padding": 16,
+      "children": [
+        {
+          "type": "text",
+          "id": "lzYR9",
+          "name": "Title",
+          "fill": "#FFFFFF",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Every network has its own colour (ring, legend, icon, bar, weights, connections):",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "SJcyn",
+          "name": "Status Text (Off)",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "The first network of each kind keeps its kind colour: Wi-Fi $net-wifi, phone $net-phone, Ethernet $net-eth.",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "YbiYM",
+          "name": "Admin Note (Off)",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Each further one of the same kind takes the next of $net-alt-1 … $net-alt-4 (mint, pink, yellow, periwinkle), in name order over all known networks, so colours don't change as cables come and go.",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "AjCt0",
+          "name": "Settings › App label",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Settings › App › Hide unavailable networks (off by default) leaves out rows that are “Cable unplugged” or “Not connected”.",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "nuXBV",
+      "x": 800,
+      "y": 820,
+      "name": "Note — Settings height",
+      "width": 360,
+      "fill": "#202020",
+      "cornerRadius": 8,
+      "layout": "vertical",
+      "gap": 8,
+      "padding": 16,
+      "children": [
+        {
+          "type": "text",
+          "id": "a2jN0",
+          "name": "Title",
+          "fill": "#FFFFFF",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Settings keeps the home page's height:",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "xzuJu",
+          "name": "Height",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Opening Settings doesn't change the popup's size: it stays as tall as the main page was.",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "rJ2Kf",
+          "name": "Scrolling",
+          "fill": "#C8C8C8",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "The header stays put; the sections below it scroll, with the same thin scrollbar as Connections.",
+          "fontFamily": "Inter",
+          "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
     }
   ],
   "variables": {
@@ -4716,6 +5673,22 @@
     "font": {
       "type": "string",
       "value": "Inter"
+    },
+    "net-alt-1": {
+      "type": "color",
+      "value": "#5EE6A8"
+    },
+    "net-alt-2": {
+      "type": "color",
+      "value": "#FF7AB6"
+    },
+    "net-alt-3": {
+      "type": "color",
+      "value": "#F2E36B"
+    },
+    "net-alt-4": {
+      "type": "color",
+      "value": "#7F95FF"
     }
   },
   "fileToken": "61f9323d-0f60-4b60-a6c0-96b688895c3b"
