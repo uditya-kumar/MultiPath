@@ -1,6 +1,6 @@
 import { ArrowUp } from "lucide-react";
 import type { LinkStatus } from "../api/types";
-import { formatRate, networkColor, ringSegments, scaleRate } from "../lib/format";
+import { formatRate, ringSegments, scaleRate } from "../lib/format";
 import { useSmoothed } from "../lib/useSmoothed";
 
 const SIZE = 120;
@@ -11,12 +11,14 @@ const GAP = 4;
 
 interface Props {
   links: LinkStatus[];
+  /** Each network's colour, by id. */
+  colors: Map<string, string>;
   rxRate: number;
   txRate: number;
 }
 
 /** Total download speed in a ring split by how much each network carries. */
-export function ShareRing({ links, rxRate, txRate }: Props) {
+export function ShareRing({ links, colors, rxRate, txRate }: Props) {
   const total = scaleRate(useSmoothed(rxRate));
   const segments = ringSegments(
     links.map((l) => l.share),
@@ -43,7 +45,7 @@ export function ShareRing({ links, rxRate, txRate }: Props) {
               cy={SIZE / 2}
               r={RADIUS}
               fill="none"
-              stroke={networkColor(link.kind)}
+              stroke={colors.get(link.id)}
               strokeWidth={STROKE}
               strokeDasharray={`${segments[i].length} ${CIRCUMFERENCE}`}
               strokeDashoffset={-segments[i].offset}
@@ -60,7 +62,7 @@ export function ShareRing({ links, rxRate, txRate }: Props) {
         {links.map((link) => (
           <div key={link.id} className="legend-item">
             <span className="legend-label">
-              <span className="dot" style={{ background: networkColor(link.kind) }} />
+              <span className="dot" style={{ background: colors.get(link.id) }} />
               {link.name}
             </span>
             <span className="legend-value">

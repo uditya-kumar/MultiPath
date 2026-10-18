@@ -1,6 +1,5 @@
 import { EthernetPort, Network, Smartphone, Wifi } from "lucide-react";
 import type { LinkKind } from "../api/types";
-import { networkColor } from "../lib/format";
 
 const ICONS = {
   wifi: Wifi,
@@ -11,9 +10,8 @@ const ICONS = {
 };
 
 /** The network's icon in a tinted square of its color. */
-export function NetIcon({ kind }: { kind: LinkKind }) {
+export function NetIcon({ kind, color }: { kind: LinkKind; color: string }) {
   const Icon = ICONS[kind] ?? Network;
-  const color = networkColor(kind);
   return (
     <span
       className="icon-box"

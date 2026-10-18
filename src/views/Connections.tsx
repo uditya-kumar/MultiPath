@@ -3,7 +3,7 @@ import { listConnections } from "../api/commands";
 import type { Connection, Status } from "../api/types";
 import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
-import { formatRate, networkColor } from "../lib/format";
+import { formatRate, networkColors } from "../lib/format";
 
 const POLL_MS = 1000;
 
@@ -34,7 +34,7 @@ export function Connections({ status, onBack }: Props) {
     };
   }, [status.on]);
 
-  const kinds = new Map(status.links.map((l) => [l.id, l.kind]));
+  const colors = networkColors(status.links);
 
   return (
     <>
@@ -51,7 +51,6 @@ export function Connections({ status, onBack }: Props) {
       ) : (
         <div className="connections" role="list">
           {connections.map((c) => {
-            const kind = c.linkId ? kinds.get(c.linkId) : undefined;
             return (
               <div key={c.id} className="connection" role="listitem">
                 <div className="connection-who">
@@ -65,7 +64,7 @@ export function Connections({ status, onBack }: Props) {
                   <span className="connection-link muted">
                     <span
                       className="dot"
-                      style={{ background: kind ? networkColor(kind) : "var(--text-3)" }}
+                      style={{ background: (c.linkId && colors.get(c.linkId)) || "var(--text-3)" }}
                     />
                     {c.linkName ?? "—"}
                   </span>

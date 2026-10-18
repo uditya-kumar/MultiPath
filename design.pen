@@ -2183,6 +2183,180 @@
         },
         {
           "type": "frame",
+          "id": "Q40WeA",
+          "name": "Updates",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 2,
+          "padding": [
+            12,
+            16,
+            8,
+            16
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "sWEEB",
+              "name": "Section Title",
+              "fill": "$text-2",
+              "content": "Updates",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "i7ZoCe",
+              "name": "Group",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "padding": [
+                6,
+                0,
+                0,
+                0
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sjjmR",
+                  "name": "Row · Version",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "i8hGYD",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "o2P3Hg",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "MultiPath 1.2.0",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "H3vE6V",
+                          "name": "Desc",
+                          "fill": "$text-3",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Look for a newer version. Nothing is installed until you say so.",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mjqFj",
+                      "name": "Secondary Button",
+                      "height": 26,
+                      "fill": "$surface-hover",
+                      "cornerRadius": 4,
+                      "stroke": "$border",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        10
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "x4cWIm",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "Check",
+                          "fontFamily": "$font",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "btQO9",
+                  "name": "Row · Check at start",
+                  "width": "fill_container",
+                  "fill": "$surface",
+                  "cornerRadius": 4,
+                  "gap": 12,
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "O5aDD",
+                      "name": "Text",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mTCOn",
+                          "name": "Label",
+                          "fill": "$text",
+                          "content": "Check for updates at start",
+                          "fontFamily": "$font",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PK353",
+                          "name": "Desc",
+                          "fill": "$text-3",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Asks GitHub for a newer version when MultiPath opens. Never installs without asking.",
+                          "lineHeight": 1.4,
+                          "fontFamily": "$font",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "dEseW",
+                      "type": "ref",
+                      "ref": "O0lszP",
+                      "name": "Toggle"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
           "id": "FpFt0",
           "name": "Bottom Spacer",
           "width": "fill_container",
@@ -3836,6 +4010,643 @@
           "content": "Settings › App label: “Start on login”",
           "fontFamily": "Inter",
           "fontSize": 12,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "dg4tc",
+      "x": 1960,
+      "y": 200,
+      "name": "Updates — states",
+      "width": 360,
+      "fill": "$bg",
+      "cornerRadius": 8,
+      "stroke": "$border",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 10,
+      "padding": 16,
+      "children": [
+        {
+          "type": "text",
+          "id": "HHIIn",
+          "name": "Title",
+          "fill": "$text",
+          "content": "Settings › Updates: one row, in each state",
+          "fontFamily": "$font",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "h4nVE",
+          "name": "Caption",
+          "fill": "$text-2",
+          "content": "Checking",
+          "fontFamily": "$font",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "Syttt",
+          "name": "Row · Checking",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 4,
+          "gap": 12,
+          "padding": [
+            10,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "wTChs",
+              "name": "Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "v5ZM9",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "Checking for updates…",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "f3aF3E",
+                  "name": "Desc",
+                  "fill": "$text-3",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "You have MultiPath 1.2.0.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oP08E",
+              "name": "Secondary Button",
+              "opacity": 0.5,
+              "height": 26,
+              "fill": "$surface-hover",
+              "cornerRadius": 4,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                10
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "pHH3E",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "Check",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "X6WL6",
+          "name": "Caption",
+          "fill": "$text-2",
+          "content": "Up to date",
+          "fontFamily": "$font",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "v3IB6",
+          "name": "Row · Up to date",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 4,
+          "gap": 12,
+          "padding": [
+            10,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "KNJIx",
+              "name": "Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Vb2JT",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "You're up to date",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "hOw6i",
+                  "name": "Desc",
+                  "fill": "$text-3",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "MultiPath 1.2.0 is the newest version.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Yr7O1",
+              "name": "Secondary Button",
+              "height": 26,
+              "fill": "$surface-hover",
+              "cornerRadius": 4,
+              "stroke": "$border",
+              "strokeWidth": 1,
+              "padding": [
+                0,
+                10
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Pmrsu",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "Check again",
+                  "fontFamily": "$font",
+                  "fontSize": 12,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "Q0aOWm",
+          "name": "Caption",
+          "fill": "$text-2",
+          "content": "Available (release notes scroll inside the box)",
+          "fontFamily": "$font",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "kVS1V",
+          "name": "Row · Available",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 4,
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            10,
+            12
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "F1iHLq",
+              "name": "Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "a0sKki",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "MultiPath 1.2.1 is available",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "xnSfc",
+                  "name": "Desc",
+                  "fill": "$text-3",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "You have 1.2.0. Installing downloads it, checks its signature, replaces this version and restarts MultiPath. Windows may ask for administrator permission.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VqCD0",
+              "name": "Notes",
+              "width": "fill_container",
+              "fill": "#00000033",
+              "cornerRadius": 4,
+              "padding": [
+                8,
+                10
+              ],
+              "children": [
+                {
+                  "type": "text",
+                  "id": "l3TvOE",
+                  "name": "Desc",
+                  "fill": "$text-2",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Faster failover when a phone tether drops.",
+                  "lineHeight": 1.4,
+                  "fontFamily": "$font",
+                  "fontSize": 11,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "I9PoK",
+              "name": "Actions",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "BF7BJ",
+                  "name": "Primary Button",
+                  "height": 26,
+                  "fill": "$accent",
+                  "cornerRadius": 4,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "z3T0D",
+                      "name": "Label",
+                      "fill": "$on-accent",
+                      "content": "Install and restart",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Y4a07L",
+                  "name": "Secondary Button",
+                  "height": 26,
+                  "fill": "$surface-hover",
+                  "cornerRadius": 4,
+                  "stroke": "$border",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tLQ6o",
+                      "name": "Label",
+                      "fill": "$text",
+                      "content": "Not now",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "X0L7q2",
+          "name": "Caption",
+          "fill": "$text-2",
+          "content": "Downloading, then installing",
+          "fontFamily": "$font",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "q1X5nP",
+          "name": "Row · Downloading",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 4,
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            10,
+            12
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "dwUlb",
+              "name": "Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "jSJdg",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "Downloading MultiPath 1.2.1…",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uyxdT",
+              "name": "Progress",
+              "width": "fill_container",
+              "height": 4,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "vMjJ6",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Rail",
+                  "fill": "#FFFFFF2E",
+                  "width": 304,
+                  "height": 4
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 2,
+                  "id": "InT4a",
+                  "x": 0,
+                  "y": 0,
+                  "name": "Rail Fill",
+                  "fill": "$accent",
+                  "width": 146,
+                  "height": 4
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "Kyyi3",
+              "name": "Desc",
+              "fill": "$text-3",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "48% · 4.1 MB of 8.6 MB",
+              "lineHeight": 1.4,
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "QVXb3",
+          "name": "Caption",
+          "fill": "$text-2",
+          "content": "Error",
+          "fontFamily": "$font",
+          "fontSize": 11,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "EVYGO",
+          "name": "Row · Error",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 4,
+          "layout": "vertical",
+          "gap": 8,
+          "padding": [
+            10,
+            12
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "vlQnJ",
+              "name": "Head",
+              "gap": 6,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "h3bSL",
+                  "name": "Dot",
+                  "fill": "$warn",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "text",
+                  "id": "z4bAPR",
+                  "name": "Label",
+                  "fill": "$text",
+                  "content": "Couldn't check for updates",
+                  "fontFamily": "$font",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "KP2Ve",
+              "name": "Desc",
+              "fill": "$text-3",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "Couldn't reach the update server. Check that you're online, then try again.",
+              "lineHeight": 1.4,
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "IdNTZ",
+              "name": "Desc",
+              "fill": "$text-3",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "You can also download MultiPath yourself from github.com/uditya-kumar/MultiPath/releases.",
+              "lineHeight": 1.4,
+              "fontFamily": "$font",
+              "fontSize": 11,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "tBl4L",
+              "name": "Actions",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "iPddw",
+                  "name": "Secondary Button",
+                  "height": 26,
+                  "fill": "$surface-hover",
+                  "cornerRadius": 4,
+                  "stroke": "$border",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ihp3d",
+                      "name": "Label",
+                      "fill": "$text",
+                      "content": "Try again",
+                      "fontFamily": "$font",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "Y1GDV",
+          "name": "Divider",
+          "fill": "$border",
+          "width": "fill_container",
+          "height": 1
+        },
+        {
+          "type": "text",
+          "id": "h5LH0",
+          "name": "Title",
+          "fill": "$text",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Main page: below the header, when a check finds a newer version",
+          "fontFamily": "$font",
+          "fontSize": 12,
+          "fontWeight": "600"
+        },
+        {
+          "type": "frame",
+          "id": "lszDn",
+          "name": "Update Banner",
+          "width": "fill_container",
+          "fill": "$surface",
+          "cornerRadius": 6,
+          "gap": 8,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "icon",
+              "id": "UJU6K",
+              "name": "Icon",
+              "width": 14,
+              "height": 14,
+              "icon": "circle-arrow-up",
+              "library": "lucide",
+              "fill": "$accent"
+            },
+            {
+              "type": "text",
+              "id": "tM5XM",
+              "name": "Text",
+              "fill": "$text-2",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "MultiPath 1.2.1 is available.",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "Z78Nrk",
+              "name": "Link",
+              "fill": "$accent",
+              "content": "Review",
+              "fontFamily": "$font",
+              "fontSize": 12,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "jz4GF",
+          "name": "Note",
+          "fill": "$text-3",
+          "textGrowth": "fixed-width",
+          "width": "fill_container",
+          "content": "Per-OS wording: the last sentence of \"available\" is \"Windows may ask for administrator permission.\" / \"Linux may ask for your password.\" / \"If MultiPath is on, macOS asks for your password again.\" Restart errors say \"its tray icon\" on Windows and Linux, \"the menu bar\" on macOS.",
+          "lineHeight": 1.4,
+          "fontFamily": "$font",
+          "fontSize": 11,
           "fontWeight": "normal"
         }
       ]

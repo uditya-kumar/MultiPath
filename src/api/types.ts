@@ -33,6 +33,8 @@ export interface SettingsStatus {
   startOnLogin: boolean;
   /** Look for a new version when MultiPath starts (never installs on its own). */
   checkUpdates: boolean;
+  /** Leave unplugged and unconnected networks out of the list. */
+  hideUnavailable: boolean;
 }
 
 export type Platform = "windows" | "linux" | "macos";
@@ -78,4 +80,5 @@ export interface OptionChange {
   dns?: string[];
   startOnLogin?: boolean;
   checkUpdates?: boolean;
+  hideUnavailable?: boolean;
 }

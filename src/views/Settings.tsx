@@ -13,7 +13,7 @@ import { hidePopup } from "../api/window";
 import { SubHeader } from "../components/Header";
 import { Toggle } from "../components/Toggle";
 import { UpdatePanel } from "../components/UpdatePanel";
-import { networkColor } from "../lib/format";
+import { networkColors } from "../lib/format";
 import { startAtLoginLabel } from "../lib/summary";
 import type { UpdateControls } from "../lib/useUpdater";
 
@@ -30,6 +30,7 @@ export function Settings({ status, onStatus, onBack, update }: Props) {
   const [error, setError] = useState<string | null>(null);
   const settings = status.settings;
   const present = status.links.filter((l) => l.present);
+  const colors = networkColors(status.links);
 
   const change = (option: OptionChange) => {
     setError(null);
@@ -77,7 +78,7 @@ export function Settings({ status, onStatus, onBack, update }: Props) {
               <WeightRow
                 key={link.id}
                 name={link.name}
-                color={networkColor(link.kind)}
+                color={colors.get(link.id) ?? "var(--text-3)"}
                 weight={link.weight}
                 onCommit={(weight) =>
                   setLinkWeight(link.id, weight)
@@ -96,6 +97,12 @@ export function Settings({ status, onStatus, onBack, update }: Props) {
           label={startAtLoginLabel(status)}
           on={settings.startOnLogin}
           onChange={(startOnLogin) => change({ startOnLogin })}
+        />
+        <SwitchRow
+          label="Hide unavailable networks"
+          desc="Leaves unplugged cables and networks that aren't connected out of the list."
+          on={settings.hideUnavailable}
+          onChange={(hideUnavailable) => change({ hideUnavailable })}
         />
         <DnsRow dns={settings.dns} onSave={(dns) => setOption({ dns }).then(onStatus)} />
       </Section>

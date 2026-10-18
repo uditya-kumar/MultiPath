@@ -42,6 +42,9 @@ pub struct Settings {
     /// only thing MultiPath would contact on its own, and it never installs
     /// anything without the user's say-so.
     pub check_updates: bool,
+    /// Leave networks that aren't there (unplugged, not connected) out of the
+    /// popup's list.
+    pub hide_unavailable: bool,
 }
 
 impl Default for Settings {
@@ -55,6 +58,7 @@ impl Default for Settings {
             // Some ISPs (Jio among them) drop DNS queries to 1.1.1.1.
             dns: vec!["8.8.8.8".parse().unwrap(), "1.1.1.1".parse().unwrap()],
             check_updates: false,
+            hide_unavailable: false,
         }
     }
 }
@@ -117,5 +121,13 @@ mod tests {
         assert!(!old.check_updates && old.sticky && !old.on);
         let chosen: Settings = serde_json::from_str(r#"{"checkUpdates":true}"#).unwrap();
         assert!(chosen.check_updates);
+    }
+
+    #[test]
+    fn unavailable_networks_show_unless_hidden() {
+        let old: Settings = serde_json::from_str(r#"{"on":false}"#).unwrap();
+        assert!(!old.hide_unavailable);
+        let chosen: Settings = serde_json::from_str(r#"{"hideUnavailable":true}"#).unwrap();
+        assert!(chosen.hide_unavailable);
     }
 }

@@ -73,6 +73,7 @@ pub struct SettingsStatus {
     pub dns: Vec<String>,
     pub start_on_login: bool,
     pub check_updates: bool,
+    pub hide_unavailable: bool,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -204,6 +205,7 @@ pub fn build(state: &AppState) -> Status {
             dns: settings.dns.iter().map(|d| d.to_string()).collect(),
             start_on_login: state.start_on_login.load(Ordering::Relaxed),
             check_updates: settings.check_updates,
+            hide_unavailable: settings.hide_unavailable,
         },
     }
 }

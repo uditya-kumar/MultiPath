@@ -48,8 +48,8 @@ export function plural(n: number, one: string, many = `${one}s`): string {
   return `${n.toLocaleString("en-US")} ${n === 1 ? one : many}`;
 }
 
-/** The CSS color for a network, by what kind of adapter it is. */
-export function networkColor(kind: LinkKind): string {
+/** The colour of the first network of each kind. */
+function kindColor(kind: LinkKind): string {
   switch (kind) {
     case "wifi":
       return "var(--net-wifi)";
@@ -61,6 +61,32 @@ export function networkColor(kind: LinkKind): string {
     default:
       return "var(--text-3)";
   }
+}
+
+const ALT_COLORS = ["var(--net-alt-1)", "var(--net-alt-2)", "var(--net-alt-3)", "var(--net-alt-4)"];
+
+/**
+ * Each network's colour, by id. The first of each kind keeps the kind's colour; every further one
+ * takes the next alternative, so two Ethernets never share a colour. Assigned in name order over
+ * every known network, present or not, so colours stay put as cables come and go.
+ */
+export function networkColors(links: LinkStatus[]): Map<string, string> {
+  const ordered = [...links].sort(
+    (a, b) => a.name.localeCompare(b.name, "en", { numeric: true }) || a.id.localeCompare(b.id),
+  );
+  const seen = new Set<string>();
+  const colors = new Map<string, string>();
+  let alt = 0;
+  for (const link of ordered) {
+    const color = kindColor(link.kind);
+    if (seen.has(color)) {
+      colors.set(link.id, ALT_COLORS[alt++ % ALT_COLORS.length]);
+    } else {
+      seen.add(color);
+      colors.set(link.id, color);
+    }
+  }
+  return colors;
 }
 
 /** The second line of a network row: "192.168.1.40 · 18 ms". */

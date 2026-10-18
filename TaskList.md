@@ -174,3 +174,9 @@ updater key and are installed only after the user confirms. The popup stays as d
 - [x] PR #5 merged without the off-design UI (hero, connection spread, light mode, router note), the replica/e2e/demo files and the fork endpoint
 - [ ] Publish the v1.2.0 GitHub release with the assets from all three systems (needs the user)
 - [ ] Live update test from 1.2.0 to a later release on each system (needs a published newer release)
+
+## Phase 10 — Network colours and hiding (issue #8)
+
+- [x] Design first: per-network colours (`net-alt-1…4`), a two-Ethernet flyout and the Settings switch in `design.pen`
+- [x] Every network its own colour in the ring, legend, rows, weights and connections: the first of each kind keeps the kind's colour, further ones take the alternatives, in name order over all known networks so colours stay put
+- [x] Settings › App › Hide unavailable networks (off by default): unplugged and unconnected networks leave the main list

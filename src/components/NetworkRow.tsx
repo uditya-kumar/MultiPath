@@ -1,16 +1,17 @@
 import type { LinkStatus } from "../api/types";
-import { formatRate, networkColor, networkMeta } from "../lib/format";
+import { formatRate, networkMeta } from "../lib/format";
 import { NetIcon } from "./NetIcon";
 import { Toggle } from "./Toggle";
 
 interface Props {
   link: LinkStatus;
+  color: string;
   /** MultiPath is on, so show live traffic. */
   live: boolean;
   onEnabled: (enabled: boolean) => void;
 }
 
-export function NetworkRow({ link, live, onEnabled }: Props) {
+export function NetworkRow({ link, color, live, onEnabled }: Props) {
   const showTraffic = live && link.present && link.enabled;
   let value: string;
   let detail: string;
@@ -31,7 +32,7 @@ export function NetworkRow({ link, live, onEnabled }: Props) {
   return (
     <div className={link.present ? "network-row" : "network-row dim"}>
       <div className="network-top">
-        <NetIcon kind={link.kind} />
+        <NetIcon kind={link.kind} color={color} />
         <div className="network-info">
           <span className="network-name" title={link.description}>
             {link.name}
@@ -54,7 +55,7 @@ export function NetworkRow({ link, live, onEnabled }: Props) {
         <div className="share-track">
           <div
             className="share-fill"
-            style={{ width: `${link.share}%`, background: networkColor(link.kind) }}
+            style={{ width: `${link.share}%`, background: color }}
           />
         </div>
       )}

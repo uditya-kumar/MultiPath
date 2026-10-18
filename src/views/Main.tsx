@@ -7,6 +7,7 @@ import { Footer } from "../components/Footer";
 import { Header } from "../components/Header";
 import { NetworkRow } from "../components/NetworkRow";
 import { ShareRing } from "../components/ShareRing";
+import { networkColors } from "../lib/format";
 import { elevationNote, footerInfo, headerStatus, inUse, type Pending } from "../lib/summary";
 import type { UpdateState } from "../lib/update";
 
@@ -44,6 +45,10 @@ export function Main({ status, onStatus, onSettings, onConnections, update }: Pr
   const header = headerStatus(status, pending);
   const busy = pending !== null || status.busy;
   const notice = error ?? (status.error && errorText(status.error));
+  const colors = networkColors(status.links);
+  const shown = status.settings.hideUnavailable
+    ? status.links.filter((l) => l.present)
+    : status.links;
 
   return (
     <>
@@ -72,7 +77,7 @@ export function Main({ status, onStatus, onSettings, onConnections, update }: Pr
 
       {status.on ? (
         <section className="throughput" aria-label="Throughput">
-          <ShareRing links={inUse(status.links)} rxRate={status.rxRate} txRate={status.txRate} />
+          <ShareRing links={inUse(status.links)} colors={colors} rxRate={status.rxRate} txRate={status.txRate} />
         </section>
       ) : (
         <section className="off-callout">
@@ -109,15 +114,20 @@ export function Main({ status, onStatus, onSettings, onConnections, update }: Pr
             </button>
           )}
         </div>
-        {status.links.map((link) => (
+        {shown.map((link) => (
           <NetworkRow
             key={link.id}
             link={link}
+            color={colors.get(link.id) ?? "var(--text-3)"}
             live={status.on}
             onEnabled={(enabled) => chooseLink(link.id, enabled)}
           />
         ))}
-        {status.links.length === 0 && <div className="empty">No networks found.</div>}
+        {shown.length === 0 && (
+          <div className="empty">
+            {status.links.length === 0 ? "No networks found." : "No networks are connected."}
+          </div>
+        )}
       </section>
 
       <Footer info={footerInfo(status)} onConnections={onConnections} onSettings={onSettings} />

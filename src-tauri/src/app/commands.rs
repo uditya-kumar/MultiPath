@@ -97,6 +97,7 @@ pub struct OptionChange {
     pub dns: Option<Vec<String>>,
     pub start_on_login: Option<bool>,
     pub check_updates: Option<bool>,
+    pub hide_unavailable: Option<bool>,
 }
 
 /// Parses DNS servers typed by the user; empty entries are skipped.
@@ -137,6 +138,9 @@ pub async fn set_option(app: AppHandle, change: OptionChange) -> Result<Status, 
         }
         if let Some(check_updates) = change.check_updates {
             s.check_updates = check_updates;
+        }
+        if let Some(hide_unavailable) = change.hide_unavailable {
+            s.hide_unavailable = hide_unavailable;
         }
     });
     let after = state.settings();
@@ -184,5 +188,7 @@ mod tests {
         assert!(change.adaptive.is_none() && change.dns.is_none());
         let change: OptionChange = serde_json::from_str(r#"{"checkUpdates":true}"#).unwrap();
         assert_eq!(change.check_updates, Some(true));
+        let change: OptionChange = serde_json::from_str(r#"{"hideUnavailable":true}"#).unwrap();
+        assert_eq!(change.hide_unavailable, Some(true));
     }
 }

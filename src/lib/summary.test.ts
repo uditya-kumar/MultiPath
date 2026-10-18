@@ -38,7 +38,7 @@ const off: Status = {
   connections: 0,
   todayBytes: 0,
   links: [wifi, phone, cable],
-  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false, checkUpdates: false },
+  settings: { adaptive: true, sticky: false, captureIpv6: false, dns: [], startOnLogin: false, checkUpdates: false, hideUnavailable: false },
 };
 const on: Status = { ...off, on: true, connections: 142, todayBytes: 3_400_000_000 };
 
