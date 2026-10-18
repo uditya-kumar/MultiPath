@@ -34,7 +34,10 @@ export type UpdateFailure = "signature" | "noRelease" | "permission" | "network"
 export function failureOf(err: unknown): { failure: UpdateFailure; detail: string } {
   const detail = typeof err === "string" ? err : err instanceof Error ? err.message : String(err);
   if (/signature|minisign|signed for version|base64/i.test(detail)) return { failure: "signature", detail };
-  if (/platform .* was not found|fallback platforms/i.test(detail)) return { failure: "noRelease", detail };
+  // "valid release JSON": the server answered, but the latest release has no feed (GitHub's 404).
+  if (/platform .* was not found|fallback platforms|valid release JSON/i.test(detail)) {
+    return { failure: "noRelease", detail };
+  }
   if (/permission denied|operation not permitted|access is denied|read-only|authentication failed|cancel/i.test(detail)) {
     return { failure: "permission", detail };
   }

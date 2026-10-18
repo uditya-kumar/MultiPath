@@ -163,7 +163,10 @@ describe("update helpers", () => {
     type During = "check" | "install" | "restart";
     const text = (err: unknown, during: During, platform: "windows" | "linux" | "macos" = "windows") =>
       updateErrorText({ step: "error", during, ...failureOf(err) }, platform);
-    expect(text("Could not fetch a valid release JSON from the remote", "check")).toContain(
+    expect(text("Could not fetch a valid release JSON from the remote", "check")).toBe(
+      "There's no update for this PC yet. Try again later.",
+    );
+    expect(text("error sending request for url (https://github.com/)", "check")).toContain(
       "Couldn't reach the update server",
     );
     expect(text(new Error("operation timed out"), "install")).toContain("nothing was installed");
